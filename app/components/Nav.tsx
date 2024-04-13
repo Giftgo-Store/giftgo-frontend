@@ -28,7 +28,9 @@ export default function Nav() {
 
   return (
     <div
-      className={`flex flex-col gap-2  bg-white  h-screen absolute px-4 py-5 transition-[width] transform ease-in-out w-fit overflow-hidden duration-300`}
+      className={`flex flex-col gap-2  bg-white sm:max-w-[260px] ${
+        showOnlyIcon ? "w-min" : "w-full"
+      }  h-screen px-4 py-5 transition-[width] transform ease-in-out w-full overflow-hidden duration-300`}
     >
       <div className="flex justify-between items-center pl-2 overflow-hidden transition-[width] transform ease-in-out duration-300 ">
         <Link href="/" className={`${showOnlyIcon ? "hidden" : "block"}`}>
@@ -49,7 +51,7 @@ export default function Nav() {
         disallowEmptySelection
         selectionMode="single"
         hideSelectedIcon
-        className={`flex flex-col gap-3 p-0 sm:max-w-[260px]  w-full overflow-hidden transition-[width] transform ease-in-out duration-300 `}
+        className={`flex flex-col gap-3 p-0   w-full overflow-hidden transition-[width] transform ease-in-out duration-300 `}
         classNames={{
           list: [
             "gap-4  transition-[width] transform ease-in-out overflow-hidden duration-300",
@@ -88,7 +90,7 @@ export default function Nav() {
           </ListboxItem>
           <ListboxItem
             className={`${
-              pathname === "/order-management" ? "bg-default" : "opacity-60"
+              pathname === "/order-management" ? "bg-[#F3F4F8]" : "opacity-60"
             }  ${
               showOnlyIcon ? "pr-0" : "px-2"
             } transition-[width] transform ease-in-out overflow-hidden duration-300`}
@@ -106,7 +108,7 @@ export default function Nav() {
           </ListboxItem>
           <ListboxItem
             className={`${
-              pathname === "/customers" ? "bg-default" : "opacity-60"
+              pathname === "/customers" ? "bg-[#F3F4F8]" : "opacity-60"
             }  ${
               showOnlyIcon ? "pr-0" : "px-2"
             } transition-[width] transform ease-in-out overflow-hidden duration-300`}
@@ -125,7 +127,7 @@ export default function Nav() {
           </ListboxItem>
           <ListboxItem
             className={`${
-              pathname === "/transactions" ? "bg-default" : "opacity-60"
+              pathname === "/transactions" ? "bg-[#F3F4F8]" : "opacity-60"
             } ${
               showOnlyIcon ? "pr-0" : "px-2"
             } transition-[width] transform ease-in-out overflow-hidden duration-300`}
@@ -177,7 +179,7 @@ export default function Nav() {
           </ListboxItem>
           <ListboxItem
             className={`${
-              pathname === "/add-products" ? "bg-default" : "opacity-60"
+              pathname === "/add-products" ? "bg-[#F3F4F8]" : "opacity-60"
             }  ${
               showOnlyIcon ? "pr-0" : "px-2"
             } transition-[width] transform ease-in-out overflow-hidden duration-300`}
@@ -195,7 +197,7 @@ export default function Nav() {
           </ListboxItem>
           <ListboxItem
             className={`${
-              pathname === "/product-list" ? "bg-default" : "opacity-60"
+              pathname === "/product-list" ? "bg-[#F3F4F8]" : "opacity-60"
             }  ${
               showOnlyIcon ? "pr-0" : "px-2"
             } transition-[width] transform ease-in-out overflow-hidden duration-300`}
