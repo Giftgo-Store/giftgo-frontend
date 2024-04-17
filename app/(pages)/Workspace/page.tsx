@@ -33,9 +33,7 @@ import {
 } from "react";
 import Chart from "react-apexcharts";
 import { HiDotsVertical } from "react-icons/hi";
-import { SlArrowDown } from "react-icons/sl";
-import { SlArrowUp } from "react-icons/sl";
-export default function Dashboard() {
+export default function Workspace() {
   const canvasref = useRef<any>();
   const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
   const series = [
@@ -473,11 +471,7 @@ export default function Dashboard() {
                 </div>
                 <div className="flex gap-2">
                   <div className="flex justify-normal items-center gap-1">
-                    <IoArrowUpOutline
-                      color="#1EB564"
-                      style={{ strokeWidth: "35" }}
-                      size={16}
-                    />
+                    <IoArrowUpOutline color="#1EB564" size={16} />
                     <span className="text-[#1EB564] font-medium">₦8.56k</span>
                   </div>
                   <p className="text-[#8B909A] text-base">vs Last 7 days</p>
@@ -611,7 +605,7 @@ export default function Dashboard() {
             <p className="py-2 font-bold text-lg">Sales by Area</p>
             <div className="flex flex-col gap-3">
               <div className="flex gap-3 justify-between items-center">
-                <div className="flex flex-col gap-1 w-[100px]">
+                <div className="flex flex-col gap-1">
                   <span className="font-medium text-base">230</span>
                   <span className="text-sm font-normal text-[#8B909A]">
                     Australia
@@ -626,17 +620,9 @@ export default function Dashboard() {
                   }}
                   size="md"
                 />
-                <div className="flex justify-center items-center gap-2">
-                  <SlArrowDown
-                    color="#D02626"
-                    style={{ strokeWidth: "35" }}
-                    style={{ strokeWidth: "35" }}
-                  />
-                  <span className="text-[#D02626]">16.2%</span>
-                </div>
               </div>
               <div className="flex gap-3 justify-between items-center">
-                <div className="flex flex-col gap-1 w-[100px]">
+                <div className="flex flex-col gap-1">
                   <span className="font-medium text-base">130</span>
                   <span className="text-sm font-normal text-[#8B909A]">
                     Canada
@@ -651,13 +637,9 @@ export default function Dashboard() {
                   }}
                   size="md"
                 />
-                <div className="flex justify-center items-center gap-2">
-                  <SlArrowUp color="#1EB564" style={{ strokeWidth: "35" }} />
-                  <span className="text-[#1EB564]">16.2%</span>
-                </div>
               </div>{" "}
               <div className="flex gap-3 justify-between items-center">
-                <div className="flex flex-col gap-1 w-[100px]">
+                <div className="flex flex-col gap-1">
                   <span className="font-medium text-base">50</span>
                   <span className="text-sm font-normal text-[#8B909A]">US</span>
                 </div>
@@ -670,13 +652,9 @@ export default function Dashboard() {
                   }}
                   size="md"
                 />
-                <div className="flex justify-center items-center gap-2">
-                  <SlArrowUp color="#1EB564" style={{ strokeWidth: "35" }} />
-                  <span className="text-[#1EB564]">12.3%</span>
-                </div>
               </div>{" "}
               <div className="flex gap-3 justify-between items-center">
-                <div className="flex flex-col gap-1 w-[100px]">
+                <div className="flex flex-col gap-1">
                   <span className="font-medium text-base">300</span>
                   <span className="text-sm font-normal text-[#8B909A]">UK</span>
                 </div>
@@ -689,13 +667,9 @@ export default function Dashboard() {
                   }}
                   size="md"
                 />
-                <div className="flex justify-center items-center gap-2">
-                  <SlArrowDown color="#D02626" style={{ strokeWidth: "35" }} />
-                  <span className="text-[#D02626]">11.2%</span>
-                </div>
               </div>{" "}
               <div className="flex gap-3 justify-between items-center">
-                <div className="flex flex-col gap-1 w-[100px]">
+                <div className="flex flex-col gap-1">
                   <span className="font-medium text-base">100</span>
                   <span className="text-sm font-normal text-[#8B909A]">
                     Germany
@@ -710,10 +684,6 @@ export default function Dashboard() {
                   }}
                   size="md"
                 />
-                <div className="flex justify-center items-center gap-2">
-                  <SlArrowDown color="#D02626" style={{ strokeWidth: "35" }} />
-                  <span className="text-[#D02626]">16.2%</span>
-                </div>
               </div>
             </div>
           </div>
@@ -866,11 +836,7 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex justify-normal items-center gap-1">
-              <IoArrowUpOutline
-                color="#1EB564"
-                style={{ strokeWidth: "35" }}
-                size={16}
-              />
+              <IoArrowUpOutline color="#1EB564" size={16} />
               <span className="text-[#1EB564]">6%</span>
               <span className="text-[#8B909A] text-base">vs last 7 days</span>
             </div>
