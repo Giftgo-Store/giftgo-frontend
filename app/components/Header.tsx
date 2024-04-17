@@ -36,7 +36,7 @@ export function Header() {
         <div className="flex gap-6 items-center">
           <Button
             isIconOnly
-            className="bg-transparent w-fit px-3"
+            className="bg-transparent w-fit p-3"
             as={Link}
             href={"/notification"}
           >
@@ -46,11 +46,17 @@ export function Header() {
           </Button>
           <Button
             isIconOnly
-            className="bg-transparent"
+            className="bg-transparent w-fit p-3"
             as={Link}
             href={"/notification"}
           >
-            <Badge color="success" shape="circle" placement="bottom-right">
+            <Badge
+              color="success"
+              content={""}
+              shape="circle"
+              placement="bottom-right"
+              size="sm"
+            >
               <Avatar
                 src="https://th.bing.com/th/id/OIP.DUflnJMpmj75BYf1WR6ZEwHaEK?rs=1&pid=ImgDetMain"
                 size="md"
