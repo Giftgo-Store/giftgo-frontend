@@ -78,7 +78,7 @@ export default function Nav() {
             } transition-[width] transform ease-in-out duration-300 `}
             startContent={<TbSmartHome size={34} />}
             key="dashboard"
-            href="/admin"
+            href="/admin/dashboard"
           >
             <p
               className={`text-lg font-semibold transition-[width] transform ease-in-out block  duration-300 ${
