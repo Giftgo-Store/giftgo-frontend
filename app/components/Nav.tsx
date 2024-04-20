@@ -73,12 +73,12 @@ export default function Nav() {
           className="w-full transition-[width] transform ease-in-out block  whitespace-nowrap  duration-300"
         >
           <ListboxItem
-            className={`${pathname === "/" ? "bg-[#F3F4F8]" : "opacity-60"}  ${
+            className={`${pathname === "/admin" ? "bg-[#F3F4F8]" : "opacity-60"}  ${
               showOnlyIcon ? "gap-0 " : "px-2"
             } transition-[width] transform ease-in-out duration-300 `}
             startContent={<TbSmartHome size={34} />}
             key="dashboard"
-            href="/"
+            href="/admin"
           >
             <p
               className={`text-lg font-semibold transition-[width] transform ease-in-out block  duration-300 ${
@@ -90,13 +90,13 @@ export default function Nav() {
           </ListboxItem>
           <ListboxItem
             className={`${
-              pathname === "/order-management" ? "bg-[#F3F4F8]" : "opacity-60"
+              pathname === "/admin/order-management" ? "bg-[#F3F4F8]" : "opacity-60"
             }  ${
               showOnlyIcon ? "pr-0" : "px-2"
             } transition-[width] transform ease-in-out  duration-300`}
             startContent={<IoCartOutline size={34} />}
             key="order-management"
-            href="/order-management"
+            href="/admin/order-management"
           >
             <p
               className={`text-lg font-semibold transition-[width] transform ease-in-out block  duration-300 ${
@@ -108,13 +108,13 @@ export default function Nav() {
           </ListboxItem>
           <ListboxItem
             className={`${
-              pathname === "/customers" ? "bg-[#F3F4F8]" : "opacity-60"
+              pathname === "/admin/customers" ? "bg-[#F3F4F8]" : "opacity-60"
             }  ${
               showOnlyIcon ? "pr-0" : "px-2"
             } transition-[width] transform ease-in-out  duration-300`}
             startContent={<LuUsers size={34} />}
             key="customers"
-            href="/customers"
+            href="/admin/customers"
           >
             <p
               className={`text-lg font-semibold transition-[width] transform ease-in-out block  duration-300 ${
@@ -127,13 +127,13 @@ export default function Nav() {
           </ListboxItem>
           <ListboxItem
             className={`${
-              pathname === "/transactions" ? "bg-[#F3F4F8]" : "opacity-60"
+              pathname === "/admin/transactions" ? "bg-[#F3F4F8]" : "opacity-60"
             } ${
               showOnlyIcon ? "pr-0" : "px-2"
             } transition-[width] transform ease-in-out  duration-300`}
             startContent={<FiFileText size={34} />}
             key="transactions"
-            href="/transactions"
+            href="/admin/transactions"
           >
             <p
               className={`text-lg font-semibold transition-[width] transform ease-in-out block  duration-300 ${
@@ -159,7 +159,7 @@ export default function Nav() {
         >
           <ListboxItem
             className={`${
-              pathname === "/add-categories" ? "bg-[#F3F4F8]" : "opacity-60"
+              pathname === "/admin/add-categories" ? "bg-[#F3F4F8]" : "opacity-60"
             }  ${
               showOnlyIcon ? "pr-0" : "px-2"
             } transition-[width] transform ease-in-out  duration-300`}
@@ -167,7 +167,7 @@ export default function Nav() {
               <Image src={BoxAdd} alt="box" width={34} height={34} />
             }
             key="add-categories"
-            href="/add-categories"
+            href="/admin/add-categories"
           >
             <p
               className={`text-lg font-semibold transition-[width] transform ease-in-out block  duration-300 ${
@@ -179,13 +179,13 @@ export default function Nav() {
           </ListboxItem>
           <ListboxItem
             className={`${
-              pathname === "/add-products" ? "bg-[#F3F4F8]" : "opacity-60"
+              pathname === "/admin/add-products" ? "bg-[#F3F4F8]" : "opacity-60"
             }  ${
               showOnlyIcon ? "pr-0" : "px-2"
             } transition-[width] transform ease-in-out  duration-300`}
             startContent={<IoMdAddCircleOutline size={34} />}
             key="add-products"
-            href="/add-products"
+            href="/admin/add-products"
           >
             <p
               className={`text-lg font-semibold transition-[width] transform ease-in-out block  duration-300 ${
@@ -197,13 +197,13 @@ export default function Nav() {
           </ListboxItem>
           <ListboxItem
             className={`${
-              pathname === "/product-list" ? "bg-[#F3F4F8]" : "opacity-60"
+              pathname === "/admin/product-list" ? "bg-[#F3F4F8]" : "opacity-60"
             }  ${
               showOnlyIcon ? "pr-0" : "px-2"
             } transition-[width] transform ease-in-out  duration-300`}
             startContent={<FiBox size={34} />}
             key="product-list"
-            href="/product-list"
+            href="/admin/product-list"
           >
             <p
               className={`text-lg font-semibold transition-[width] transform ease-in-out block  duration-300 ${
