@@ -1,6 +1,3 @@
-const page = () => {
-    return ( <>
-    </> );
+export default function Transactions() {
+  return <div></div>;
 }
- 
-export default page;
