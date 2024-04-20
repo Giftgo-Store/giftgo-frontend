@@ -5,28 +5,30 @@ interface dashboardCard {
   amount: number;
   profit: boolean;
   percentage: number;
+  customstyle?: string;
 }
 export function DashboardCard({
   title,
   amount,
   profit,
   percentage,
+  customstyle,
 }: dashboardCard) {
   return (
-    <div className="w-full  p-5 bg-white rounded-2xl">
+    <div className={`${customstyle} w-full p-5 bg-white rounded-2xl`}>
       <div className="flex flex-col">
         <p className="font-semibold text-lg text-[#23272E]">{title}</p>
         <span className="text-[#8B909A] text-base">Last 7 days</span>
       </div>
       <div className="flex flex-col gap-5">
-        <div className="flex gap-5  justify-between ">
+        <div className="flex gap-5 flex-wrap sm:flex-nowrap flex-row justify-between ">
           <div className="flex gap-6 items-end justify-normal">
             <span className="font-bold text-3xl text-[2rem]">₦{amount}K</span>
           </div>
           <Image
             src={profit ? "green-rise.png" : "/red-dip.png"}
             alt="arrow rise or fall"
-            className="max-w-[500px] w-full h-full object-contain"
+            className="md:max-w-[500px] md:w-full w-[90%] h-full object-contain"
           />
         </div>
         <div className="flex gap-2">

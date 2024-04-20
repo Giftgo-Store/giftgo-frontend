@@ -29,7 +29,7 @@ export default function RootLayout({
             <div className="h-screen w-full overflow-y-auto">
               <div className="sm:px-6 px-3 flex flex-col">
                 <Header />
-                <div className="pt-6">{children}</div>
+                <div className="py-6">{children}</div>
               </div>
             </div>
           </div>
