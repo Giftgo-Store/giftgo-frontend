@@ -24,15 +24,7 @@ export default function RootLayout({
         className={`${inter.className} absolute h-screen w-full bg-[#FAFAFA]`}
       >
         <Providers>
-          <div className="flex">
-            <Nav />
-            <div className="h-screen w-full overflow-y-auto">
-              <div className="sm:px-6 px-3 flex flex-col">
-                <Header />
-                <div className="pt-6">{children}</div>
-              </div>
-            </div>
-          </div>
+          <div>{children}</div>
         </Providers>
       </body>
     </html>
