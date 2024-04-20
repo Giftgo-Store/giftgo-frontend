@@ -1,7 +1,3 @@
-export default function Index() {
-  return (
-    <div>
-      hello
-    </div>
-  )
+export default function Admin() {
+  return <div>hello</div>;
 }
