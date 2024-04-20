@@ -73,12 +73,12 @@ export default function Nav() {
           className="w-full transition-[width] transform ease-in-out block  whitespace-nowrap  duration-300"
         >
           <ListboxItem
-            className={`${pathname === "/admin" ? "bg-[#F3F4F8]" : "opacity-60"}  ${
+            className={`${pathname === "/admin/dashboard" ? "bg-[#F3F4F8]" : "opacity-60"}  ${
               showOnlyIcon ? "gap-0 " : "px-2"
             } transition-[width] transform ease-in-out duration-300 `}
             startContent={<TbSmartHome size={34} />}
             key="dashboard"
-            href="/admin"
+            href="/admin/dashboard"
           >
             <p
               className={`text-lg font-semibold transition-[width] transform ease-in-out block  duration-300 ${
