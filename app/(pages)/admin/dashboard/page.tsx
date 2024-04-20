@@ -31,10 +31,11 @@ import {
   useMemo,
   useRef,
 } from "react";
-import Chart from "react-apexcharts";
 import { HiDotsVertical } from "react-icons/hi";
 import { SlArrowDown } from "react-icons/sl";
 import { SlArrowUp } from "react-icons/sl";
+import dynamic from "next/dynamic";
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 export default function Dashboard() {
   const canvasref = useRef<any>();
   const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
