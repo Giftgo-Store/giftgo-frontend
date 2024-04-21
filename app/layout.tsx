@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers/providers";
-import Nav from "./components/Nav";
-import { Header } from "./components/Header";
+import AppWrapper from "./components/AppWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,7 +23,7 @@ export default function RootLayout({
         className={`${inter.className} absolute h-screen w-full bg-[#FAFAFA]`}
       >
         <Providers>
-          <div>{children}</div>
+          <AppWrapper>{children}</AppWrapper>
         </Providers>
       </body>
     </html>
