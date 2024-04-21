@@ -2,10 +2,9 @@ import Card from './components/Card';
 import Category from './components/Category';
 import './globals.css'
 import Image from "next/image";
-import { MdOutlineLocalShipping } from "react-icons/md";
 import { IoTrophyOutline } from "react-icons/io5";
-import { PiCreditCardLight } from "react-icons/pi";
-import { FiHeadphones } from "react-icons/fi";
+import { PiCreditCardLight, PiHeadphones } from "react-icons/pi";
+import { LiaShippingFastSolid } from "react-icons/lia";
 
 
 const Landing = () => {
@@ -31,7 +30,7 @@ const Landing = () => {
 
         <div className="border-[#E4E7E9] border-[1px] bg-[#F5F5F5] flex justify-between items-center p-2 mx-[8%] rounded-[8px] mb-[84px]">
           <div className="p-4 flex justify-between items-center bg-white gap-2">
-            <MdOutlineLocalShipping className="w-10 h-10 text-[#191C1F]" />
+            <LiaShippingFastSolid className="w-10 h-10 text-[#191C1F]" />
             <div className="flex flex-col gap-0 items-start">
               <h2 className="text-[14px] text-[#191C1F] font-[500] leading-0">
                 FREE SHIPPING
@@ -43,7 +42,7 @@ const Landing = () => {
           </div>
 
           <div className="p-4 flex justify-between items-center bg-white gap-2">
-            <FiHeadphones className="w-10 h-10 text-[#191C1F]" />
+            <PiHeadphones className="w-10 h-10 text-[#191C1F]" />
             <div className="flex flex-col gap-0 items-start">
               <h2 className="text-[14px] text-[#191C1F] font-[500] leading-0">
                 SUPPORT 24/7

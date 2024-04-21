@@ -5,23 +5,31 @@ import { FaStar } from "react-icons/fa6";
 import { IoEyeOutline } from "react-icons/io5";
 import { PiShoppingCart } from "react-icons/pi";
 import { LiaFighterJetSolid } from "react-icons/lia";
+import { useRouter } from "next/navigation";
 
 type CardProps = {
     express? : boolean
 }
 
 const Card = ({express= false} : CardProps) => {
+      const router = useRouter();
+
       const [isHovered, setIsHovered] = useState(false);
 
       const handleMouseEnter = () => setIsHovered(true);
       const handleMouseLeave = () => setIsHovered(false);
     return (
       <>
-        <div className="w-[290px] flex flex-col gap-[16px] border-[#E4E7E9] border-[1px] rounded-[8px] p-[8px] drop-shadow-sm hover:shadow-2xl shadow-white/12 cursor-pointer relative">
-           {express && <div className="bg-primary rounded-br-[8px] rounded-tl-[8px] absolute top-0 left-0 py-[7px] px-[10px] flex justify-center items-center gap-1 text-white z-50">
+        <div
+          className="w-[290px] flex flex-col gap-[16px] border-[#E4E7E9] border-[1px] rounded-[8px] p-[8px] drop-shadow-sm hover:shadow-2xl shadow-white/12 cursor-pointer relative"
+          onClick={() => router.push("/product")}
+        >
+          {express && (
+            <div className="bg-primary rounded-br-[8px] rounded-tl-[8px] absolute top-0 left-0 py-[7px] px-[10px] flex justify-center items-center gap-1 text-white z-50">
               <LiaFighterJetSolid />
               <p className="text-[11px]">Express shipping</p>
-            </div>}
+            </div>
+          )}
           <div
             className="relative"
             onMouseEnter={handleMouseEnter}
