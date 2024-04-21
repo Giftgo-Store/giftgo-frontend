@@ -7,19 +7,19 @@ export function Header() {
   const pathname = usePathname();
   function pageName() {
     switch (pathname) {
-      case "/":
+      case "/admin/dashboard":
         return "Dashboard";
-      case "/order-management":
+      case "/admin/order-management":
         return "Order Management";
-      case "/customers":
+      case "/admin/customers":
         return "Customers";
-      case "/transactions":
+      case "/admin/transactions":
         return "Transactions";
-      case "/add-categories":
+      case "/admin/add-categories":
         return "Add Categories";
-      case "/add-products":
+      case "/admin/add-products":
         return "Add Products";
-      case "/product-list":
+      case "/admin/product-list":
         return "Product List";
       default:
         return "Dashboard";

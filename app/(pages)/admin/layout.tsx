@@ -19,10 +19,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${inter.className} absolute h-screen w-full bg-[#FAFAFA]`}
-      >
         <Providers>
           <div className="flex">
             <Nav />
@@ -34,7 +30,5 @@ export default function RootLayout({
             </div>
           </div>
         </Providers>
-      </body>
-    </html>
   );
 }

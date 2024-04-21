@@ -26,7 +26,7 @@ export function DashboardCard({
             <span className="font-bold text-3xl text-[2rem]">₦{amount}K</span>
           </div>
           <Image
-            src={profit ? "green-rise.png" : "/red-dip.png"}
+            src={profit ? "/green-rise.png" : "/red-dip.png"}
             alt="arrow rise or fall"
             className="md:max-w-[500px] md:w-full w-[90%] h-full object-contain"
           />

@@ -17,14 +17,11 @@ import BoxAdd from "../../public/box-add.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+
 export default function Nav() {
-    const [selectedKeys, setSelectedKeys] = useState<any>(new Set(["text"]));
-    const [showOnlyIcon, setShowOnlyIcon] = useState(false)
-    const pathname = usePathname();
-  const selectedValue = useMemo(
-    () => Array.from(selectedKeys).join(", "),
-    [selectedKeys]
-  );
+  const [showOnlyIcon, setShowOnlyIcon] = useState(false);
+  const pathname = usePathname();
 
   return (
     <div
@@ -73,7 +70,9 @@ export default function Nav() {
           className="w-full transition-[width] transform ease-in-out block  whitespace-nowrap  duration-300"
         >
           <ListboxItem
-            className={`${pathname === "/admin/dashboard" ? "bg-[#F3F4F8]" : "opacity-60"}  ${
+            className={`${
+              pathname === "/admin/dashboard" ? "bg-[#F3F4F8]" : "opacity-60"
+            }  ${
               showOnlyIcon ? "gap-0 " : "px-2"
             } transition-[width] transform ease-in-out duration-300 `}
             startContent={<TbSmartHome size={34} />}
@@ -90,7 +89,9 @@ export default function Nav() {
           </ListboxItem>
           <ListboxItem
             className={`${
-              pathname === "/admin/order-management" ? "bg-[#F3F4F8]" : "opacity-60"
+              pathname === "/admin/order-management"
+                ? "bg-[#F3F4F8]"
+                : "opacity-60"
             }  ${
               showOnlyIcon ? "pr-0" : "px-2"
             } transition-[width] transform ease-in-out  duration-300`}
@@ -159,7 +160,9 @@ export default function Nav() {
         >
           <ListboxItem
             className={`${
-              pathname === "/admin/add-categories" ? "bg-[#F3F4F8]" : "opacity-60"
+              pathname === "/admin/add-categories"
+                ? "bg-[#F3F4F8]"
+                : "opacity-60"
             }  ${
               showOnlyIcon ? "pr-0" : "px-2"
             } transition-[width] transform ease-in-out  duration-300`}

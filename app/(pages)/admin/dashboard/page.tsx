@@ -22,7 +22,7 @@ import { TbBell } from "react-icons/tb";
 import { IoArrowDownOutline, IoArrowUpOutline } from "react-icons/io5";
 import { DashboardCard } from "@/app/components/dashboardCard";
 import { DashboardCardHeader } from "@/app/components/dashboardCardHeader";
-import ApexCharts, { ApexOptions } from "apexcharts";
+import { ApexOptions } from "apexcharts";
 import {
   LegacyRef,
   MouseEvent,
@@ -31,11 +31,10 @@ import {
   useMemo,
   useRef,
 } from "react";
+import Chart from "react-apexcharts";
 import { HiDotsVertical } from "react-icons/hi";
 import { SlArrowDown } from "react-icons/sl";
 import { SlArrowUp } from "react-icons/sl";
-import dynamic from "next/dynamic";
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 export default function Dashboard() {
   const canvasref = useRef<any>();
   const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
@@ -138,7 +137,7 @@ export default function Dashboard() {
 
   const rows = [
     {
-      id: "#5089",
+      id: "#5069",
       issued_date: "31 March 2024",
       total: "12000",
       action: "Active",
@@ -392,6 +391,7 @@ export default function Dashboard() {
       </div>
     );
   }, []);
+
   const renderCell = useCallback((item: any, columnKey: React.Key) => {
     switch (columnKey) {
       case "id":
@@ -459,9 +459,9 @@ export default function Dashboard() {
   return (
     <div>
       {/* total sales and cost section */}
-      <div className="flex justify-between items-center gap-4 ">
+      <div className="flex lg:flex-row flex-col justify-between items-center gap-4 ">
         <div className="p-5 w-full bg-white rounded-2xl ">
-          <div className="flex justify-between gap-5">
+          <div className="flex md:flex-row flex-col justify-between gap-5">
             <div className="flex flex-col justify-between">
               <div className="flex flex-col pb-3">
                 <p className="font-semibold text-lg">Total Sales & Costs</p>
@@ -474,7 +474,11 @@ export default function Dashboard() {
                 </div>
                 <div className="flex gap-2">
                   <div className="flex justify-normal items-center gap-1">
-                    <IoArrowUpOutline color="#1EB564" size={16} />
+                    <IoArrowUpOutline
+                      color="#1EB564"
+                      style={{ strokeWidth: "35" }}
+                      size={16}
+                    />
                     <span className="text-[#1EB564] font-medium">₦8.56k</span>
                   </div>
                   <p className="text-[#8B909A] text-base">vs Last 7 days</p>
@@ -496,7 +500,8 @@ export default function Dashboard() {
                 <Image
                   src={"/lines.png"}
                   alt=""
-                  className="w-[400px] h-full object-contain"
+                  className="lg:w-[400px] w-full h-full object-contain"
+                  removeWrapper
                 ></Image>
               </div>
               <div className="flex justify-between w-full">
@@ -509,30 +514,34 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        <div className="max-w-[40%] w-full">
+        <div className="lg:max-w-[40%] w-full">
           <DashboardCard
             title={"Sessions"}
             amount={1.6}
             profit={false}
             percentage={3}
+            customstyle="min-w-[350px] "
           />
         </div>
       </div>
       {/* dashboard section containing cards */}
-      <div className="flex gap-4 py-4">
+      <div className="flex gap-4 py-4 flex-wrap lg:flex-nowrap">
         <DashboardCard
+          customstyle="min-w-[270px] lg:max-w-[unset]"
           title={"Total Orders"}
           amount={700}
           profit={true}
           percentage={6}
         ></DashboardCard>
         <DashboardCard
+          customstyle="min-w-[270px] lg:max-w-[unset]"
           title={"Total Profit"}
           amount={150}
           profit={true}
           percentage={12}
         ></DashboardCard>
         <DashboardCard
+          customstyle="min-w-[270px] lg:max-w-[unset]"
           title={"Discounted Amount"}
           amount={12}
           profit={false}
@@ -540,7 +549,7 @@ export default function Dashboard() {
         ></DashboardCard>
       </div>
       {/* report section */}
-      <div className="flex gap-4 pb-4">
+      <div className="flex lg:flex-row flex-col gap-4 pb-4">
         {/* report chart */}
         <div className="p-5  w-full bg-white rounded-2xl flex flex-col gap-6">
           <DashboardCardHeader
@@ -585,7 +594,7 @@ export default function Dashboard() {
           </div>
         </div>
         {/* user tracker */}
-        <div className="max-w-[40%] w-full p-5 bg-white rounded-2xl">
+        <div className="lg:max-w-[40%] w-full p-5 bg-white rounded-2xl">
           <div className="flex flex-col gap-2 py-3">
             <p className="font-semibold text-lg text-[#23272E]">
               Users in last 30 minutes
@@ -608,7 +617,7 @@ export default function Dashboard() {
             <p className="py-2 font-bold text-lg">Sales by Area</p>
             <div className="flex flex-col gap-3">
               <div className="flex gap-3 justify-between items-center">
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 w-[150px]">
                   <span className="font-medium text-base">230</span>
                   <span className="text-sm font-normal text-[#8B909A]">
                     Australia
@@ -624,12 +633,12 @@ export default function Dashboard() {
                   size="md"
                 />
                 <div className="flex justify-center items-center gap-2">
-                  <SlArrowDown color="#D02626" />
+                  <SlArrowDown color="#D02626" style={{ strokeWidth: "35" }} />
                   <span className="text-[#D02626]">16.2%</span>
                 </div>
               </div>
               <div className="flex gap-3 justify-between items-center">
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 w-[150px]">
                   <span className="font-medium text-base">130</span>
                   <span className="text-sm font-normal text-[#8B909A]">
                     Canada
@@ -645,12 +654,12 @@ export default function Dashboard() {
                   size="md"
                 />
                 <div className="flex justify-center items-center gap-2">
-                  <SlArrowDown color="#1EB564" />
+                  <SlArrowUp color="#1EB564" style={{ strokeWidth: "35" }} />
                   <span className="text-[#1EB564]">16.2%</span>
                 </div>
               </div>{" "}
               <div className="flex gap-3 justify-between items-center">
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 w-[150px]">
                   <span className="font-medium text-base">50</span>
                   <span className="text-sm font-normal text-[#8B909A]">US</span>
                 </div>
@@ -664,12 +673,12 @@ export default function Dashboard() {
                   size="md"
                 />
                 <div className="flex justify-center items-center gap-2">
-                  <SlArrowUp color="#1EB564" />
+                  <SlArrowUp color="#1EB564" style={{ strokeWidth: "35" }} />
                   <span className="text-[#1EB564]">12.3%</span>
                 </div>
               </div>{" "}
               <div className="flex gap-3 justify-between items-center">
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 w-[150px]">
                   <span className="font-medium text-base">300</span>
                   <span className="text-sm font-normal text-[#8B909A]">UK</span>
                 </div>
@@ -683,12 +692,12 @@ export default function Dashboard() {
                   size="md"
                 />
                 <div className="flex justify-center items-center gap-2">
-                  <SlArrowDown color="#D02626" />
+                  <SlArrowDown color="#D02626" style={{ strokeWidth: "35" }} />
                   <span className="text-[#D02626]">11.2%</span>
                 </div>
               </div>{" "}
               <div className="flex gap-3 justify-between items-center">
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 w-[150px]">
                   <span className="font-medium text-base">100</span>
                   <span className="text-sm font-normal text-[#8B909A]">
                     Germany
@@ -704,7 +713,7 @@ export default function Dashboard() {
                   size="md"
                 />
                 <div className="flex justify-center items-center gap-2">
-                  <SlArrowDown color=" #D02626" />
+                  <SlArrowDown color="#D02626" style={{ strokeWidth: "35" }} />
                   <span className="text-[#D02626]">16.2%</span>
                 </div>
               </div>
@@ -713,8 +722,8 @@ export default function Dashboard() {
         </div>
       </div>
       {/* top sellin category section */}
-      <div className="flex gap-4 pb-4">
-        <div className="max-w-[40%] w-full flex flex-col gap-4 p-5 bg-white rounded-2xl">
+      <div className="flex lg:flex-row flex-col gap-4 pb-4">
+        <div className="lg:max-w-[40%] w-full flex flex-col gap-4 p-5 bg-white rounded-2xl">
           <div>
             <DashboardCardHeader
               title="Top Selling Category"
@@ -722,7 +731,7 @@ export default function Dashboard() {
               option={option}
             />
           </div>
-          <div className="relative max-h-[300px] w-fit mx-auto">
+          <div className="relative max-h-[350px] w-fit mx-auto">
             <div className="w-[220px] h-[220px] rounded-full flex flex-col gap-2 items-center justify-center bg-[#EB6363] text-white">
               <span className="opacity-[80%]">Gifts</span>
               <span className="font-bold text-2xl">500</span>
@@ -778,7 +787,7 @@ export default function Dashboard() {
         </div>
       </div>
       {/* best selling product section */}
-      <div className="flex gap-4 pb-4">
+      <div className="flex lg:flex-row flex-col gap-4 pb-4">
         <div className="w-full p-5 bg-white rounded-2xl">
           <Table
             shadow="none"
@@ -815,7 +824,7 @@ export default function Dashboard() {
             </TableBody>
           </Table>
         </div>
-        <div className="w-full max-w-[40%] p-5 bg-white rounded-2xl flex flex-col gap-4">
+        <div className="w-full lg:max-w-[40%] p-5 bg-white rounded-2xl flex flex-col gap-4">
           <DashboardCardHeader
             title={"Trending Products"}
             supportText="Total 5k visitors"
@@ -844,8 +853,8 @@ export default function Dashboard() {
         </div>
       </div>
       {/* total orders */}
-      <div className="flex gap-4 pb-4">
-        <div className="max-w-[40%] w-full p-5 bg-white rounded-2xl">
+      <div className="flex lg:flex-row flex-col gap-4 pb-4">
+        <div className="lg:max-w-[40%] w-full p-5 bg-white rounded-2xl">
           <div className="flex justify-between items-center">
             <div>
               <div className="flex flex-col gap-2 py-3">
@@ -859,7 +868,11 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex justify-normal items-center gap-1">
-              <IoArrowUpOutline color="#1EB564" size={16} />
+              <IoArrowUpOutline
+                color="#1EB564"
+                style={{ strokeWidth: "35" }}
+                size={16}
+              />
               <span className="text-[#1EB564]">6%</span>
               <span className="text-[#8B909A] text-base">vs last 7 days</span>
             </div>
