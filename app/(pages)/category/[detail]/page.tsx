@@ -1,13 +1,12 @@
 "use client";
 
 import Card from "@/app/components/Card";
-import Category from "@/app/components/Category";
-import { FaArrowRight, FaArrowLeft } from "react-icons/fa6";
+import { FaArrowRight } from "react-icons/fa6";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 const page = () => {
-                const router = useRouter();
+  const router = useRouter();
 
   return (
     <>
@@ -16,8 +15,11 @@ const page = () => {
           USA Store
         </h2>
         <p className="text-[#475156] text-[18px] font-[500]">
-          <span className="cursor-pointer" onClick={() => router.push("/")}>Home</span> /{" "}
-          <span className="cursor-pointer">Shop</span> / <span className="cursor-pointer">USA store</span> / Kids items
+          <span className="cursor-pointer" onClick={() => router.push("/")}>
+            Home
+          </span>{" "}
+          / <span className="cursor-pointer">Shop</span> /{" "}
+          <span className="cursor-pointer">USA store</span> / Kids items
         </p>
       </div>
 

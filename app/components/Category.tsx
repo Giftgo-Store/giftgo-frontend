@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 const Category = () => {
-            const router = useRouter();
+  const router = useRouter();
 
   return (
     <div
