@@ -12,10 +12,18 @@ const LandingHeader = () => {
             Welcome to Giftgo online store.{" "}
           </p>
           <div className="flex justify-center items-center gap-[24px] text-[14px] font-[500]">
-            <select name="" id="" className="border-none bg-secondary outline-none">
+            <select
+              name=""
+              id=""
+              className="border-none bg-secondary outline-none"
+            >
               <option value="">Eng</option>
             </select>
-            <select name="" id="" className="border-none bg-secondary outline-none">
+            <select
+              name=""
+              id=""
+              className="border-none bg-secondary outline-none"
+            >
               <option value="">NGN</option>
             </select>
           </div>
@@ -51,6 +59,11 @@ const LandingHeader = () => {
               className="rounded-[4px] h-[48px] w-[150px] text-[14px] font-[600] px-[10px] py-[14px] outline-none text-black"
             >
               <option value="All category">All category</option>
+              <option value="Uncategorized">Uncategorized</option>
+              <option value="Flowers and Notes">Flowers and Notes</option>
+              <option value="Kids items">Kids items</option>
+              <option value="Adult items">Adult items</option>
+              <option value="Food Items">Food Items</option>
             </select>
 
             <div className="flex justify-center items-center gap-[32px]">
@@ -65,7 +78,10 @@ const LandingHeader = () => {
                 id=""
                 className="border-none bg-primary text-white outline-none text-[16px] font-[500]"
               >
-                <option value="" className="flex justify-center gap-1 items-center">
+                <option
+                  value=""
+                  className="flex justify-center gap-1 items-center"
+                >
                   Ship to{" "}
                   <Image src="/flag.png" alt="" width={20} height={10} />
                 </option>
