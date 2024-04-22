@@ -167,7 +167,7 @@ const page = () => {
             </div>
             <div className="text-[14px] text-[#191C1F] whitespace-nowrap">
               <h2 className="text-[#191C1F] font-[500]">Feature</h2>
-              <div className="flex flex-col items-start mt-1 gap-3 mt-4">
+              <div className="flex flex-col items-start gap-3 mt-4">
                 <div className="flex justify-start items-center gap-1">
                   <PiMedalLight className="text-[#FA8232] h-6 w-6" />
                   <p>Free 1 Year Warranty</p>
