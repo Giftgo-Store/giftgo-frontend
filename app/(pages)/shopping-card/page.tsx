@@ -14,7 +14,7 @@ const page = () => {
       </div>
 
       <div className="pt-[56px] px-[8%] mb-[90px] flex justify-between items-center gap-6">
-        <div className="border-[#E4E7E9] border-[1px] w-[64%] rounded-[4px]">
+        <div className="border-[#E4E7E9] border-[1px] w-[67%] rounded-[4px]">
           <div className="px-6 py-5">
             <h2 className="text-[18px] font-[500] text-[#191C1F]">
               Shopping Card
@@ -73,10 +73,14 @@ const page = () => {
                               height={72}
                               className="relative z-0"
                             />
-                            <p>Canon EOS 1500D DSLR Camera Body+ 18-55 mm</p>
+                            <p className="text-[14px] font-[400]">
+                              Canon EOS 1500D DSLR Camera Body+ 18-55 mm
+                            </p>
                           </div>
                         </td>
-                        <td className=" px-6 py-4">₦70</td>
+                        <td className="text-[14px] font-[400] px-6 py-4">
+                          ₦70
+                        </td>
                         <td className=" px-6 py-4">
                           <div className="flex justify-center items-center gap-[35px] text-[#191C1F] px-6 py-4 border-[#E4E7E9] border-[2px] rounded-[3px]">
                             <FiMinus className="w-4 h-4 cursor-pointer" />
@@ -84,7 +88,9 @@ const page = () => {
                             <FiPlus className="w-4 h-4 cursor-pointer" />
                           </div>
                         </td>
-                        <td className=" px-6 py-4">₦70</td>
+                        <td className="text-[14px] font-[400] px-6 py-4">
+                          ₦70
+                        </td>
                       </tr>
                       <tr className="transition duration-300 ease-in-out">
                         <td className=" px-6 py-4 text-[14px] text-[#191C1F]">
@@ -104,10 +110,14 @@ const page = () => {
                               height={72}
                               className="relative z-0"
                             />
-                            <p>Canon EOS 1500D DSLR Camera Body+ 18-55 mm</p>
+                            <p className="text-[14px] font-[400]">
+                              Canon EOS 1500D DSLR Camera Body+ 18-55 mm
+                            </p>
                           </div>
                         </td>
-                        <td className=" px-6 py-4">₦70</td>
+                        <td className="text-[14px] font-[400] px-6 py-4">
+                          ₦70
+                        </td>
                         <td className=" px-6 py-4">
                           <div className="flex justify-center items-center gap-[35px] text-[#191C1F] px-6 py-4 border-[#E4E7E9] border-[2px] rounded-[3px]">
                             <FiMinus className="w-4 h-4 cursor-pointer" />
@@ -115,7 +125,9 @@ const page = () => {
                             <FiPlus className="w-4 h-4 cursor-pointer" />
                           </div>
                         </td>
-                        <td className=" px-6 py-4">₦70</td>
+                        <td className="text-[14px] font-[400] px-6 py-4">
+                          ₦70
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -135,7 +147,7 @@ const page = () => {
           </div>
         </div>
 
-        <div className="border-[#E4E7E9] border-[1px] w-[36%] rounded-[4px]">
+        <div className="border-[#E4E7E9] border-[1px] w-[33%] rounded-[4px]">
           <div className="px-6 py-5">
             <h2 className="text-[18px] font-[500] text-[#191C1F]">
               Card Totals
@@ -161,10 +173,10 @@ const page = () => {
           </div>
 
           <div className="flex justify-center items-center my-6">
-              <button className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary rounded-[3px] font-[700]">
-                <p>PROCEED TO CHECKOUT</p>
-                <FiArrowRight className="w-4 h-4 cursor-pointer" />
-              </button>
+            <button className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary rounded-[3px] font-[700]">
+              <p>PROCEED TO CHECKOUT</p>
+              <FiArrowRight className="w-4 h-4 cursor-pointer" />
+            </button>
           </div>
         </div>
       </div>
