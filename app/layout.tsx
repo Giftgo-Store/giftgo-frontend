@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} absolute h-screen w-full bg-[#FAFAFA]`}
+        className={`${inter.className} absolute h-screen w-full`}
       >
         <Providers>
           <AppWrapper>{children}</AppWrapper>
