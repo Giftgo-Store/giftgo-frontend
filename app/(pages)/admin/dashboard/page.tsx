@@ -508,7 +508,7 @@ export default function Dashboard() {
               </div>
               <div className="flex justify-between w-full">
                 {days.map((day: string) => (
-                  <span className="text-[#8B909A] font-medium text-[0.625rem] leading-[20px]">
+                  <span key={day} className="text-[#8B909A] font-medium text-[0.625rem] leading-[20px]">
                     {day}
                   </span>
                 ))}
@@ -834,7 +834,7 @@ export default function Dashboard() {
           />
           <div className="flex flex-col gap-2">
             {products.map((product, index) => (
-              <div className="flex justify-between items-center w-full ">
+              <div className="flex justify-between items-center w-full " key={index}>
                 <User
                   key={index}
                   name={<p className="font-bold text-base">{product.name}</p>}
