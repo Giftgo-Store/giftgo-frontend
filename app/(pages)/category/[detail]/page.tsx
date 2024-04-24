@@ -5,7 +5,7 @@ import { FaArrowRight } from "react-icons/fa6";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
 
   return (
@@ -125,4 +125,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
