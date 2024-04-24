@@ -217,28 +217,24 @@ const { replace } = useRouter();
                     </div>
                     <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
                       <Select
-                        className={`${statusColor(
-                          order.status
-                        )} min-h-[30px] px-2`}
+                        suppressHydrationWarning={true}
+                        radius="none"
+                        size="sm"
+                        classNames={{
+                          trigger: [statusColor(order.status), ,],
+                          value: [
+                            `group-data-[has-value=true]:${statusColor(
+                              order.status
+                            )}`,
+                            statusColor(order.status),
+                            "bg-[color:unset]",
+                          ],
+                        }}
+                        onSelectionChange={() => statusColor(order.status)}
+                        defaultSelectedKeys={[order.status]}
                       >
                         {status.map((item, index) => (
-                          <SelectItem
-                            suppressHydrationWarning={true}
-                            radius="none"
-                            size="sm"
-                            classNames={{
-                              trigger: [statusColor(order.status), ,],
-                              value: [
-                                `group-data-[has-value=true]:${statusColor(
-                                  order.status
-                                )}`,
-                                statusColor(order.status),
-                                "bg-[color:unset]",
-                              ],
-                            }}
-                            onSelectionChange={() => statusColor(order.status)}
-                            defaultSelectedKeys={[order.status]}
-                          >
+                          <SelectItem key={item} value={item} className="">
                             {item}
                           </SelectItem>
                         ))}
