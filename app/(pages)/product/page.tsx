@@ -24,7 +24,7 @@ import { LiaShippingFastSolid } from "react-icons/lia";
 import { GoArrowDown } from "react-icons/go";
 import { useState } from "react";
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const [activeNav, setActiveNav] = useState("1");
   const [showMore, setShowMore] = useState(false);
@@ -368,4 +368,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
