@@ -30,6 +30,7 @@ export default function OrderManagement() {
   const [data,setData]=useState([])
   const filters = ["date range", "status", "amounts of product"];
   const tabs = [
+    "All",
     "Pending",
     "Confirmed",
     "Processing",
@@ -38,6 +39,15 @@ export default function OrderManagement() {
     "Delivered",
     "Cancelled",
   ];
+    const status = [
+      "Pending",
+      "Confirmed",
+      "Processing",
+      "Picked",
+      "Shipped",
+      "Delivered",
+      "Cancelled",
+    ];
 const pathname = usePathname();
 const { replace } = useRouter();
   const searchParams = useSearchParams();
@@ -85,7 +95,7 @@ const { replace } = useRouter();
             <Tab
               className="text-[#8B909A]"
               title={tab}
-              key={`${pathname}?tab=${tab}`}
+              key={searchParams ? `${pathname}?tab=${tab}` : pathname}
             ></Tab>
           ))}
         </Tabs>
@@ -174,8 +184,8 @@ const { replace } = useRouter();
               <AccordionItem
                 classNames={{
                   trigger: ["py-0", "gap-0", "px-4"],
-                  base: ["px-0","data-[open=true]:bg-[#DBDADE]"],
-                  content:"py-0"
+                  base: ["px-0", "data-[open=true]:bg-[#DBDADE]"],
+                  content: "py-0",
                 }}
                 indicator={({ isOpen }) =>
                   isOpen ? (
@@ -207,24 +217,28 @@ const { replace } = useRouter();
                     </div>
                     <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
                       <Select
-                        suppressHydrationWarning={true}
-                        radius="none"
-                        size="sm"
-                        classNames={{
-                          trigger: [statusColor(order.status), ,],
-                          value: [
-                            `group-data-[has-value=true]:${statusColor(
-                              order.status
-                            )}`,
-                            statusColor(order.status),
-                            "bg-[color:unset]",
-                          ],
-                        }}
-                        onSelectionChange={() => statusColor(order.status)}
-                        defaultSelectedKeys={[order.status]}
+                        className={`${statusColor(
+                          order.status
+                        )} min-h-[30px] px-2`}
                       >
-                        {tabs.map((item, index) => (
-                          <SelectItem key={item} value={item} className="">
+                        {status.map((item, index) => (
+                          <SelectItem
+                            suppressHydrationWarning={true}
+                            radius="none"
+                            size="sm"
+                            classNames={{
+                              trigger: [statusColor(order.status), ,],
+                              value: [
+                                `group-data-[has-value=true]:${statusColor(
+                                  order.status
+                                )}`,
+                                statusColor(order.status),
+                                "bg-[color:unset]",
+                              ],
+                            }}
+                            onSelectionChange={() => statusColor(order.status)}
+                            defaultSelectedKeys={[order.status]}
+                          >
                             {item}
                           </SelectItem>
                         ))}
@@ -328,8 +342,7 @@ const { replace } = useRouter();
                       <p className="text-[#EA5455] py-4">₦0</p>
                       <p className="py-4">₦{order.totalAmount}</p>
                     </div>
-                    <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
-                    </div>
+                    <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4"></div>
                   </div>
                 </div>
               </AccordionItem>
