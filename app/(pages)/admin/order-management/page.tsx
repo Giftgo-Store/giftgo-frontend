@@ -95,7 +95,7 @@ const { replace } = useRouter();
             <Tab
               className="text-[#8B909A]"
               title={tab}
-              key={searchParams ? `${pathname}?tab=${tab}` : pathname}
+              key={searchParams?`${pathname}?tab=${tab}`:pathname}
             ></Tab>
           ))}
         </Tabs>
@@ -216,29 +216,13 @@ const { replace } = useRouter();
                       <span className="mx-auto">₦{order.profit}</span>
                     </div>
                     <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
-                      <Select
-                        suppressHydrationWarning={true}
-                        radius="none"
-                        size="sm"
-                        classNames={{
-                          trigger: [statusColor(order.status), ,],
-                          value: [
-                            `group-data-[has-value=true]:${statusColor(
-                              order.status
-                            )}`,
-                            statusColor(order.status),
-                            "bg-[color:unset]",
-                          ],
-                        }}
-                        onSelectionChange={() => statusColor(order.status)}
-                        defaultSelectedKeys={[order.status]}
-                      >
+                      <select className={`${statusColor(order.status)} min-h-[30px] px-2`}>
                         {status.map((item, index) => (
-                          <SelectItem key={item} value={item} className="">
+                          <option selected={item===order.status} key={item} value={item} className="">
                             {item}
-                          </SelectItem>
+                          </option>
                         ))}
-                      </Select>
+                      </select>
                     </div>
                     <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
                       <span className="hidden">dropdown</span>
