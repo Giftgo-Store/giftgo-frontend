@@ -19,16 +19,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-        <Providers>
-          <div className="flex">
-            <Nav />
-            <div className="h-screen w-full overflow-y-auto">
-              <div className="sm:px-6 px-3 flex flex-col">
-                <Header />
-                <div className="pt-6">{children}</div>
-              </div>
-            </div>
+    <Providers>
+      <div className="flex bg-[#FAFAFA]">
+        <Nav />
+        <div className="h-screen w-full overflow-y-auto">
+          <div className="sm:px-6 px-3 flex flex-col">
+            <Header />
+            <div className="pt-6">{children}</div>
           </div>
-        </Providers>
+        </div>
+      </div>
+    </Providers>
   );
 }

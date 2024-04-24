@@ -34,7 +34,7 @@ export const OrderList = [
     timestamp: new Date().toLocaleDateString("en-us"),
     customerName: "Joseph wheeler",
     totalAmount: 20000,
-    status: "Pending",
+    status: "Confirmed",
     profit: 1200,
     products: [
       {
