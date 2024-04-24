@@ -32,7 +32,7 @@ export default function OrderManagement() {
   const tabs = [
     "Pending",
     "Confirmed",
-    "processing",
+    "Processing",
     "Picked",
     "Shipped",
     "Delivered",
@@ -49,7 +49,7 @@ const { replace } = useRouter();
         return "text-[#FFC600] bg-[#FFC60029]";
       case "Confirmed":
         return "text-[#28C76F] bg-[#28C76F29]";
-      case "processing":
+      case "Processing":
         return "text-[#0FB7FF] bg-[#0FB7FF29]";
       case "Shipped":
         return "text-[#BD00FF] bg-[#BD00FF29]";
