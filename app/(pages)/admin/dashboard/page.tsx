@@ -31,7 +31,9 @@ import {
   useMemo,
   useRef,
 } from "react";
-import Chart from "react-apexcharts";
+
+import dynamic from "next/dynamic";
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 import { HiDotsVertical } from "react-icons/hi";
 import { SlArrowDown } from "react-icons/sl";
 import { SlArrowUp } from "react-icons/sl";

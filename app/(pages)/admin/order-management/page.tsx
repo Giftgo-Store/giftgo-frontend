@@ -20,9 +20,14 @@ import {
   IoCaretForwardCircleOutline,
 } from "react-icons/io5";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { useSearchParams, usePathname, useRouter } from "next/navigation";
+
+
+
 export default function OrderManagement() {
   const [filterOption, setFilterOption] = useState<string | any>("date range");
   const [pageNo, setPageNo] = useState<any | number>();
+  const [data,setData]=useState([])
   const filters = ["date range", "status", "amounts of product"];
   const tabs = [
     "Pending",
@@ -33,6 +38,10 @@ export default function OrderManagement() {
     "Delivered",
     "Cancelled",
   ];
+const pathname = usePathname();
+const { replace } = useRouter();
+  const searchParams = useSearchParams();
+
 
   function statusColor(orderStatus: string) {
     switch (orderStatus) {
@@ -59,6 +68,7 @@ export default function OrderManagement() {
       <div className="w-full overflow-x-auto py-2">
         {" "}
         <Tabs
+          selectedKey={`${pathname}?${searchParams}`}
           variant="underlined"
           color="success"
           className="border-b py-0 w-full"
@@ -67,9 +77,16 @@ export default function OrderManagement() {
             cursor: ["group-data-[selected=true]:bg-[#1EB564]"],
             tabList: "py-0",
           }}
+          onSelectionChange={(tab: any) => {
+            replace(tab);
+          }}
         >
           {tabs.map((tab) => (
-            <Tab className="text-[#8B909A]" title={tab} key={tab}></Tab>
+            <Tab
+              className="text-[#8B909A]"
+              title={tab}
+              key={`${pathname}?tab=${tab}`}
+            ></Tab>
           ))}
         </Tabs>
       </div>
@@ -148,11 +165,17 @@ export default function OrderManagement() {
         </div>
         <div>
           {OrderList.map((order, index) => (
-            <Accordion className="border-b py-0 px-0" showDivider key={index}>
+            <Accordion
+              suppressHydrationWarning={true}
+              className="border-b py-0 px-0"
+              showDivider
+              key={index}
+            >
               <AccordionItem
                 classNames={{
-                          trigger: ["py-0", "gap-0","px-4"],
-                    base:"px-0"
+                  trigger: ["py-0", "gap-0", "px-4"],
+                  base: ["px-0","data-[open=true]:bg-[#DBDADE]"],
+                  content:"py-0"
                 }}
                 indicator={({ isOpen }) =>
                   isOpen ? (
@@ -212,76 +235,103 @@ export default function OrderManagement() {
                     </div>
                   </div>
                 }
-                  >
-                      <div className="bg-[#FAFAFA]">
-                         <div
-                  className="flex justify-between border-b"
-                  suppressHydrationWarning={true}
-                >
-                  <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
-                    <span>#</span>
-                  </div>
-                  <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
-                    <span>SKU</span>
-                  </div>
-                  <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
-                    <span>NAME</span>
-                  </div>
-                  <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
-                    <span>PRICE</span>
-                  </div>
-                  <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
-                    <span>QTY</span>
-                  </div>
-                  <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
-                    <span>DISC.</span>
-                  </div>
-                  <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
-                    <span>TOTAL</span>
-                  </div>
-                  <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
-                    <p className="flex gap-2">
-                      <PiPrinterFill color="#8B909A" size={20} />
-                      <span>PRINT</span>
-                    </p>
-                  </div>
-                </div>
-                {order.products.map((product, index) => (
+              >
+                <div className="bg-[#FAFAFA]">
                   <div
-                    key={index}
                     className="flex justify-between border-b"
+                    suppressHydrationWarning={true}
+                  >
+                    <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                      <span>#</span>
+                    </div>
+                    <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                      <span>SKU</span>
+                    </div>
+                    <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                      <span>NAME</span>
+                    </div>
+                    <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                      <span>PRICE</span>
+                    </div>
+                    <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                      <span>QTY</span>
+                    </div>
+                    <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                      <span>DISC.</span>
+                    </div>
+                    <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                      <span>TOTAL</span>
+                    </div>
+                    <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                      <p className="flex gap-2">
+                        <PiPrinterFill color="#8B909A" size={20} />
+                        <span>PRINT</span>
+                      </p>
+                    </div>
+                  </div>
+                  {order.products.map((product, index) => (
+                    <div key={index}>
+                      <div
+                        key={index}
+                        className="flex justify-between border-b"
+                        suppressHydrationWarning={true}
+                      >
+                        <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
+                          <span className="hidden">#</span>
+                        </div>
+                        <div className=" flex-1 flex-grow text-sm font-medium py-4 px-4">
+                          <span>{product.productId}</span>
+                        </div>
+                        <div className=" flex-1 flex-grow  text-sm  py-4 px-4 font-semibold">
+                          <span>{product.productName}</span>
+                        </div>
+                        <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                          <span>₦{product.price}</span>
+                        </div>
+                        <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                          <span>x{product.quantity}</span>
+                        </div>
+                        <div className=" flex-1 flex-grow text-[#EA5455] text-sm font-medium py-4 px-4">
+                          <span>{product.discount}%</span>
+                        </div>
+                        <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                          <span>₦{product.total}</span>
+                        </div>
+                        <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                          <p className="flex gap-2">
+                            <HiOutlineDotsHorizontal color="black" size={20} />
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <div
+                    className="flex justify-between "
                     suppressHydrationWarning={true}
                   >
                     <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
                       <span className="hidden">#</span>
                     </div>
-                    <div className=" flex-1 flex-grow text-sm font-medium py-4 px-4">
-                      <span>{product.productId}</span>
+                    <div className=" flex-1 flex-grow text-sm font-medium py-4 px-4"></div>
+                    <div className=" flex-1 flex-grow  text-sm  py-4 px-4 font-semibold"></div>
+                    <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4"></div>
+                    <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                      <p className="py-4">Subtotal</p>
+                      <p className="py-4">Shipping</p>
+                      <p className="py-4">Discount</p>
+                      <p className="py-4">Total</p>
                     </div>
-                    <div className=" flex-1 flex-grow  text-sm  py-4 px-4 font-semibold">
-                      <span>{product.productName}</span>
+                    <div className=" flex-1 flex-grow text-[#EA5455] text-sm font-medium py-4 px-4"></div>
+                    <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                      <p className="py-4">₦11,000</p>
+                      <p className="py-4">₦900</p>
+                      <p className="text-[#EA5455] py-4">₦0</p>
+                      <p className="py-4">₦{order.totalAmount}</p>
                     </div>
                     <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
-                      <span>₦{product.price}</span>
-                    </div>
-                    <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
-                      <span>x{product.quantity}</span>
-                    </div>
-                    <div className=" flex-1 flex-grow text-[#EA5455] text-sm font-medium py-4 px-4">
-                      <span>{product.discount}%</span>
-                    </div>
-                    <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
-                      <span>₦{product.total}</span>
-                    </div>
-                    <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
-                      <p className="flex gap-2 justify-center ">
-                        <HiOutlineDotsHorizontal color="black" size={20} />
-                      </p>
                     </div>
                   </div>
-                ))}  
-                      </div>
-               
+                </div>
               </AccordionItem>
             </Accordion>
           ))}

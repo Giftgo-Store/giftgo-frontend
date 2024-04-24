@@ -77,6 +77,7 @@ export default function Nav() {
             } transition-[width] transform ease-in-out duration-300 `}
             startContent={<TbSmartHome size={34} />}
             key="dashboard"
+            aria-label="dashboard"
             href="/admin/dashboard"
           >
             <p
