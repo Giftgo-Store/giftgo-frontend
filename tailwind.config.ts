@@ -15,11 +15,13 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       colors: {
-        
-      }
+        primary: "rgba(235, 99, 99, 1)",
+        secondary: "rgba(254, 239, 211, 1)",
+        cardBg: "rgba(148, 148, 148, 0.4)",
+      },
     },
   },
-  darkMode:"class",
+  darkMode: "class",
   plugins: [nextui()],
 };
 export default config;
