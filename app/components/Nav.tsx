@@ -81,7 +81,7 @@ export default function Nav() {
             href="/admin/dashboard"
           >
             <p
-              className={`text-lg font-semibold transition-[width] transform ease-in-out block  duration-300 ${
+              className={`text-base font-semibold transition-[width] transform ease-in-out block  duration-300 ${
                 showOnlyIcon ? "w-[0] px-0" : ""
               }transition-[width] transform ease-in-out  duration-300`}
             >
@@ -101,7 +101,7 @@ export default function Nav() {
             href="/admin/order-management"
           >
             <p
-              className={`text-lg font-semibold transition-[width] transform ease-in-out block  duration-300 ${
+              className={`text-base font-semibold transition-[width] transform ease-in-out block  duration-300 ${
                 showOnlyIcon ? "w-[0] px-0" : ""
               }transition-[width] transform ease-in-out  duration-300`}
             >
@@ -119,7 +119,7 @@ export default function Nav() {
             href="/admin/customers"
           >
             <p
-              className={`text-lg font-semibold transition-[width] transform ease-in-out block  duration-300 ${
+              className={`text-base font-semibold transition-[width] transform ease-in-out block  duration-300 ${
                 showOnlyIcon ? "w-[0] px-0" : ""
               }transition-[width] transform ease-in-out  duration-300`}
             >
@@ -138,7 +138,7 @@ export default function Nav() {
             href="/admin/transactions"
           >
             <p
-              className={`text-lg font-semibold transition-[width] transform ease-in-out block  duration-300 ${
+              className={`text-base font-semibold transition-[width] transform ease-in-out block  duration-300 ${
                 showOnlyIcon ? "w-[0] px-0" : ""
               }transition-[width] transform ease-in-out  duration-300`}
             >
@@ -174,7 +174,7 @@ export default function Nav() {
             href="/admin/add-categories"
           >
             <p
-              className={`text-lg font-semibold transition-[width] transform ease-in-out block  duration-300 ${
+              className={`text-base font-semibold transition-[width] transform ease-in-out block  duration-300 ${
                 showOnlyIcon ? "w-[0] px-0" : ""
               }transition-[width] transform ease-in-out  duration-300`}
             >
@@ -192,7 +192,7 @@ export default function Nav() {
             href="/admin/add-products"
           >
             <p
-              className={`text-lg font-semibold transition-[width] transform ease-in-out block  duration-300 ${
+              className={`text-base font-semibold transition-[width] transform ease-in-out block  duration-300 ${
                 showOnlyIcon ? "w-[0] px-0" : ""
               }transition-[width] transform ease-in-out  duration-300`}
             >
@@ -210,7 +210,7 @@ export default function Nav() {
             href="/admin/product-list"
           >
             <p
-              className={`text-lg font-semibold transition-[width] transform ease-in-out block  duration-300 ${
+              className={`text-base font-semibold transition-[width] transform ease-in-out block  duration-300 ${
                 showOnlyIcon ? "w-[0] px-0" : ""
               }transition-[width] transform ease-in-out  duration-300`}
             >
