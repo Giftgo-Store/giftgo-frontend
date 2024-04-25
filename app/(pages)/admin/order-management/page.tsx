@@ -10,7 +10,7 @@ import {
   Tab,
   Tabs,
 } from "@nextui-org/react";
-import { useState } from "react";
+import { useState, useMemo, useCallback, Suspense, useEffect } from "react";
 import { SlArrowDown } from "react-icons/sl";
 import { CiSearch } from "react-icons/ci";
 import { OrderList } from "@/app/assets/data";
@@ -22,13 +22,37 @@ import {
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
-
+interface order {
+  orderId: string;
+  timestamp: string;
+  customerName: string;
+  totalAmount: number;
+  status: string;
+  profit: number;
+  products: [
+    {
+      productId: string;
+      productName: string;
+      price: number;
+      originalPrice: number;
+      sellingPrice: number;
+      quantity: number;
+      discount: number;
+      total: number;
+    }
+  ];
+}
 
 export default function OrderManagement() {
-  const [filterOption, setFilterOption] = useState<string | any>("date range");
+  const [sortOption, setSortOption] = useState<string>("Recent");
+  const [filterValue, setFilterValue] = useState("");
   const [pageNo, setPageNo] = useState<any | number>();
-  const [data,setData]=useState([])
-  const filters = ["date range", "status", "amounts of product"];
+  const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
+  const [statusFilterValue, setStatusFilterValue] = useState("All");
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const filters = ["Recent", "Older", "Most products", "Less products"];
+
   const tabs = [
     "All",
     "Pending",
@@ -39,20 +63,78 @@ export default function OrderManagement() {
     "Delivered",
     "Cancelled",
   ];
-    const status = [
-      "Pending",
-      "Confirmed",
-      "Processing",
-      "Picked",
-      "Shipped",
-      "Delivered",
-      "Cancelled",
-    ];
-const pathname = usePathname();
-const { replace } = useRouter();
-  const searchParams = useSearchParams();
+  const status = [
+    "Pending",
+    "Confirmed",
+    "Processing",
+    "Picked",
+    "Shipped",
+    "Delivered",
+    "Cancelled",
+  ];
+  const pathname = usePathname();
+  const { replace } = useRouter();
 
+  // Update status filter value when search params change
+  
+  // Filter and sort items based on sort option
+  const filteredItems = useMemo(() => {
+    let sortedList = OrderList.slice(); // Create a copy of the original list
 
+    // Sort the list based on the sortOption
+    if (sortOption === "Recent") {
+      sortedList.sort((a, b) => {
+        const earlyOrder = new Date(a.timestamp) as unknown as number;
+        const laterOrder = new Date(b.timestamp) as unknown as number;
+        return laterOrder - earlyOrder;
+      });
+    } else if (sortOption === "Older") {
+      sortedList.sort((a, b) => {
+        const earlyOrder = new Date(a.timestamp) as unknown as number;
+        const laterOrder = new Date(b.timestamp) as unknown as number;
+        return earlyOrder - laterOrder;
+      });
+    } else if (sortOption === "Most products") {
+      sortedList.sort((a, b) => {
+        const largeOrder = a.products.length;
+        const smallOrder = b.products.length;
+        return smallOrder - largeOrder;
+      });
+    } else if (sortOption === "Less products") {
+      sortedList.sort((a, b) => {
+        const largeOrder = a.products.length;
+        const smallOrder = b.products.length;
+        return largeOrder - smallOrder;
+      });
+    }
+
+    // Filter the sorted list based on other filters
+    let filteredList = sortedList.filter((item) => {
+      // Apply status and orderId filters
+      if (statusFilterValue.includes("All")) {
+        if (filterValue.length > 0) {
+          return item.orderId.includes(filterValue);
+        }
+        return true;
+      } else {
+        if (typeof item.status === "string") {
+          if (filterValue.length > 0) {
+            return (
+              item.orderId.includes(filterValue) &&
+              statusFilterValue.includes(item.status)
+            );
+          }
+          return statusFilterValue.includes(item.status);
+        }
+        return false;
+      }
+    });
+
+    return filteredList;
+  }, [OrderList, statusFilterValue, filterValue, sortOption]);
+
+  //color for orders status select
+  console.log(filteredItems, statusFilterValue, sortOption);
   function statusColor(orderStatus: string) {
     switch (orderStatus) {
       case "Pending":
@@ -64,7 +146,7 @@ const { replace } = useRouter();
       case "Shipped":
         return "text-[#BD00FF] bg-[#BD00FF29]";
       case "Cancelled":
-        return " text-danger bg-[#EA5455FF29]";
+        return "text-[#EA5455] bg-[#ffbeaa]";
       case "Picked":
         return "text-[#1EB564] bg-[#0F60FF29]";
       case "Delivered":
@@ -73,32 +155,75 @@ const { replace } = useRouter();
         return "text-[#FFC600] bg-[#FFC60029]";
     }
   }
+
+  //tabs for orders
+  const MyTabs = useCallback(() => {
+    const searchParams = useSearchParams();
+    useEffect(() => {
+      
+        setStatusFilterValue(`${pathname}?${searchParams}`);
+      
+    }, []);
+    return (
+      <Tabs
+        selectedKey={`${pathname}?${searchParams}`}
+        variant="underlined"
+        color="success"
+        className="border-b py-0 w-full"
+        classNames={{
+          tabContent: ["group-data-[selected=true]:text-[#1EB564]"],
+          cursor: ["group-data-[selected=true]:bg-[#1EB564]"],
+          tabList: "py-0",
+        }}
+        onSelectionChange={(tab: any) => {
+          replace(tab);
+          setStatusFilterValue(tab);
+        }}
+      >
+        {tabs.map((tab) => (
+          <Tab
+            className="text-[#8B909A]"
+            title={tab}
+            key={searchParams ? `${pathname}?tab=${tab}` : pathname}
+          ></Tab>
+        ))}
+      </Tabs>
+    );
+  }, []);
+
+  //select for orders
+  const MySelect = useCallback(
+    (orderStatus: string) => {
+      return (
+        <Select
+          aria-label={orderStatus}
+          suppressHydrationWarning={true}
+          radius="none"
+          size="sm"
+          classNames={{
+            trigger: [statusColor(orderStatus)],
+            value: [
+              `group-data-[has-value=true]:${statusColor(orderStatus)}`,
+              statusColor(orderStatus),
+              "bg-[color:unset]",
+            ],
+          }}
+          selectedKeys={[orderStatus]}
+        >
+          {status.map((item) => (
+            <SelectItem key={item} value={item} className="">
+              {item}
+            </SelectItem>
+          ))}
+        </Select>
+      );
+    },
+    [statusFilterValue, filteredItems]
+  );
   return (
     <div className="pb-12">
       <div className="w-full overflow-x-auto py-2">
-        {" "}
-        <Tabs
-          selectedKey={`${pathname}?${searchParams}`}
-          variant="underlined"
-          color="success"
-          className="border-b py-0 w-full"
-          classNames={{
-            tabContent: ["group-data-[selected=true]:text-[#1EB564]"],
-            cursor: ["group-data-[selected=true]:bg-[#1EB564]"],
-            tabList: "py-0",
-          }}
-          onSelectionChange={(tab: any) => {
-            replace(tab);
-          }}
-        >
-          {tabs.map((tab) => (
-            <Tab
-              className="text-[#8B909A]"
-              title={tab}
-              key={searchParams?`${pathname}?tab=${tab}`:pathname}
-            ></Tab>
-          ))}
-        </Tabs>
+        <Suspense>{MyTabs()}</Suspense>
       </div>
       <div className="flex justify-between gap-3 pt-4 py-3">
         <Input
@@ -118,7 +243,12 @@ const { replace } = useRouter();
               "group-data-[focus=true]:bg-white",
             ],
           }}
+          value={filterValue}
+          onChange={(e) => {
+            setFilterValue(e.target.value);
+          }}
         ></Input>
+
         <Select
           size="md"
           radius="sm"
@@ -134,9 +264,11 @@ const { replace } = useRouter();
             ],
           }}
           selectorIcon={<SlArrowDown size={28} color="#8B909A" />}
-          placeholder="Filter by"
-          value={filterOption}
-          onSelectionChange={setFilterOption}
+          placeholder="Sort by"
+          selectedKeys={[sortOption]}
+          onChange={(e) => {
+            setSortOption(e.target.value);
+          }}
         >
           {filters.map((filter) => (
             <SelectItem key={filter}>{filter}</SelectItem>
@@ -174,160 +306,157 @@ const { replace } = useRouter();
           </div>
         </div>
         <div>
-          {OrderList.map((order, index) => (
-            <Accordion
-              suppressHydrationWarning={true}
-              className="border-b py-0 px-0"
-              showDivider
-              key={index}
-            >
-              <AccordionItem
-                classNames={{
-                  trigger: ["py-0", "gap-0", "px-4"],
-                  base: ["px-0", "data-[open=true]:bg-[#DBDADE]"],
-                  content: "py-0",
-                }}
-                indicator={({ isOpen }) =>
-                  isOpen ? (
-                    <IoCaretForwardCircleOutline color="black" size={28} />
-                  ) : (
-                    <IoCaretDownCircleOutline color="#8B909A" size={28} />
-                  )
-                }
-                key={index}
-                suppressHydrationWarning={true}
-                title={
-                  <div className="flex justify-between items-center py-1">
-                    <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
-                      <span className="mx-auto font-semibold">
-                        {order.orderId}
-                      </span>
-                    </div>
-                    <div className=" flex-1 flex-grow  text-sm font-medium py-2 pr-4 pl-2">
-                      <span>{order.timestamp}</span>
-                    </div>
-                    <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
-                      <span className="mx-auto">{order.customerName}</span>
-                    </div>
-                    <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
-                      <span className="mx-auto">₦{order.totalAmount}</span>
-                    </div>
-                    <div className=" flex-1 flex-grow  text-sm font-medium py-2 pl-4">
-                      <span className="mx-auto">₦{order.profit}</span>
-                    </div>
-                    <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
-                      <select className={`${statusColor(order.status)} min-h-[30px] px-2`}>
-                        {status.map((item, index) => (
-                          <option selected={item===order.status} key={item} value={item} className="">
-                            {item}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
-                      <span className="hidden">dropdown</span>
-                    </div>
-                  </div>
-                }
+          {filteredItems &&
+            filteredItems.map((order, index) => (
+              <Accordion
+                suppressHydrationWarning
+                className="border-b py-0 px-0"
+                showDivider
+                key={order.orderId + index}
               >
-                <div className="bg-[#FAFAFA]">
-                  <div
-                    className="flex justify-between border-b"
-                    suppressHydrationWarning={true}
-                  >
-                    <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
-                      <span>#</span>
-                    </div>
-                    <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
-                      <span>SKU</span>
-                    </div>
-                    <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
-                      <span>NAME</span>
-                    </div>
-                    <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
-                      <span>PRICE</span>
-                    </div>
-                    <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
-                      <span>QTY</span>
-                    </div>
-                    <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
-                      <span>DISC.</span>
-                    </div>
-                    <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
-                      <span>TOTAL</span>
-                    </div>
-                    <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
-                      <p className="flex gap-2">
-                        <PiPrinterFill color="#8B909A" size={20} />
-                        <span>PRINT</span>
-                      </p>
-                    </div>
-                  </div>
-                  {order.products.map((product, index) => (
-                    <div key={index}>
-                      <div
-                        key={index}
-                        className="flex justify-between border-b"
-                        suppressHydrationWarning={true}
-                      >
-                        <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
-                          <span className="hidden">#</span>
-                        </div>
-                        <div className=" flex-1 flex-grow text-sm font-medium py-4 px-4">
-                          <span>{product.productId}</span>
-                        </div>
-                        <div className=" flex-1 flex-grow  text-sm  py-4 px-4 font-semibold">
-                          <span>{product.productName}</span>
-                        </div>
-                        <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
-                          <span>₦{product.price}</span>
-                        </div>
-                        <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
-                          <span>x{product.quantity}</span>
-                        </div>
-                        <div className=" flex-1 flex-grow text-[#EA5455] text-sm font-medium py-4 px-4">
-                          <span>{product.discount}%</span>
-                        </div>
-                        <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
-                          <span>₦{product.total}</span>
-                        </div>
-                        <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
-                          <p className="flex gap-2">
-                            <HiOutlineDotsHorizontal color="black" size={20} />
-                          </p>
-                        </div>
+                <AccordionItem
+                  classNames={{
+                    trigger: ["py-0", "gap-0", "px-4"],
+                    base: ["px-0", "data-[open=true]:bg-[#DBDADE]"],
+                    content: "py-0",
+                  }}
+                  indicator={({ isOpen }) =>
+                    isOpen ? (
+                      <IoCaretForwardCircleOutline color="black" size={28} />
+                    ) : (
+                      <IoCaretDownCircleOutline color="#8B909A" size={28} />
+                    )
+                  }
+                  suppressHydrationWarning
+                  title={
+                    <div className="flex justify-between items-center py-1">
+                      <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
+                        <span className="mx-auto font-semibold">
+                          {order.orderId}
+                        </span>
+                      </div>
+                      <div className=" flex-1 flex-grow  text-sm font-medium py-2 pr-4 pl-2">
+                        <span>{order.timestamp}</span>
+                      </div>
+                      <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
+                        <span className="mx-auto">{order.customerName}</span>
+                      </div>
+                      <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
+                        <span className="mx-auto">₦{order.totalAmount}</span>
+                      </div>
+                      <div className=" flex-1 flex-grow  text-sm font-medium py-2 pl-4">
+                        <span className="mx-auto">₦{order.profit}</span>
+                      </div>
+                      <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
+                        {MySelect(order.status)}
+                      </div>
+                      <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
+                        <span className="hidden">dropdown</span>
                       </div>
                     </div>
-                  ))}
-                  <div
-                    className="flex justify-between "
-                    suppressHydrationWarning={true}
-                  >
-                    <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
-                      <span className="hidden">#</span>
+                  }
+                >
+                  <div className="bg-[#FAFAFA]">
+                    <div
+                      className="flex justify-between border-b"
+                      suppressHydrationWarning={true}
+                    >
+                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                        <span>#</span>
+                      </div>
+                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                        <span>SKU</span>
+                      </div>
+                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                        <span>NAME</span>
+                      </div>
+                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                        <span>PRICE</span>
+                      </div>
+                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                        <span>QTY</span>
+                      </div>
+                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                        <span>DISC.</span>
+                      </div>
+                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                        <span>TOTAL</span>
+                      </div>
+                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                        <p className="flex gap-2">
+                          <PiPrinterFill color="#8B909A" size={20} />
+                          <span>PRINT</span>
+                        </p>
+                      </div>
                     </div>
-                    <div className=" flex-1 flex-grow text-sm font-medium py-4 px-4"></div>
-                    <div className=" flex-1 flex-grow  text-sm  py-4 px-4 font-semibold"></div>
-                    <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4"></div>
-                    <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
-                      <p className="py-4">Subtotal</p>
-                      <p className="py-4">Shipping</p>
-                      <p className="py-4">Discount</p>
-                      <p className="py-4">Total</p>
+                    {order.products.map((product, index) => (
+                      <div key={index}>
+                        <div
+                          key={index}
+                          className="flex justify-between border-b"
+                          suppressHydrationWarning={true}
+                        >
+                          <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
+                            <span className="hidden">#</span>
+                          </div>
+                          <div className=" flex-1 flex-grow text-sm font-medium py-4 px-4">
+                            <span>{product.productId}</span>
+                          </div>
+                          <div className=" flex-1 flex-grow  text-sm  py-4 px-4 font-semibold">
+                            <span>{product.productName}</span>
+                          </div>
+                          <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                            <span>₦{product.price}</span>
+                          </div>
+                          <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                            <span>x{product.quantity}</span>
+                          </div>
+                          <div className=" flex-1 flex-grow text-[#EA5455] text-sm font-medium py-4 px-4">
+                            <span>{product.discount}%</span>
+                          </div>
+                          <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                            <span>₦{product.total}</span>
+                          </div>
+                          <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                            <p className="flex gap-2">
+                              <HiOutlineDotsHorizontal
+                                color="black"
+                                size={20}
+                              />
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    <div
+                      className="flex justify-between "
+                      suppressHydrationWarning={true}
+                    >
+                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
+                        <span className="hidden">#</span>
+                      </div>
+                      <div className=" flex-1 flex-grow text-sm font-medium py-4 px-4"></div>
+                      <div className=" flex-1 flex-grow  text-sm  py-4 px-4 font-semibold"></div>
+                      <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4"></div>
+                      <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                        <p className="py-4">Subtotal</p>
+                        <p className="py-4">Shipping</p>
+                        <p className="py-4">Discount</p>
+                        <p className="py-4">Total</p>
+                      </div>
+                      <div className=" flex-1 flex-grow text-[#EA5455] text-sm font-medium py-4 px-4"></div>
+                      <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                        <p className="py-4">₦11,000</p>
+                        <p className="py-4">₦900</p>
+                        <p className="text-[#EA5455] py-4">₦0</p>
+                        <p className="py-4">₦{order.totalAmount}</p>
+                      </div>
+                      <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4"></div>
                     </div>
-                    <div className=" flex-1 flex-grow text-[#EA5455] text-sm font-medium py-4 px-4"></div>
-                    <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
-                      <p className="py-4">₦11,000</p>
-                      <p className="py-4">₦900</p>
-                      <p className="text-[#EA5455] py-4">₦0</p>
-                      <p className="py-4">₦{order.totalAmount}</p>
-                    </div>
-                    <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4"></div>
                   </div>
-                </div>
-              </AccordionItem>
-            </Accordion>
-          ))}
+                </AccordionItem>
+              </Accordion>
+            ))}
         </div>
         <div className="flex justify-between items-center py-2 px-3">
           <div className="flex justify-normal gap-2 items-center text-[#8B909A] text-sm font-medium">
