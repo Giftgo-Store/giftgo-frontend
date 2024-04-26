@@ -50,9 +50,10 @@ export default function OrderManagement() {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [statusFilterValue, setStatusFilterValue] = useState("All");
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const filters = ["Recent", "Older", "Most products", "Less products"];
+  const [rowsPerPage, setRowsPerPage] = useState<any | string[]>("10");
 
+  const filters = ["Recent", "Older", "Most products", "Less products"];
+  const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
   const tabs = [
     "All",
     "Pending",
@@ -74,14 +75,13 @@ export default function OrderManagement() {
   ];
   const pathname = usePathname();
   const { replace } = useRouter();
-const searchParams = useSearchParams();
-    useEffect(() => {
-      
-        setStatusFilterValue(`${pathname}?${searchParams}`);
-      
-    }, [searchParams]);
+  const searchParams = useSearchParams();
+
   // Update status filter value when search params change
-  
+  useEffect(() => {
+    setStatusFilterValue(`${pathname}?${searchParams}`);
+  }, [searchParams]);
+
   // Filter and sort items based on sort option
   const filteredItems = useMemo(() => {
     let sortedList = OrderList.slice(); // Create a copy of the original list
@@ -138,8 +138,27 @@ const searchParams = useSearchParams();
     return filteredList;
   }, [OrderList, statusFilterValue, filterValue, sortOption]);
 
-  //color for orders status select
-  console.log(filteredItems, statusFilterValue, sortOption);
+  //pagination for orders
+
+  const Items = useMemo(() => {
+    const start = (page - 1) * Number(rowsPerPage);
+    const end = start + Number(rowsPerPage);
+
+    return filteredItems.slice(start, end);
+  }, [
+    page,
+    filteredItems,
+    OrderList,
+    statusFilterValue,
+    filterValue,
+    sortOption,
+    rowsPerPage,
+  ]);
+
+  const pages = useMemo(() => {
+    return Math.ceil(filteredItems.length / Number(rowsPerPage));
+  }, [Items]);
+
   function statusColor(orderStatus: string) {
     switch (orderStatus) {
       case "Pending":
@@ -160,34 +179,28 @@ const searchParams = useSearchParams();
         return "text-[#FFC600] bg-[#FFC60029]";
     }
   }
-  //tab fallback 
- function TabFallback() {
-      return (
-        <Tabs
-          variant="underlined"
-          color="success"
-          className="border-b py-0 w-full"
-          classNames={{
-            tabContent: ["group-data-[selected=true]:text-[#1EB564]"],
-            cursor: ["group-data-[selected=true]:bg-[#1EB564]"],
-            tabList: "py-0",
-          }}
-        >
-          {tabs.map((tab) => (
-            <Tab
-              className="text-[#8B909A]"
-              title={tab}
-              key={tab}
-            ></Tab>
-          ))}
-        </Tabs>
-      );
-    }
- 
+  //tab fallback
+  function TabFallback() {
+    return (
+      <Tabs
+        variant="underlined"
+        color="success"
+        className="border-b py-0 w-full"
+        classNames={{
+          tabContent: ["group-data-[selected=true]:text-[#1EB564]"],
+          cursor: ["group-data-[selected=true]:bg-[#1EB564]"],
+          tabList: "py-0",
+        }}
+      >
+        {tabs.map((tab) => (
+          <Tab className="text-[#8B909A]" title={tab} key={tab}></Tab>
+        ))}
+      </Tabs>
+    );
+  }
+
   //tabs for orders
   const MyTabs = useCallback(() => {
-    
-   
     return (
       <Tabs
         selectedKey={`${pathname}?${searchParams}`}
@@ -247,7 +260,7 @@ const searchParams = useSearchParams();
   return (
     <div className="pb-12">
       <div className="w-full overflow-x-auto py-2">
-        <Suspense fallback={<TabFallback/>}>{MyTabs()}</Suspense>
+        <Suspense fallback={<TabFallback />}>{MyTabs()}</Suspense>
       </div>
       <div className="flex justify-between gap-3 pt-4 py-3">
         <Input
@@ -330,8 +343,8 @@ const searchParams = useSearchParams();
           </div>
         </div>
         <div>
-          {filteredItems &&
-            filteredItems.map((order, index) => (
+          {Items &&
+            Items.map((order, index) => (
               <Accordion
                 suppressHydrationWarning
                 className="border-b py-0 px-0"
@@ -359,7 +372,7 @@ const searchParams = useSearchParams();
                           {order.orderId}
                         </span>
                       </div>
-                      <div className=" flex-1 flex-grow  text-sm font-medium py-2 pr-4 pl-2">
+                      <div className=" flex-1 flex-grow  text-sm font-medium py-2 pr-4 pl-0">
                         <span>{order.timestamp}</span>
                       </div>
                       <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
@@ -481,6 +494,11 @@ const searchParams = useSearchParams();
                 </AccordionItem>
               </Accordion>
             ))}
+          {Items && Items.length < 0 && (
+            <div className="min-w-[40vh] flex justify-center items-center">
+              <p className="text-lg font-semibold">No orders found !</p>
+            </div>
+          )}
         </div>
         <div className="flex justify-between items-center py-2 px-3">
           <div className="flex justify-normal gap-2 items-center text-[#8B909A] text-sm font-medium">
@@ -488,29 +506,34 @@ const searchParams = useSearchParams();
             <Select
               size="sm"
               className=" w-[70px]"
-              selectedKeys={pageNo}
-              onSelectionChange={setPageNo}
-              defaultSelectedKeys={["10"]}
+              selectedKeys={[rowsPerPage]}
+              onChange={(e) => {
+                setRowsPerPage(e.target.value);
+              }}
+              aria-label="rows"
             >
-              <SelectItem key={10} value={10}>
-                10
-              </SelectItem>
-              <SelectItem key={20} value={20}>
-                20
-              </SelectItem>
-              <SelectItem key={30} value={30}>
-                30
-              </SelectItem>
-              <SelectItem key={40} value={40}>
-                40
-              </SelectItem>
-              <SelectItem key={50} value={50}>
-                50
-              </SelectItem>
+              {rowsPerPageOptions.map((option) => (
+                <SelectItem
+                  isDisabled={filteredItems.length < Number(option)}
+                  key={option}
+                  value={option}
+                >
+                  {option}
+                </SelectItem>
+              ))}
             </Select>
-            <p>of 50</p>
+            <p>of {filteredItems.length}</p>
           </div>
-          <Pagination showControls color="success" total={5} initialPage={1} />
+          <Pagination
+            showControls
+            color="success"
+            total={pages}
+            initialPage={1}
+            page={page}
+            onChange={(page) => {
+              setPage(page);
+            }}
+          />
         </div>
       </div>
     </div>
