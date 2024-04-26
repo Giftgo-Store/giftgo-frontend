@@ -10,12 +10,12 @@ import { LiaShippingFastSolid } from "react-icons/lia";
 const Landing = () => {
     return (
       <>
-        <div className="mx-[8%] mt-[96px] bg-secondary pt-[40px] px-[40px] rounded-[8px] flex justify-between item-end mb-[32px]">
-          <div className="flex flex-col items-start justify-center pb-[40px]">
+        <div className="mx-[4%] lg:mx-[8%] mt-[30px] lg:mt-[96px] bg-secondary pt-[20px] lg:pt-[40px] px-[20px] lg:px-[40px] rounded-[8px] flex justify-between item-end mb-[32px] flex-col lg:flex-row">
+          <div className="flex flex-col items-start justify-center lg:pb-[40px]">
             <Image src="/icon.svg" alt="" width={118} height={48} />
 
-            <h1 className="pt-2 leading-[72px] text-[48px] font-[600] text-[#191C1F] pb-[40px]">
-              Shop the Best Selection <br /> from Around the Globe at <br />{" "}
+            <h1 className="pt-2 lg:leading-[72px] text-[25px] lg:text-[48px] font-[600] text-[#191C1F] pb-[40px]">
+              Shop the Best Selection <br className='hidden lg:block' /> from Around the Globe at <br className='hidden lg:block' />{" "}
               GiftGo!
             </h1>
 
@@ -28,7 +28,7 @@ const Landing = () => {
           </div>
         </div>
 
-        <div className="border-[#E4E7E9] border-[1px] bg-[#F5F5F5] flex justify-between items-center p-2 mx-[8%] rounded-[8px] mb-[84px]">
+        <div className="border-[#E4E7E9] border-[1px] bg-[#F5F5F5] flex justify-center gap-2 lg:justify-between items-center p-2 mx-[4%] lg:mx-[8%] rounded-[8px] mb-[84px] flex-wrap">
           <div className="p-4 flex justify-between items-center bg-white gap-2">
             <LiaShippingFastSolid className="w-10 h-10 text-[#191C1F]" />
             <div className="flex flex-col gap-0 items-start">
@@ -78,62 +78,62 @@ const Landing = () => {
           </div>
         </div>
 
-        <div className="mx-[8%] text-[#191C1F] mb-[90px]">
+        <div className="mx-[4%] lg:mx-[8%] text-[#191C1F] mb-[90px]">
           <h2 className="text-center font-[600] text-[26px] pb-[24px]">
             Shop By
           </h2>
 
-          <div className="bg-[#F5F5F5] py-10 px-20 w-full flex justify-center items-center gap-x-[140px] gap-y-10 flex-wrap">
+          <div className="bg-[#F5F5F5] py-10 px-10 lg:px-20 w-full flex justify-center items-center lg:gap-x-[140px] gap-y-5 gap-x-14 lg:gap-y-10 flex-wrap">
             <div className="flex flex-col items-center justify-center gap-1">
-              <div className="w-[112px] h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
+              <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
                 <Image src="/um.png" alt="" width={68} height={50} />
               </div>
               <p className="text-[20px]">USA</p>
             </div>
             <div className="flex flex-col items-center justify-center gap-1">
-              <div className="w-[112px] h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
+              <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
                 <Image src="/gb.png" alt="" width={68} height={50} />
               </div>
               <p className="text-[20px]">UK</p>
             </div>
             <div className="flex flex-col items-center justify-center gap-1">
-              <div className="w-[112px] h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
+              <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
                 <Image src="/de.png" alt="" width={68} height={50} />
               </div>
               <p className="text-[20px]">Germany</p>
             </div>
             <div className="flex flex-col items-center justify-center gap-1">
-              <div className="w-[112px] h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
+              <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
                 <Image src="/ca.png" alt="" width={68} height={50} />
               </div>
               <p className="text-[20px]">Canada</p>
             </div>
             <div className="flex flex-col items-center justify-center gap-1">
-              <div className="w-[112px] h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
+              <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
                 <Image src="/au.png" alt="" width={68} height={50} />
               </div>
               <p className="text-[20px]">Australia</p>
             </div>
             <div className="flex flex-col items-center justify-center gap-1">
-              <div className="w-[112px] h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
+              <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
                 <Image src="/br.png" alt="" width={68} height={50} />
               </div>
               <p className="text-[20px]">Brazil</p>
             </div>
             <div className="flex flex-col items-center justify-center gap-1">
-              <div className="w-[112px] h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
+              <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
                 <Image src="/asia.png" alt="" width={68} height={50} />
               </div>
               <p className="text-[20px]">Asia</p>
             </div>
             <div className="flex flex-col items-center justify-center gap-1">
-              <div className="w-[112px] h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
+              <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
                 <Image src="/na.png" alt="" width={68} height={50} />
               </div>
               <p className="text-[20px]">North America</p>
             </div>
             <div className="flex flex-col items-center justify-center gap-1">
-              <div className="w-[112px] h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
+              <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
                 <Image src="/europe.png" alt="" width={68} height={50} />
               </div>
               <p className="text-[20px]">Rest of Europe</p>
