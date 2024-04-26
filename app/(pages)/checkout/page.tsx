@@ -4,7 +4,7 @@ import { FiMinus, FiPlus, FiArrowLeft, FiArrowRight } from "react-icons/fi";
 const page = () => {
   return (
     <>
-      <div className="py-[20px] px-[8%] text-center bg-secondary mb-[56px]">
+      <div className="py-[20px] px-[4%] lg:px-[8%] text-center bg-secondary mb-[56px]">
         <h2 className="font-[600] leading-[32px] text-[28px] text-[#191C1F] pb-1">
           Checkout
         </h2>
@@ -14,8 +14,8 @@ const page = () => {
         </p>
       </div>
 
-      <div className="px-[8%] mb-[90px] flex justify-between items-start gap-6">
-        <div className="w-[67%] rounded-[4px]">
+      <div className="px-[4%] lg:px-[8%] mb-[90px] flex-col lg:flex-row flex justify-between items-start gap-6">
+        <div className="lg:w-[67%] rounded-[4px]">
           <div className="py-5">
             <h2 className="text-[18px] font-[500] text-[#191C1F]">
               Shipping Information
@@ -23,8 +23,8 @@ const page = () => {
           </div>
 
           <div className="flex flex-col items-start gap-4">
-            <div className="flex justify-between items-end w-full gap-4">
-              <div className="flex flex-col gap-2 w-[30%]">
+            <div className="flex justify-between flex-col lg:flex-row items-start lg:items-end w-full gap-4">
+              <div className="flex flex-col gap-2 w-full lg:w-[30%]">
                 <label
                   htmlFor="username"
                   className="text-[#191C1F] text-[14px]"
@@ -39,14 +39,14 @@ const page = () => {
                   placeholder="First name"
                 />
               </div>
-              <div className="flex flex-col gap-2 w-[30%]">
+              <div className="flex flex-col gap-2 w-full lg:w-[30%]">
                 <input
                   type="text"
                   className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none"
                   placeholder="Last name"
                 />
               </div>
-              <div className="flex flex-col gap-2 w-[40%]">
+              <div className="flex flex-col gap-2 w-full lg:w-[40%]">
                 <label
                   htmlFor="username"
                   className="text-[#191C1F] text-[14px]"
@@ -75,8 +75,8 @@ const page = () => {
                 placeholder="Address"
               />
             </div>
-            <div className="flex justify-between items-end w-full gap-4">
-              <div className="flex flex-col gap-2 w-[25%]">
+            <div className="flex justify-between flex-wrap items-start lg:items-end w-full gap-4">
+              <div className="flex flex-col gap-2 w-[45%] lg:w-[25%]">
                 <label
                   htmlFor="username"
                   className="text-[#191C1F] text-[14px]"
@@ -87,7 +87,7 @@ const page = () => {
                   <option value="">select</option>
                 </select>
               </div>
-              <div className="flex flex-col gap-2 w-[25%]">
+              <div className="flex flex-col gap-2 w-[45%] lg:w-[25%]">
                 <label
                   htmlFor="username"
                   className="text-[#191C1F] text-[14px]"
@@ -98,7 +98,7 @@ const page = () => {
                   <option value="">select</option>
                 </select>
               </div>
-              <div className="flex flex-col gap-2 w-[25%]">
+              <div className="flex flex-col gap-2 w-[45%] lg:w-[25%]">
                 <label
                   htmlFor="username"
                   className="text-[#191C1F] text-[14px]"
@@ -109,7 +109,7 @@ const page = () => {
                   <option value="">select</option>
                 </select>
               </div>
-              <div className="flex flex-col gap-2 w-[25%]">
+              <div className="flex flex-col gap-2 w-[45%] lg:w-[25%]">
                 <label
                   htmlFor="username"
                   className="text-[#191C1F] text-[14px]"
@@ -125,8 +125,8 @@ const page = () => {
                 />
               </div>
             </div>
-            <div className="flex justify-between items-end w-full gap-4">
-              <div className="flex flex-col gap-2 w-[50%]">
+            <div className="flex justify-between flex-wrap items-end w-full gap-4">
+              <div className="flex flex-col gap-2 w-full lg:w-[50%]">
                 <label
                   htmlFor="username"
                   className="text-[#191C1F] text-[14px]"
@@ -141,7 +141,7 @@ const page = () => {
                   placeholder="Email Address"
                 />
               </div>
-              <div className="flex flex-col gap-2 w-[50%]">
+              <div className="flex flex-col gap-2 w-full lg:w-[50%]">
                 <label
                   htmlFor="username"
                   className="text-[#191C1F] text-[14px]"
@@ -172,7 +172,7 @@ const page = () => {
             />
           </div>
         </div>
-        <div className="border-[#E4E7E9] border-[1px] w-[33%] rounded-[4px]">
+        <div className="border-[#E4E7E9] border-[1px] lg:w-[33%] rounded-[4px]">
           <div className="px-6 py-5">
             <h2 className="text-[18px] font-[500] text-[#191C1F]">
               Order Summery
