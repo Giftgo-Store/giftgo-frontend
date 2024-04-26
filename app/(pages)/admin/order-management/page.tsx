@@ -74,7 +74,12 @@ export default function OrderManagement() {
   ];
   const pathname = usePathname();
   const { replace } = useRouter();
-
+const searchParams = useSearchParams();
+    useEffect(() => {
+      
+        setStatusFilterValue(`${pathname}?${searchParams}`);
+      
+    }, [searchParams]);
   // Update status filter value when search params change
   
   // Filter and sort items based on sort option
@@ -155,15 +160,34 @@ export default function OrderManagement() {
         return "text-[#FFC600] bg-[#FFC60029]";
     }
   }
-
+  //tab fallback 
+ function TabFallback() {
+      return (
+        <Tabs
+          variant="underlined"
+          color="success"
+          className="border-b py-0 w-full"
+          classNames={{
+            tabContent: ["group-data-[selected=true]:text-[#1EB564]"],
+            cursor: ["group-data-[selected=true]:bg-[#1EB564]"],
+            tabList: "py-0",
+          }}
+        >
+          {tabs.map((tab) => (
+            <Tab
+              className="text-[#8B909A]"
+              title={tab}
+              key={tab}
+            ></Tab>
+          ))}
+        </Tabs>
+      );
+    }
+ 
   //tabs for orders
   const MyTabs = useCallback(() => {
-    const searchParams = useSearchParams();
-    useEffect(() => {
-      
-        setStatusFilterValue(`${pathname}?${searchParams}`);
-      
-    }, []);
+    
+   
     return (
       <Tabs
         selectedKey={`${pathname}?${searchParams}`}
@@ -189,7 +213,7 @@ export default function OrderManagement() {
         ))}
       </Tabs>
     );
-  }, []);
+  }, [searchParams]);
 
   //select for orders
   const MySelect = useCallback(
@@ -223,7 +247,7 @@ export default function OrderManagement() {
   return (
     <div className="pb-12">
       <div className="w-full overflow-x-auto py-2">
-        <Suspense>{MyTabs()}</Suspense>
+        <Suspense fallback={<TabFallback/>}>{MyTabs()}</Suspense>
       </div>
       <div className="flex justify-between gap-3 pt-4 py-3">
         <Input

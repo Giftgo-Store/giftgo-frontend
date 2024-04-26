@@ -4,6 +4,7 @@ import "../../globals.css";
 import Nav from "../../components/Nav";
 import { Providers } from "../../providers/providers";
 import { Header } from "../../components/Header";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +26,8 @@ export default function RootLayout({
         <div className="h-screen w-full overflow-y-auto">
           <div className="sm:px-6 px-3 flex flex-col">
             <Header />
-            <div className="pt-6">{children}</div>
+            <div className="pt-6">
+              <Suspense>{children}</Suspense></div>
           </div>
         </div>
       </div>
