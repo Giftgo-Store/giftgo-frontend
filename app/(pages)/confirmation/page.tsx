@@ -12,7 +12,7 @@ const page = () => {
         </p>
       </div>
 
-      <div className="flex justify-center flex-col items-center pt-[50px] pb-[200px]">
+      <div className="flex justify-center flex-col items-center pt-0 lg:pt-[50px] pb-[100px] lg:pb-[200px]">
         <div className="flex justify-center flex-col items-center gap-[35px]">
           <Image src="/check.png" alt="" width={90} height={90} />
 
@@ -20,7 +20,7 @@ const page = () => {
             <h2 className="text-[#191C1F] text-[24px] font-[600]">
               Your order is completed!
             </h2>
-            <p className="text-[14] text-[#5F6C72] w-[60%] text-center pt-[12px]">
+            <p className="text-[14] text-[#5F6C72] w-[80%] lg:w-[60%] text-center pt-[12px]">
               Thank you for your order! Your order is being processed and will
               be completed within 3-6 hours. You will receive an email
               confirmation when your order is completed.
