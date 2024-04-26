@@ -15,7 +15,7 @@ const AppWrapper = ({ children }: { children: ReactNode }) => {
       {!pathname.includes("admin") && (
         <div className="relative">
           <Header />
-          <div className="top-[600px] sticky right-[4px] flex justify-center items-center gap-0 z-0 cursor-pointer hover:z-50">
+          <div className="top-[600px] sticky right-[4px] flex justify-center items-center gap-0 z-0 cursor-pointer hover:z-[999]">
             <Image
               src="/whatsapp.svg"
               alt=""

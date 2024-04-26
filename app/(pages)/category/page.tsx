@@ -6,14 +6,14 @@ import Image from "next/image";
 const page = () => {
     return (
       <>
-        <div className="py-[20px] px-[8%] bg-secondary mb-[56px]">
+        <div className="py-[20px] px-[4%] lg:px-[8%] bg-secondary mb-[56px]">
           <h2 className="font-[600] leading-[32px] text-[28px] text-[#191C1F]">
             USA Store
           </h2>
           <p className="text-[#475156] text-[18px] font-[500]">Home / Search</p>
         </div>
 
-        <div className="py-4 bg-[#F5F5F5] mx-[8%] mb-[32px]">
+        <div className="py-4 bg-[#F5F5F5] px-[4%] lg:mx-[8%] mb-[32px]">
           <h2 className="text-[#191C1F] text-[24px] text-center font-[600]">
             Shop By Categories
           </h2>
@@ -28,18 +28,22 @@ const page = () => {
             <Category />
             <Category />
             <Category />
-            <Category />
-            <Category />
+            <span className="hidden lg:block">
+              <Category />
+            </span>
+            <span className="hidden lg:block">
+              <Category />
+            </span>
           </div>
         </div>
 
-        <div className="mx-[8%] mb-[90px]">
+        <div className="mx-[4%] lg:mx-[8%] mb-[90px]">
           <div>
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-center lg:justify-between items-center mb-6">
               <h2 className="text-[#191C1F] text-[24px] text-center font-[600]">
                 Products you may like
               </h2>
-              <p className="flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2">
+              <p className="hidden lg:flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2">
                 Browse All Products
                 <FaArrowRight />
               </p>
@@ -53,28 +57,31 @@ const page = () => {
               <Card />
               <Card express={true} />
               <Card />
+              <button className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]">
+                <p> Browse All Products</p>
+              </button>
             </div>
           </div>
 
-          <div className="flex gap-4 justify-between items-center my-[32px]">
-            <div className="w-[50%] bg-[#F2F4F5] pt-[36px] pl-[36px] flex justify-between items-end rounded-[4px]">
-              <div className="flex flex-col items-start justify-center pb-[60px] w-[50%]">
+          <div className="flex gap-4 justify-between flex-col lg:flex-row items-center my-[32px]">
+            <div className="lg:w-[50%] bg-[#F2F4F5] pt-[36px] pl-[36px] flex justify-between flex-col lg:flex-row items-center lg:items-end rounded-[4px]">
+              <div className="flex flex-col items-start justify-center lg:pb-[60px] lg:w-[50%]">
                 <p className="bg-secondary py-2 px-3 rounded-[2px] text-[#475156] text-[14px] font-[600]">
                   INTRODUCING
                 </p>
                 <h1 className="pt-2 leading-[45px] text-[36px] font-[600] text-[#191C1F] pb-[12px]">
-                  Exotic Fluffy <br /> Teddy Bear
+                  Exotic Fluffy <br className="hidden lg:block" /> Teddy Bear
                 </h1>
                 <p className="text-[#475156] pb-[20px] font-[500]">
-                  Shop for you best sellers the nicest <br /> fluffiest teddy
+                  Shop for you best sellers the nicest <br className="hidden lg:block" /> fluffiest teddy
                   bears{" "}
                 </p>
 
-                <button className="py-[14px] px-[24px] rounded-[2px] bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2">
+                <button className="py-[14px] px-[10px] lg:px-[24px] rounded-[2px] bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2">
                   SHOP NOW <FaArrowRight className="w-5 h-5" />
                 </button>
               </div>
-              <div className="flex justify-end items-center w-[50%]">
+              <div className="flex justify-end items-center lg:w-[50%]">
                 <Image
                   src="/teddy2.png"
                   alt=""
@@ -84,8 +91,8 @@ const page = () => {
                 />
               </div>
             </div>
-            <div className="w-[50%] bg-[#191C1F] pt-[36px] pl-[36px] flex justify-between items-end rounded-[4px]">
-              <div className="flex flex-col items-start justify-center pb-[60px] w-[50%]">
+            <div className="lg:w-[50%] bg-[#191C1F] pt-[36px] lg:pl-[36px] flex justify-between items-center lg:items-end flex-col lg:flex-row rounded-[4px]">
+              <div className="flex flex-col items-start justify-center pb-[60px] lg:w-[50%]">
                 <p className="bg-secondary py-2 px-3 rounded-[2px] text-[#475156] text-[14px] font-[600]">
                   INTRODUCING
                 </p>
@@ -101,7 +108,7 @@ const page = () => {
                   SHOP NOW <FaArrowRight className="w-5 h-5" />
                 </button>
               </div>
-              <div className="flex justify-end items-center w-[50%] relative">
+              <div className="flex justify-end items-center lg:w-[50%] relative">
                 <div className="flex justify-center text-center items-center w-[100px] h-[88px] rounded-full bg-secondary absolute -top-3 right-6">
                   <div className="flex flex-col text-center items-center gap-0">
                     <p className="leading-0 text-[13px]">From</p>
@@ -122,11 +129,11 @@ const page = () => {
           </div>
 
           <div>
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-center lg:justify-between items-center mb-6">
               <h2 className="text-[#191C1F] text-[24px] text-center font-[600]">
                 Fastest Delivery Available
               </h2>
-              <p className="flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2">
+              <p className="hidden lg:flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2">
                 Browse All Products
                 <FaArrowRight />
               </p>
@@ -140,6 +147,9 @@ const page = () => {
               <Card />
               <Card express={true} />
               <Card express={true} />
+              <button className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]">
+                <p> Browse All Products</p>
+              </button>
             </div>
           </div>
         </div>
