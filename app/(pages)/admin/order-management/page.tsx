@@ -46,8 +46,6 @@ interface order {
 export default function OrderManagement() {
   const [sortOption, setSortOption] = useState<string>("Recent");
   const [filterValue, setFilterValue] = useState("");
-  const [pageNo, setPageNo] = useState<any | number>();
-  const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [statusFilterValue, setStatusFilterValue] = useState("All");
   const [rowsPerPage, setRowsPerPage] = useState<any | string[]>("10");
@@ -87,25 +85,33 @@ export default function OrderManagement() {
     let sortedList = OrderList.slice(); // Create a copy of the original list
 
     // Sort the list based on the sortOption
+
+    //filter recent orders
     if (sortOption === "Recent") {
       sortedList.sort((a, b) => {
         const earlyOrder = new Date(a.timestamp) as unknown as number;
         const laterOrder = new Date(b.timestamp) as unknown as number;
         return laterOrder - earlyOrder;
       });
-    } else if (sortOption === "Older") {
+    }
+    //filter by older orders
+    else if (sortOption === "Older") {
       sortedList.sort((a, b) => {
         const earlyOrder = new Date(a.timestamp) as unknown as number;
         const laterOrder = new Date(b.timestamp) as unknown as number;
         return earlyOrder - laterOrder;
       });
-    } else if (sortOption === "Most products") {
+    }
+    //filter by most products
+    else if (sortOption === "Most products") {
       sortedList.sort((a, b) => {
         const largeOrder = a.products.length;
         const smallOrder = b.products.length;
         return smallOrder - largeOrder;
       });
-    } else if (sortOption === "Less products") {
+    }
+    //filter by less products
+    else if (sortOption === "Less products") {
       sortedList.sort((a, b) => {
         const largeOrder = a.products.length;
         const smallOrder = b.products.length;

@@ -393,7 +393,24 @@ export default function Dashboard() {
       </div>
     );
   }, []);
-
+  const RecentTableTopContent = useMemo(() => {
+    return (
+      <div className="flex justify-between py-3 w-full">
+        <div className="flex flex-col">
+          <p className="font-semibold text-lg text-[#23272E]">
+            Recent Orders
+          </p>
+        </div>
+        <Button
+          isIconOnly
+          className="bg-transparent text-[#1EB564]"
+          onClick={option}
+        >
+          <HiDotsVertical size={24} color="#8B909A" />
+        </Button>
+      </div>
+    );
+  }, []);
   const renderCell = useCallback((item: any, columnKey: React.Key) => {
     switch (columnKey) {
       case "id":
@@ -892,8 +909,8 @@ export default function Dashboard() {
         <div className="w-full p-5 bg-white rounded-2xl">
           <Table
             shadow="none"
-            aria-label="last transactions"
-            topContent={bestSellingTableTopContent}
+            aria-label="best selling products"
+            topContent={RecentTableTopContent}
             classNames={{
               th: [
                 "border-divider",
