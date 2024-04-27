@@ -221,6 +221,7 @@ export default function OrderManagement() {
         onSelectionChange={(tab: any) => {
           replace(tab);
           setStatusFilterValue(tab);
+          setPage(1)
         }}
       >
         {tabs.map((tab) => (
