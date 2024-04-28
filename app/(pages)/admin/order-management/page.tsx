@@ -349,7 +349,7 @@ export default function OrderManagement() {
             </div>
           </div>
         </div>
-        <div className="w-fit md:w-full">
+        <div className="w-fit lg:w-full">
           {Items &&
             Items.map((order, index) => (
               <Accordion
@@ -383,16 +383,16 @@ export default function OrderManagement() {
                       <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 pr-4 pl-0">
                         <span>{order.timestamp}</span>
                       </div>
-                      <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 md:px-4">
+                      <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 lg:px-4">
                         <span className="mx-auto">{order.customerName}</span>
                       </div>
-                      <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 md:px-4 ">
+                      <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 lg:px-4 ">
                         <span className="mx-auto">₦{order.totalAmount}</span>
                       </div>
-                      <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 md:px-4 ">
+                      <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 lg:px-4 ">
                         <span className="mx-auto">₦{order.profit}</span>
                       </div>
-                      <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 md:px-4 ">
+                      <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 lg:px-4 ">
                         {MySelect(order.status)}
                       </div>
                       <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-4">
