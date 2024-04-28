@@ -137,14 +137,16 @@ export function Header() {
             </Dropdown>
             <Button isIconOnly className="bg-transparent">
               <NavbarMenuToggle
-              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-              className="md:hidden"
-            />
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                className="md:hidden"
+              />
             </Button>
-            
           </div>
         </NavbarContent>
         <NavbarMenu className="flex flex-col gap-3 text-xl text-black">
+          <NavbarItem>
+            <p className="px-3 py-1 opacity-60">MAIN MENU</p>
+          </NavbarItem>
           <NavbarItem
             className={`flex gap-3 justify-normal items-center p-[6px] rounded text-black ${
               pathname === "/admin/dashboard" ? "bg-[#F3F4F8]" : "opacity-60"
@@ -193,6 +195,9 @@ export function Header() {
               {" "}
               Customers
             </p>
+          </NavbarItem>
+          <NavbarItem>
+            <p className="px-3 py-1 opacity-60">PRODUCTS</p>
           </NavbarItem>
           <NavbarItem
             className={`flex gap-3 justify-normal items-center p-[6px] rounded text-black ${
