@@ -5,7 +5,7 @@ import Nav from "../../components/Nav";
 import { Providers } from "../../providers/providers";
 import { Header } from "../../components/Header";
 import { Suspense } from "react";
-
+import { useRouter } from "next/navigation";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,6 +19,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <Providers>
       <div className="flex bg-[#FAFAFA]">

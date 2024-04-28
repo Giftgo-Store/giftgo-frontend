@@ -18,14 +18,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-
 export default function Nav() {
   const [showOnlyIcon, setShowOnlyIcon] = useState(false);
   const pathname = usePathname();
 
   return (
     <div
-      className={`flex flex-col gap-2  bg-white sm:max-w-[260px] ${
+      className={`md:flex flex-col gap-2  bg-white sm:max-w-[260px] hidden ${
         showOnlyIcon ? "w-min" : "w-full"
       }  h-screen px-4 py-5 transition-[width] transform ease-in-out w-full  duration-300`}
     >
