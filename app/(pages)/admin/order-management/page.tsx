@@ -319,37 +319,37 @@ export default function OrderManagement() {
           ))}
         </Select>
       </div>
-      <div className="w-full bg-white rounded-2xl">
-        <div className="flex justify-between py-2 border-b">
-          <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
+      <div className="w-full bg-white rounded-2xl overflow-x-auto overflow-y-hidden">
+        <div className="flex justify-between py-2 border-b w-full min-w-max">
+          <div className=" flex-1 min-w-[150px] w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
             <span>ORDER ID</span>
           </div>
-          <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
+          <div className=" flex-1 min-w-[150px] w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
             <span>Created</span>
           </div>
-          <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
+          <div className=" flex-1 min-w-[150px] w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
             <span>CUSTOMER</span>
           </div>
-          <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
+          <div className=" flex-1 min-w-[150px] w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
             <span>TOTAL</span>
           </div>
-          <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
+          <div className=" flex-1 min-w-[150px] w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
             <span>PROFIT</span>
           </div>
-          <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
+          <div className=" flex-1 min-w-[150px] w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
             <span>STATUS</span>
           </div>
-          <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
+          <div className=" flex-1 min-w-[150px] w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
             <span className="hidden">dropdown</span>
           </div>
-          <div className="text-[#8B909A] text-sm font-medium py-2 px-0">
+          <div className="text-[#8B909A] text-sm font-medium w-[28px]">
             <div className="opacity-0">
               {" "}
               <IoCaretDownCircleOutline color="#8B909A" size={24} />
             </div>
           </div>
         </div>
-        <div>
+        <div className="w-fit md:w-full">
           {Items &&
             Items.map((order, index) => (
               <Accordion
@@ -371,30 +371,31 @@ export default function OrderManagement() {
                       <IoCaretDownCircleOutline color="#8B909A" size={28} />
                     )
                   }
+                  className="w-full"
                   suppressHydrationWarning
                   title={
                     <div className="flex justify-between items-center py-1">
-                      <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
+                      <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-4">
                         <span className="mx-auto font-semibold">
                           {order.orderId}
                         </span>
                       </div>
-                      <div className=" flex-1 flex-grow  text-sm font-medium py-2 pr-4 pl-0">
+                      <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 pr-4 pl-0">
                         <span>{order.timestamp}</span>
                       </div>
-                      <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
+                      <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 md:px-4">
                         <span className="mx-auto">{order.customerName}</span>
                       </div>
-                      <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
+                      <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 md:px-4 ">
                         <span className="mx-auto">₦{order.totalAmount}</span>
                       </div>
-                      <div className=" flex-1 flex-grow  text-sm font-medium py-2 pl-4">
+                      <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 md:px-4 ">
                         <span className="mx-auto">₦{order.profit}</span>
                       </div>
-                      <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
+                      <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 md:px-4 ">
                         {MySelect(order.status)}
                       </div>
-                      <div className=" flex-1 flex-grow  text-sm font-medium py-2 px-4">
+                      <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-4">
                         <span className="hidden">dropdown</span>
                       </div>
                     </div>
@@ -405,28 +406,28 @@ export default function OrderManagement() {
                       className="flex justify-between border-b"
                       suppressHydrationWarning={true}
                     >
-                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                      <div className="flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
                         <span>#</span>
                       </div>
-                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                      <div className=" flex-1   w-full flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
                         <span>SKU</span>
                       </div>
-                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                      <div className=" flex-1  w-full flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
                         <span>NAME</span>
                       </div>
-                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                      <div className=" flex-1  w-full flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
                         <span>PRICE</span>
                       </div>
-                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                      <div className=" flex-1  w-full flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
                         <span>QTY</span>
                       </div>
-                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                      <div className=" flex-1  w-full flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
                         <span>DISC.</span>
                       </div>
-                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                      <div className=" flex-1  w-full flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
                         <span>TOTAL</span>
                       </div>
-                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
+                      <div className=" flex-1 max-w-[100px] w-full flex-grow text-[#8B909A] text-sm font-medium py-4 px-4">
                         <p className="flex gap-2">
                           <PiPrinterFill color="#8B909A" size={20} />
                           <span>PRINT</span>
@@ -440,28 +441,28 @@ export default function OrderManagement() {
                           className="flex justify-between border-b"
                           suppressHydrationWarning={true}
                         >
-                          <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
+                          <div className=" flex-1  w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
                             <span className="hidden">#</span>
                           </div>
-                          <div className=" flex-1 flex-grow text-sm font-medium py-4 px-4">
+                          <div className=" flex-1  w-full  flex-grow text-sm font-medium py-4 px-4">
                             <span>{product.productId}</span>
                           </div>
-                          <div className=" flex-1 flex-grow  text-sm  py-4 px-4 font-semibold">
+                          <div className=" flex-1  w-full  flex-grow  text-sm  py-4 px-4 font-semibold">
                             <span>{product.productName}</span>
                           </div>
-                          <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                          <div className=" flex-1  w-full  flex-grow  text-sm font-medium py-4 px-4">
                             <span>₦{product.price}</span>
                           </div>
-                          <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                          <div className=" flex-1  w-full  flex-grow  text-sm font-medium py-4 px-4">
                             <span>x{product.quantity}</span>
                           </div>
-                          <div className=" flex-1 flex-grow text-[#EA5455] text-sm font-medium py-4 px-4">
+                          <div className=" flex-1  w-full  flex-grow text-[#EA5455] text-sm font-medium py-4 px-4">
                             <span>{product.discount}%</span>
                           </div>
-                          <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                          <div className=" flex-1  w-full  flex-grow  text-sm font-medium py-4 px-4">
                             <span>₦{product.total}</span>
                           </div>
-                          <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                          <div className=" flex-1 max-w-[100px]  w-full  flex-grow  text-sm font-medium py-4 px-4">
                             <p className="flex gap-2">
                               <HiOutlineDotsHorizontal
                                 color="black"
@@ -476,26 +477,26 @@ export default function OrderManagement() {
                       className="flex justify-between "
                       suppressHydrationWarning={true}
                     >
-                      <div className=" flex-1 flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
+                      <div className=" flex-1  w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
                         <span className="hidden">#</span>
                       </div>
-                      <div className=" flex-1 flex-grow text-sm font-medium py-4 px-4"></div>
-                      <div className=" flex-1 flex-grow  text-sm  py-4 px-4 font-semibold"></div>
-                      <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4"></div>
-                      <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                      <div className=" flex-1  w-full flex-grow text-sm font-medium py-4 px-4"></div>
+                      <div className=" flex-1  w-full flex-grow  text-sm  py-4 px-4 font-semibold"></div>
+                      <div className=" flex-1  w-full flex-grow  text-sm font-medium py-4 px-4"></div>
+                      <div className=" flex-1  w-full flex-grow  text-sm font-medium py-4 px-4">
                         <p className="py-4">Subtotal</p>
                         <p className="py-4">Shipping</p>
                         <p className="py-4">Discount</p>
                         <p className="py-4">Total</p>
                       </div>
-                      <div className=" flex-1 flex-grow text-[#EA5455] text-sm font-medium py-4 px-4"></div>
-                      <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4">
+                      <div className=" flex-1  w-full flex-grow text-[#EA5455] text-sm font-medium py-4 px-4"></div>
+                      <div className=" flex-1  w-full flex-grow  text-sm font-medium py-4 px-4">
                         <p className="py-4">₦11,000</p>
                         <p className="py-4">₦900</p>
                         <p className="text-[#EA5455] py-4">₦0</p>
                         <p className="py-4">₦{order.totalAmount}</p>
                       </div>
-                      <div className=" flex-1 flex-grow  text-sm font-medium py-4 px-4"></div>
+                      <div className=" flex-1 max-w-[100px] w-full flex-grow  text-sm font-medium py-4 px-4"></div>
                     </div>
                   </div>
                 </AccordionItem>

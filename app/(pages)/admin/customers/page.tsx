@@ -64,7 +64,7 @@ export default function Customers() {
 //bottom conten of table
   const bottomContent = useMemo(() => {
     return (
-      <div className="flex sm:flex-row flex-col  justify-between sm:items-center gap-3">
+      <div className="flex w-full justify-between sm:items-center gap-3">
         <div className="flex justify-normal  gap-2 items-center text-[#8B909A] text-sm font-medium">
           <p>Showing</p>
           <Select
@@ -88,7 +88,7 @@ export default function Customers() {
           </Select>
           <p>of {filteredItems.length}</p>
         </div>
-        <div className="py-2 px-2 flex justify-center sm:justify-between items-center">
+        <div className="py-2 px-2 sm:justify-between items-center">
           <Pagination
             isDisabled={filterValue.length > 1}
             showControls
