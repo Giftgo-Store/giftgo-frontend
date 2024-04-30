@@ -28,7 +28,7 @@ export default function AddCategories() {
     [selectedKeys]
   );
   const { isOpen, onOpen, onClose } = useDisclosure();
-  
+
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const imageFile = event.target.files?.[0];
     if (imageFile) {
@@ -92,7 +92,6 @@ export default function AddCategories() {
                 </ModalHeader>
                 <ModalBody>
                   <Input
-                    
                     placeholder="Category name"
                     endContent={<CiSearch size={28} color="#8B909A" />}
                     size="md"
@@ -109,7 +108,9 @@ export default function AddCategories() {
                         "group-data-[focus=true]:bg-white",
                       ],
                     }}
-                    value={selectedValue.length<0?categoryName:selectedValue}
+                    value={
+                      selectedValue.length < 0 ? categoryName : selectedValue
+                    }
                     onChange={(e) => {
                       setCategoryName(e.target.value);
                     }}
@@ -131,43 +132,43 @@ export default function AddCategories() {
                             alert("ok");
                           }}
                         >
-                        <input
-                          type="file"
-                          name="file input drag"
-                          className="opacity-0  absolute w-full h-[50%] top-[35%] left-0 "
-                          accept="image/*"
-                          onChange={handleImageChange}
-                        ></input>
-                        <label
-                          className="cursor-pointer flex justify-center items-center flex-col"
-                          htmlFor="file input drag"
-                        >
-                          <SlPicture size={48} color="#1EB564" />
-                          <div className="w-full h-full">
-                            <div className="flex justify-center gap-1">
-                              <p>Drop your Images here or </p>
-                              <p>
-                                <input
-                                  type="file"
-                                  name="file input"
-                                  className="opacity-0 absolute w-[50px]"
-                                  accept="image/*"
-                                  onChange={handleImageChange}
-                                ></input>
-                                <label
-                                  className="cursor-pointer text-[#1EB564]"
-                                  htmlFor="file input"
-                                >
-                                  Browse
-                                </label>
+                          <input
+                            type="file"
+                            name="file input drag"
+                            className="opacity-0  absolute w-full h-[50%] top-[35%] left-0 "
+                            accept="image/*"
+                            onChange={handleImageChange}
+                          ></input>
+                          <label
+                            className="cursor-pointer flex justify-center items-center flex-col"
+                            htmlFor="file input drag"
+                          >
+                            <SlPicture size={48} color="#1EB564" />
+                            <div className="w-full h-full">
+                              <div className="flex justify-center gap-1">
+                                <p>Drop your Images here or </p>
+                                <p>
+                                  <input
+                                    type="file"
+                                    name="file input"
+                                    className="opacity-0 absolute w-[50px]"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                  ></input>
+                                  <label
+                                    className="cursor-pointer text-[#1EB564]"
+                                    htmlFor="file input"
+                                  >
+                                    Browse
+                                  </label>
+                                </p>
+                              </div>
+                              <p className="text-center">
+                                Jpeg,png,jpj are allowed
                               </p>
                             </div>
-                            <p className="text-center">
-                              Jpeg,png,jpj are allowed
-                            </p>
-                          </div>
-                            </label>
-                          </form>
+                          </label>
+                        </form>
                       </div>
                     )}
                   </div>

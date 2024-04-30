@@ -134,7 +134,7 @@ export function Header() {
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
-            <Button isIconOnly className="bg-transparent">
+            <Button isIconOnly className="md:hidden bg-transparent">
               <NavbarMenuToggle
                 aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                 className="md:hidden"
