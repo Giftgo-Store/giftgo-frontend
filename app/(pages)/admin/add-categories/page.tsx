@@ -116,16 +116,17 @@ export default function AddCategories() {
                     }}
                   ></Input>
                   <p className="text-lg py-2">Upload a picture</p>
-                  <div className="flex justify-center items-center flex-col gap-4  p-4 py-5 bordered-input">
-                    {selectedImage ? (
+                  {selectedImage ? (
                       <Image
                         src={imagePreview}
                         alt="Preview"
-                        className="object-contain max-w-[300px] w-full h-full rounded-md"
+                        className="object-contain max-w-[300px] w-full h-full rounded-md mx-auto"
                         width={100}
                         height={100}
                       />
-                    ) : (
+                    ) :
+                  <div className="flex justify-center items-center flex-col gap-4  p-4 py-5 bordered-input">
+                     
                       <div className="w-full h-full">
                         <form
                           onSubmit={(event) => {
@@ -170,8 +171,8 @@ export default function AddCategories() {
                           </label>
                         </form>
                       </div>
-                    )}
-                  </div>
+                    
+                  </div>}
                 </ModalBody>
                 <ModalFooter className="flex justify-center">
                   <Button className="bg-[#1EB564] text-white text-sm w-[150px]">

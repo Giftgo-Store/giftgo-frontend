@@ -181,6 +181,7 @@ export default function Nav() {
             </p>
           </ListboxItem>
           <ListboxItem
+            aria-label="add product"
             className={`${
               pathname === "/admin/add-products" ? "bg-[#F3F4F8]" : "opacity-60"
             }  ${
@@ -213,7 +214,7 @@ export default function Nav() {
                 showOnlyIcon ? "w-[0] px-0" : ""
               }transition-[width] transform ease-in-out  duration-300`}
             >
-              product List
+              Product List
             </p>
           </ListboxItem>
         </ListboxSection>
