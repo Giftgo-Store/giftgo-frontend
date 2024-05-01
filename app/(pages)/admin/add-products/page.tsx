@@ -12,8 +12,16 @@ import {
   Spinner,
   Skeleton,
   Spacer,
+  Button,
 } from "@nextui-org/react";
-import { ChangeEvent, MouseEvent, useEffect, useReducer, useState } from "react";
+import {
+  ChangeEvent,
+  MouseEvent,
+  useEffect,
+  useReducer,
+  useState,
+  useMemo,
+} from "react";
 import { SlPicture } from "react-icons/sl";
 
 interface Form {
@@ -23,7 +31,7 @@ interface Form {
   CAD: string;
   AUD: string;
   JPY: string;
-  NGN?: string;
+  NGN: string;
 }
 type Currency = keyof Form;
 interface Flag {
@@ -45,11 +53,17 @@ function useDebounceValue(value: string, time = 250) {
     const timeout = setTimeout(() => {
       setDebounceValue(value);
     }, time);
+
     return () => {
       clearTimeout(timeout);
     };
+    // Check if value is empty and debounceValue is different
   }, [value, time]);
-
+  useEffect(() => {
+    if (value === "" && debouncevalue !== "") {
+      setDebounceValue("");
+    }
+  }, [value, debouncevalue]);
   return debouncevalue;
 }
 function reducer(state: Form, action: ActionType) {
@@ -78,9 +92,9 @@ function reducer(state: Form, action: ActionType) {
 export default function AddProducts() {
   const [loadingCurrency, setLoadingCurrency] = useState(false);
   const [conversionRates, setConversionRates] = useState<ConversionRates>({});
-   const [selectedImages, setSelectedImages] = useState<any[]>([]);
-   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
- const [imageNames, setImageNames] = useState<string[]>([]);
+  const [selectedImages, setSelectedImages] = useState<any[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [imageNames, setImageNames] = useState<string[]>([]);
 
   const [form, setForm] = useState<Form>({
     USD: "",
@@ -91,7 +105,7 @@ export default function AddProducts() {
     JPY: "",
     NGN: "",
   });
-  //const nairaQuery = useDebounceValue(form.NGN);
+  const nairaQuery = useDebounceValue(form.NGN);
 
   const categories = ["shoes", "clothes", "suits", "jewelry", "furniture"];
 
@@ -144,18 +158,16 @@ export default function AddProducts() {
       console.log(error);
     }
   };
-  // useEffect(() => {
-  //   getConversionRates();
-  // }, []);
+  useEffect(() => {
+    getConversionRates();
+  }, []);
 
   const setAllParameters = (values: Partial<Form>) => {
     setForm((prevForm) => ({ ...prevForm, ...values }));
   };
 
   const calculateConvertedValues = () => {
-    setLoadingCurrency(true);
     const convertedValues: Partial<Form> = {};
-
     if (form.NGN) {
       for (const currency in conversionRates) {
         if (currency !== "NGN") {
@@ -164,13 +176,11 @@ export default function AddProducts() {
           ).toFixed(4);
         }
       }
+      console.log(convertedValues);
     }
-
     setAllParameters(convertedValues);
-    setLoadingCurrency(false);
   };
 
-  console.log(form);
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     currency: Currency
@@ -180,9 +190,47 @@ export default function AddProducts() {
       ...prevForm,
       [currency]: value,
     }));
-
     if (currency === "NGN") {
-      calculateConvertedValues();
+      setForm((prevForm) => ({
+        ...prevForm,
+        [currency]: value,
+      }));
+      setForm((prevForm) => ({
+        ...prevForm,
+        USD: (Number(value) * Number(conversionRates.USD))
+          .toFixed(4)
+          .toString(),
+      }));
+      setForm((prevForm) => ({
+        ...prevForm,
+        GBP: (Number(value) * Number(conversionRates.GBP))
+          .toFixed(4)
+          .toString(),
+      }));
+      setForm((prevForm) => ({
+        ...prevForm,
+        AUD: (Number(value) * Number(conversionRates.AUD))
+          .toFixed(4)
+          .toString(),
+      }));
+      setForm((prevForm) => ({
+        ...prevForm,
+        JPY: (Number(value) * Number(conversionRates.JPY))
+          .toFixed(4)
+          .toString(),
+      }));
+      setForm((prevForm) => ({
+        ...prevForm,
+        CAD: (Number(value) * Number(conversionRates.CAD))
+          .toFixed(4)
+          .toString(),
+      }));
+      setForm((prevForm) => ({
+        ...prevForm,
+        EUR: (Number(value) * Number(conversionRates.EUR))
+          .toFixed(4)
+          .toString(),
+      }));
     }
   };
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -191,7 +239,6 @@ export default function AddProducts() {
       const newSelectedImages: any[] = [];
       const newImagePreviews: string[] = [];
       const newImageNames: string[] = [];
-      
 
       // Iterate through the selected image files
       for (let i = 0; i < imageFiles.length; i++) {
@@ -212,10 +259,7 @@ export default function AddProducts() {
         ...prevImagePreviews,
         ...newImagePreviews,
       ]);
-        setImageNames((prevImageNames) => [
-          ...prevImageNames,
-          ...newImageNames,
-        ]);
+      setImageNames((prevImageNames) => [...prevImageNames, ...newImageNames]);
     }
   };
 
@@ -227,7 +271,16 @@ export default function AddProducts() {
       prevImagePreviews.filter((_, i) => i !== index)
     );
   };
-
+  const ImageUploadCards = useMemo(() => {
+    return imagePreviews.map((imagePreview, index) => (
+      <ImageUploadCard
+        key={index}
+        name={imageNames[index]}
+        avatar={imagePreview}
+        removeCard={() => removeImage(index)}
+      />
+    ));
+  }, [imagePreviews, imageNames]);
   return (
     <div className="pb-8">
       <form className="p-5 bg-white rounded-lg flex flex-col lg:flex-row gap-5">
@@ -335,7 +388,7 @@ export default function AddProducts() {
             ></Input>
           </div>
           <div className="flex w-full flex-col gap-4">
-            <div className="flex w-full justify-between gap-2">
+            <div className="flex md:flex-row flex-col w-full justify-between gap-2">
               <div className="flex w-full flex-col gap-3">
                 <p>SKU</p>
                 <Input
@@ -377,7 +430,7 @@ export default function AddProducts() {
                 ></Input>
               </div>
             </div>
-            <div className="flex w-full justify-between gap-2">
+            <div className="flex md:flex-row flex-col w-full justify-between gap-2">
               <div className="flex w-full flex-col gap-3">
                 <p>Regular Price</p>
                 <Input
@@ -501,17 +554,26 @@ export default function AddProducts() {
             </label>
           </div>
           <Spacer y={12}></Spacer>
-          <div className=" flex flex-col gap-3">
-            {imagePreviews.map((imagepreview, index) => (
-              <ImageUploadCard
-                name={imageNames[index]}
-                avatar={imagepreview}
-                removeCard={() => {
-                  removeImage(index);
+          <div className=" flex flex-col gap-3 h-fit">{ImageUploadCards}</div>
+          <Spacer y={12}></Spacer>
+          {selectedImages.length > 0 && (
+            <div className=" flex justify-between gap-4">
+              <Button size="lg" className="bg-[#1EB564] text-white w-full">
+                Confirm
+              </Button>
+              <Button
+                size="lg"
+                className="bg-transparent border-1 w-full"
+                onClick={() => {
+                  setImageNames([]);
+                  setSelectedImages([]);
+                  setImagePreviews([]);
                 }}
-              />
-            ))}
-          </div>
+              >
+                Cancel
+              </Button>
+            </div>
+          )}
         </div>
       </form>
     </div>
