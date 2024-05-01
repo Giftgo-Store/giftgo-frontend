@@ -27,7 +27,6 @@ import BoxAdd from "../../public/box-add.svg";
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
-  console.log(isMenuOpen);
   function pageName() {
     switch (pathname) {
       case "/admin/dashboard":
@@ -135,7 +134,7 @@ export function Header() {
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
-            <Button isIconOnly className="bg-transparent">
+            <Button isIconOnly className="md:hidden bg-transparent">
               <NavbarMenuToggle
                 aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                 className="md:hidden"
@@ -196,9 +195,6 @@ export function Header() {
               Customers
             </p>
           </NavbarItem>
-          <NavbarItem>
-            <p className="px-3 py-1 opacity-60">PRODUCTS</p>
-          </NavbarItem>
           <NavbarItem
             className={`flex gap-3 justify-normal items-center p-[6px] rounded text-black ${
               pathname === "/admin/transactions" ? "bg-[#F3F4F8]" : "opacity-60"
@@ -215,6 +211,9 @@ export function Header() {
             </p>
           </NavbarItem>
 
+          <NavbarItem>
+            <p className="px-3 py-1 opacity-60">PRODUCTS</p>
+          </NavbarItem>
           <NavbarItem
             className={`flex gap-3 justify-normal items-center p-[6px] rounded text-black ${
               pathname === "/admin/add-categories"

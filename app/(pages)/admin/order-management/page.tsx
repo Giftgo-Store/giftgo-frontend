@@ -131,8 +131,12 @@ export default function OrderManagement() {
         if (typeof item.status === "string") {
           if (filterValue.length > 0) {
             return (
-              item.orderId.includes(filterValue) &&
-              statusFilterValue.includes(item.status)
+              item.orderId
+                .toLocaleLowerCase()
+                .includes(filterValue.toLocaleLowerCase()) &&
+              statusFilterValue
+                .toLocaleLowerCase()
+                .includes(item.status.toLocaleLowerCase())
             );
           }
           return statusFilterValue.includes(item.status);

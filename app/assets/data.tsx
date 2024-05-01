@@ -268,7 +268,7 @@ export const OrderList = [
     products: [
       {
         productId: "#6876",
-        productName: "Bama",
+        productName: "Nike AF1's",
         price: 3000,
         originalPrice: 2000,
         sellingPrice: 2700,
@@ -299,7 +299,7 @@ export const OrderList = [
     products: [
       {
         productId: "#6876",
-        productName: "Bama",
+        productName: "Nike AF1's",
         price: 3000,
         originalPrice: 2000,
         sellingPrice: 2700,
@@ -330,7 +330,7 @@ export const OrderList = [
     products: [
       {
         productId: "#6876",
-        productName: "Bama",
+        productName: "Nike AF1's",
         price: 3000,
         originalPrice: 2000,
         sellingPrice: 2700,
@@ -361,7 +361,7 @@ export const OrderList = [
     products: [
       {
         productId: "#6876",
-        productName: "Bama",
+        productName: "Nike AF1's",
         price: 3000,
         originalPrice: 2000,
         sellingPrice: 2700,
