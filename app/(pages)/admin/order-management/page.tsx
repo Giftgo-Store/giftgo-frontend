@@ -517,7 +517,7 @@ export default function OrderManagement() {
             <p>Showing</p>
             <Select
               size="sm"
-              className=" w-[70px]"
+              className=" w-[100px]"
               selectedKeys={[rowsPerPage]}
               onChange={(e) => {
                 setRowsPerPage(e.target.value);
