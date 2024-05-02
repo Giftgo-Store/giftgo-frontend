@@ -120,7 +120,7 @@ export default function AddCategories() {
                       <Image
                         src={imagePreview}
                         alt="Preview"
-                        className="object-contain max-w-[300px] w-full h-full rounded-md mx-auto"
+                        className="object-contain max-w-[300px] max-h-[300px] w-full h-full rounded-md mx-auto"
                         width={100}
                         height={100}
                       />

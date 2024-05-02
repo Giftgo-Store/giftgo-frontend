@@ -159,7 +159,7 @@ export default function ProductList() {
           <p>Showing</p>
           <Select
             size="sm"
-            className=" w-[70px] border-1 rounded-lg"
+            className=" w-[100px] border-1 rounded-lg"
             selectedKeys={[rowsPerPage]}
             onChange={(e) => {
               setRowsPerPage(e.target.value);
