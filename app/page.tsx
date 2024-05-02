@@ -28,8 +28,8 @@ const Landing = () => {
           </div>
         </div>
 
-        <div className="border-[#E4E7E9] border-[1px] bg-[#F5F5F5] flex justify-center gap-2 lg:justify-between items-center p-2 mx-[4%] lg:mx-[8%] rounded-[8px] mb-[84px] flex-wrap">
-          <div className="p-4 flex justify-between items-center bg-white gap-2">
+        <div className="border-[#E4E7E9] border-[1px] bg-[#F5F5F5] flex gap-2 justify-between items-center p-2 mx-[4%] lg:mx-[8%] rounded-[8px] mb-[84px] overflow-x-auto">
+          <div className="p-6 lg:p-4 whitespace-nowrap lg:whitespace-wrap flex justify-between items-center bg-white gap-2">
             <LiaShippingFastSolid className="w-10 h-10 text-[#191C1F]" />
             <div className="flex flex-col gap-0 items-start">
               <h2 className="text-[14px] text-[#191C1F] font-[500] leading-0">
@@ -41,7 +41,7 @@ const Landing = () => {
             </div>
           </div>
 
-          <div className="p-4 flex justify-between items-center bg-white gap-2">
+          <div className="p-6 lg:p-4 whitespace-nowrap lg:whitespace-wrap flex justify-between items-center bg-white gap-2">
             <PiHeadphones className="w-10 h-10 text-[#191C1F]" />
             <div className="flex flex-col gap-0 items-start">
               <h2 className="text-[14px] text-[#191C1F] font-[500] leading-0">
@@ -53,7 +53,7 @@ const Landing = () => {
             </div>
           </div>
 
-          <div className="p-4 flex justify-between items-center bg-white gap-2">
+          <div className="p-6 lg:p-4 whitespace-nowrap lg:whitespace-wrap flex justify-between items-center bg-white gap-2">
             <IoTrophyOutline className="w-10 h-10 text-[#191C1F]" />
             <div className="flex flex-col gap-0 items-start">
               <h2 className="text-[14px] text-[#191C1F] font-[500] leading-0">
@@ -65,7 +65,7 @@ const Landing = () => {
             </div>
           </div>
 
-          <div className="p-4 flex justify-between items-center bg-white gap-2">
+          <div className="p-6 lg:p-4 whitespace-nowrap lg:whitespace-wrap flex justify-between items-center bg-white gap-2">
             <PiCreditCardLight className="w-10 h-10 text-[#191C1F]" />
             <div className="flex flex-col gap-0 items-start">
               <h2 className="text-[14px] text-[#191C1F] font-[500] leading-0">

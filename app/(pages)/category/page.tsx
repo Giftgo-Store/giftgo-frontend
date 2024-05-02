@@ -64,7 +64,7 @@ const page = () => {
           </div>
 
           <div className="flex gap-4 justify-between flex-col lg:flex-row items-center my-[32px]">
-            <div className="lg:w-[50%] bg-[#F2F4F5] pt-[36px] pl-[36px] flex justify-between flex-col lg:flex-row items-center lg:items-end rounded-[4px]">
+            <div className="w-full lg:w-[50%] bg-[#F2F4F5] pt-[36px] pl-[36px] pr-[10px] flex justify-between flex-col lg:flex-row items-center lg:items-end rounded-[4px]">
               <div className="flex flex-col items-start justify-center lg:pb-[60px] lg:w-[50%]">
                 <p className="bg-secondary py-2 px-3 rounded-[2px] text-[#475156] text-[14px] font-[600]">
                   INTRODUCING
@@ -91,7 +91,7 @@ const page = () => {
                 />
               </div>
             </div>
-            <div className="lg:w-[50%] bg-[#191C1F] pt-[36px] lg:pl-[36px] flex justify-between items-center lg:items-end flex-col lg:flex-row rounded-[4px]">
+            <div className="w-full lg:w-[50%] bg-[#191C1F] pt-[36px] lg:pl-[36px] flex justify-between items-center lg:items-end flex-col lg:flex-row rounded-[4px]">
               <div className="flex flex-col items-start justify-center pb-[60px] lg:w-[50%]">
                 <p className="bg-secondary py-2 px-3 rounded-[2px] text-[#475156] text-[14px] font-[600]">
                   INTRODUCING
