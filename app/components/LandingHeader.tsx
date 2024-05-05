@@ -1,13 +1,44 @@
+"use client"
+
 import Image from "next/image";
 import { FiSearch } from "react-icons/fi";
 import { PiMapPinLine, PiShoppingCart } from "react-icons/pi";
-import { FiHeadphones, FiPhoneCall } from "react-icons/fi";
+import { FiHeadphones, FiPhoneCall} from "react-icons/fi";
+import { IoCloseOutline } from "react-icons/io5";
 import { AiOutlineUser } from "react-icons/ai";
 import { GiHamburgerMenu } from "react-icons/gi";
+import Link from "next/link";
+import { useState } from "react";
 
 const LandingHeader = () => {
+const [isOpen, setIsOpen] = useState(false)
+
+    const toggleMenu = () => {
+      window.scroll(0, 0);
+      setIsOpen(!isOpen);
+    };
+
     return (
       <>
+        <div
+          className={`${
+            isOpen
+              ? "fixed bg-primary top-0 left-0 w-[80%] flex-col transition-all duration-300 ease-in-out py-[10px] px-[24px] rounded-r-[10px] flex justify-between gap-[25px] h-[100vh] pt-[70px] text-white lg:hidden activeNav z-40"
+              : "fixed left-[-100%] transition-all duration-300 ease-in-out"
+          } `}
+        >
+          <div className="text-center flex flex-col justify-start items-end gap-[25px]">
+            <div className="lg:hidden" onClick={toggleMenu}>
+              <IoCloseOutline className="text-white h-[30px] w-[30px]" />
+            </div>
+            <Link onClick={toggleMenu} href={"/"} className="w-full">
+              <p className="">Home</p>
+            </Link>
+            <Link onClick={toggleMenu} href={"/contact"} className="w-full">
+              <p className="">Contact</p>
+            </Link>
+          </div>
+        </div>
         <div className="py-3 flex justify-between w-full items-center bg-secondary px-[4%] lg:px-[8%]">
           <p className="text-[14px] leading-[20px]">
             Welcome to Giftgo online store.{" "}
@@ -32,23 +63,25 @@ const LandingHeader = () => {
 
         <div className="px-[4%] lg:px-[8%] flex flex-col justify-between items-center bg-primary pt-[20px] lg:pb-[16px] gap-[20px]">
           <div className="flex justify-between items-center w-full flex-wrap">
-            <div className='lg;hidden'>
-              <GiHamburgerMenu className='text-white h-[30px] w-[30px]' />
+            <div className="lg:hidden" onClick={toggleMenu}>
+              <GiHamburgerMenu className="text-white h-[30px] w-[30px]" />
             </div>
             <div className="w-[20%] ">
-              <Image src="/icon.svg" alt="" width={118} height={48} />
+              <Link href="/">
+                <Image src="/icon.svg" alt="" width={118} height={48} />
+              </Link>
             </div>
             <div className="relative">
               <input
                 type="search"
-                className="rounded-[4px] h-[48px] w-[260px] lg:w-[600px] px-[20px] py-[14px] outline-none text-[14px] hidden lg:flex"
+                className="rounded-[4px] h-[48px] w-[260px] lg:w-[600px] px-[20px] py-[14px] outline-none text-[14px] hidden lg:flex z-0"
                 placeholder="Search for anything..."
               />
               <FiSearch className="text-white lg:text-black lg:absolute right-4 top-4 w-[20px] h-[20px]" />
             </div>
 
             <div className="flex justify-center items-center gap-[20px] lg:hidden">
-               <PiShoppingCart className="w-[25px] text-white h-[25px]" />
+              <PiShoppingCart className="w-[25px] text-white h-[25px]" />
               <AiOutlineUser className="w-[25px] text-white h-[25px]" />
               <select
                 name=""

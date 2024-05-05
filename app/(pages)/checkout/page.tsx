@@ -1,7 +1,30 @@
+"use client";
+
 import Image from "next/image";
 import { FiMinus, FiPlus, FiArrowLeft, FiArrowRight } from "react-icons/fi";
+import { useRef, useState } from "react";
 
 const page = () => {
+  const [image, setImage] = useState<string[]>([]);
+  const [customizable, setCustomizable] = useState(true);
+  const photoInput: React.MutableRefObject<HTMLInputElement | null> =
+    useRef(null);
+
+  const handleValidChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files.item(0);
+      // if (file instanceof File) {
+      //   try {
+      //     const downloadURL = await upload(file);
+      //     console.log("File uploaded successfully:", downloadURL);
+      //     setImage([downloadURL]);
+      //   } catch (error) {
+      //     console.error("Error uploading file:", error);
+      //   }
+      //   if (!file) return;
+      // }
+    }
+  };
   return (
     <>
       <div className="py-[20px] px-[4%] lg:px-[8%] text-center bg-secondary mb-[56px]">
@@ -22,7 +45,7 @@ const page = () => {
             </h2>
           </div>
 
-          <div className="flex flex-col items-start gap-4">
+          <div className="flex flex-col items-start w-full gap-4">
             <div className="flex justify-between flex-col lg:flex-row items-start lg:items-end w-full gap-4">
               <div className="flex flex-col gap-2 w-full lg:w-[30%]">
                 <label
@@ -75,8 +98,8 @@ const page = () => {
                 placeholder="Address"
               />
             </div>
-            <div className="flex justify-between flex-wrap items-start lg:items-end w-full gap-4">
-              <div className="flex flex-col gap-2 w-[45%] lg:w-[25%]">
+            <div className="flex justify-between items-start flex-wrap lg:items-end w-full gap-4">
+              <div className="flex flex-col gap-2 w-[45%] lg:w-[23%]">
                 <label
                   htmlFor="username"
                   className="text-[#191C1F] text-[14px]"
@@ -87,7 +110,7 @@ const page = () => {
                   <option value="">select</option>
                 </select>
               </div>
-              <div className="flex flex-col gap-2 w-[45%] lg:w-[25%]">
+              <div className="flex flex-col gap-2 w-[45%] lg:w-[23%]">
                 <label
                   htmlFor="username"
                   className="text-[#191C1F] text-[14px]"
@@ -98,7 +121,7 @@ const page = () => {
                   <option value="">select</option>
                 </select>
               </div>
-              <div className="flex flex-col gap-2 w-[45%] lg:w-[25%]">
+              <div className="flex flex-col gap-2 w-[45%] lg:w-[23%]">
                 <label
                   htmlFor="username"
                   className="text-[#191C1F] text-[14px]"
@@ -109,7 +132,7 @@ const page = () => {
                   <option value="">select</option>
                 </select>
               </div>
-              <div className="flex flex-col gap-2 w-[45%] lg:w-[25%]">
+              <div className="flex flex-col gap-2 w-[45%] lg:w-[23%]">
                 <label
                   htmlFor="username"
                   className="text-[#191C1F] text-[14px]"
@@ -125,8 +148,8 @@ const page = () => {
                 />
               </div>
             </div>
-            <div className="flex justify-between flex-wrap items-end w-full gap-4">
-              <div className="flex flex-col gap-2 w-full lg:w-[50%]">
+            <div className="flex justify-between items-end w-full gap-4 flex-wrap">
+              <div className="flex flex-col gap-2 w-full lg:w-[48%]">
                 <label
                   htmlFor="username"
                   className="text-[#191C1F] text-[14px]"
@@ -141,7 +164,7 @@ const page = () => {
                   placeholder="Email Address"
                 />
               </div>
-              <div className="flex flex-col gap-2 w-full lg:w-[50%]">
+              <div className="flex flex-col gap-2 w-full lg:w-[48%]">
                 <label
                   htmlFor="username"
                   className="text-[#191C1F] text-[14px]"
@@ -162,15 +185,69 @@ const page = () => {
               Additional Information
             </h2>
           </div>
-          <div className="flex flex-col gap-2 w-full">
-            <label htmlFor="username" className="text-[#191C1F] text-[14px]">
-              Order Notes <span className="text-[#929FA5]">(Optional)</span>
-            </label>
-            <textarea
-              className="border-[#E4E7E9] text-[14px] border-[1px] h-[124px] py-2 px-5 outline-none"
-              placeholder="Notes about your order, e.g. special notes for delivery. This notes may or may not be checked."
-            />
-          </div>
+          {customizable ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 h-full w-full gap-4 lg:gap-2">
+              <div className="flex flex-col">
+                <label
+                  htmlFor="username"
+                  className="text-[#191C1F] text-[14px]"
+                >
+                  Order Notes <span className="text-[#929FA5]">(Optional)</span>
+                </label>
+                <textarea
+                  className="border-[#E4E7E9] text-[14px] border-[1px] h-[150px] lg:h-full py-2 px-5 outline-none"
+                  placeholder="Notes about your order, e.g. special notes for delivery. This notes may or may not be checked."
+                />
+              </div>
+
+              <div className="flex flex-col items-start">
+                <label className="text-[#191C1F]">
+                  Upload Image you want printed
+                </label>
+                <input
+                  type="file"
+                  required
+                  className="hidden"
+                  ref={photoInput}
+                  onChange={handleValidChange}
+                />
+                <div
+                  className="border-[2px] border-dashed border-[##E4E7E9] rounded-[8px] px-8 w-full flex flex-col justify-center items-center cursor-pointer py-[26px]"
+                  onClick={() => {
+                    if (photoInput.current) {
+                      // @ts-ignore
+                      photoInput.current.click();
+                    }
+                  }}
+                >
+                  {image.length < 1 ? (
+                    <>
+                      <Image width={64} height={64} src="/image.png" alt="" />{" "}
+                      <p className="text-[#929FA5] text-center">
+                        Drop your image here, or{" "}
+                        <span className="text-primary">Browse</span> <br />
+                        Jpeg, png are allowed
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-green-400">
+                      File uploaded successfully!
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col">
+              <label htmlFor="username" className="text-[#191C1F] text-[14px]">
+                Order Notes <span className="text-[#929FA5]">(Optional)</span>
+              </label>
+              <textarea
+                className="border-[#E4E7E9] text-[14px] border-[1px] h-[150px] py-2 px-5 outline-none"
+                placeholder="Notes about your order, e.g. special notes for delivery. This notes may or may not be checked."
+              />
+            </div>
+          )}
         </div>
         <div className="border-[#E4E7E9] border-[1px] lg:w-[33%] rounded-[4px]">
           <div className="px-6 py-5">
