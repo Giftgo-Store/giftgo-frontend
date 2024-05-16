@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import React, { ReactNode } from "react";
 import Header from "./LandingHeader";
@@ -7,11 +7,15 @@ import { usePathname } from "next/navigation";
 import "../globals.css";
 import Image from "next/image";
 
-const AppWrapper = ({ children }: { children: ReactNode }) => {
+const AppWrapper = ({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) => {
   const pathname = usePathname();
   // const path = pathname.includes
   return (
-    <div className="relative">
+    <div className="relative" suppressHydrationWarning>
       {!pathname.includes("admin") && (
         <div className="relative">
           <Header />
@@ -24,11 +28,14 @@ const AppWrapper = ({ children }: { children: ReactNode }) => {
               className="absolute right-2"
             />
           </div>
+          <div>
+
           {children}
+          </div>
           <Footer />
         </div>
       )}
-      {pathname.includes("admin") && <>{children}</>}
+      {pathname.includes("admin") && <div>{children}</div>}
     </div>
   );
 };

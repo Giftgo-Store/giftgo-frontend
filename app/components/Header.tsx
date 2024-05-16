@@ -56,6 +56,7 @@ export function Header() {
         classNames={{
           wrapper: ["px-0", "bg-transparent"],
         }}
+        suppressHydrationWarning
       >
         <NavbarContent>
           <NavbarBrand>
@@ -72,7 +73,7 @@ export function Header() {
         <NavbarContent justify="end">
           <div className="flex gap-6 max-[200px] justify-between items-center">
             <Dropdown placement="bottom-start">
-              <DropdownTrigger>
+              <DropdownTrigger suppressHydrationWarning>
                 <Button
                   isIconOnly
                   className="bg-transparent w-[50px] h-[50px] p-3"
@@ -97,7 +98,7 @@ export function Header() {
               </DropdownMenu>
             </Dropdown>
             <Dropdown placement="bottom-start">
-              <DropdownTrigger>
+              <DropdownTrigger suppressHydrationWarning>
                 <Button
                   isIconOnly
                   className="bg-transparent w-[50px] h-[50px] p-3"
@@ -134,12 +135,11 @@ export function Header() {
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
-            <Button isIconOnly className="md:hidden bg-transparent">
+           
               <NavbarMenuToggle
                 aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                 className="md:hidden"
               />
-            </Button>
           </div>
         </NavbarContent>
         <NavbarMenu className="flex flex-col gap-3 text-xl text-black">
