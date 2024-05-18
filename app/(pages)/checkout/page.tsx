@@ -4,7 +4,7 @@ import Image from "next/image";
 import { FiMinus, FiPlus, FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import { useRef, useState } from "react";
 
-const page = () => {
+const Page = () => {
   const [image, setImage] = useState<string[]>([]);
   const [customizable, setCustomizable] = useState(true);
   const photoInput: React.MutableRefObject<HTMLInputElement | null> =
@@ -323,4 +323,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
