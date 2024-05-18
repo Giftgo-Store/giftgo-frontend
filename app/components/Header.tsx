@@ -265,7 +265,7 @@ export function Header() {
         </NavbarMenu>
       </Navbar>
     );
-  },[isMenuOpen])
+  },[isMenuOpen, pageName, pathname])
   return (
    nav()
   );
