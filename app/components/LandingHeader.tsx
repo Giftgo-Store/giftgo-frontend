@@ -94,8 +94,19 @@ const [isOpen, setIsOpen] = useState(false)
             </div>
 
             <div className="flex justify-center items-center gap-[20px] lg:hidden">
-              <PiShoppingCart className="w-[25px] text-white h-[25px]" />
-              <AiOutlineUser className="w-[25px] text-white h-[25px]" />
+              <PiShoppingCart
+                className="w-[25px] text-white h-[25px]"
+                onClick={openCheckoutModal}
+              />
+              <CheckoutModal
+                showCheckoutModal={showCheckoutModal}
+                closeCheckoutModal={closeCheckoutModal}
+              />
+              <AiOutlineUser
+                className="w-[25px] text-white h-[25px]"
+                onClick={openModal}
+              />
+              <Modal showModal={showModal} closeModal={closeModal} />
               <select
                 name=""
                 id=""
@@ -145,7 +156,10 @@ const [isOpen, setIsOpen] = useState(false)
                 className="w-[25px] text-white h-[25px] cursor-pointer"
                 onClick={openCheckoutModal}
               />
-              <CheckoutModal showCheckoutModal={showCheckoutModal} closeCheckoutModal={closeCheckoutModal} />
+              <CheckoutModal
+                showCheckoutModal={showCheckoutModal}
+                closeCheckoutModal={closeCheckoutModal}
+              />
               <AiOutlineUser
                 className="w-[25px] text-white h-[25px] cursor-pointer"
                 onClick={openModal}

@@ -38,7 +38,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
         { "bg-overlayy ": showModal, hidden: !showModal }
       )}
     >
-      <div className="absolute right-[120px] bg-white rounded-[4px] top-[195px] shadow-lg w-[426px] py-3">
+      <div className="absolute lg:right-[120px] bg-white rounded-[4px] top-[100px] lg:top-[195px] shadow-lg w-[90%] lg:w-[426px] py-3">
         <button
           className="absolute z-40 top-0 right-0 mt-1 mr-2 text-[20px] text-gray-600"
           onClick={closeModal}

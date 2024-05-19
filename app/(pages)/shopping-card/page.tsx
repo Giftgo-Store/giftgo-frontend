@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { FiMinus, FiPlus, FiArrowLeft, FiArrowRight } from "react-icons/fi";
 
-const page = () => {
+const Page = () => {
   return (
     <>
       <div className="py-[20px] px-[8%] text-center bg-secondary mb-[56px]">
@@ -184,4 +184,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
