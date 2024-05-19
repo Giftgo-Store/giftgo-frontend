@@ -252,7 +252,7 @@ const Page = () => {
         <div className="border-[#E4E7E9] border-[1px] lg:w-[33%] rounded-[4px]">
           <div className="px-6 py-5">
             <h2 className="text-[18px] font-[500] text-[#191C1F]">
-              Order Summery
+              Order Summary
             </h2>
           </div>
 

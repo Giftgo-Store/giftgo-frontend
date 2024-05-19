@@ -18,6 +18,7 @@ const config: Config = {
         primary: "rgba(235, 99, 99, 1)",
         secondary: "rgba(254, 239, 211, 1)",
         cardBg: "rgba(148, 148, 148, 0.4)",
+        overlayy: "rgba(25, 28, 31, 0.5)",
       },
     },
   },
