@@ -9,9 +9,22 @@ import { AiOutlineUser } from "react-icons/ai";
 import { GiHamburgerMenu } from "react-icons/gi";
 import Link from "next/link";
 import { useState } from "react";
+import Modal from "./LoginModal";
+import CheckoutModal from "./CheckoutModal";
+
 
 const LandingHeader = () => {
 const [isOpen, setIsOpen] = useState(false)
+
+ const [showModal, setShowModal] = useState(false);
+
+ const openModal = () => setShowModal(true);
+ const closeModal = () => setShowModal(false);
+
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+
+  const openCheckoutModal = () => setShowCheckoutModal(true);
+  const closeCheckoutModal = () => setShowCheckoutModal(false);
 
     const toggleMenu = () => {
       window.scroll(0, 0);
@@ -81,8 +94,19 @@ const [isOpen, setIsOpen] = useState(false)
             </div>
 
             <div className="flex justify-center items-center gap-[20px] lg:hidden">
-              <PiShoppingCart className="w-[25px] text-white h-[25px]" />
-              <AiOutlineUser className="w-[25px] text-white h-[25px]" />
+              <PiShoppingCart
+                className="w-[25px] text-white h-[25px]"
+                onClick={openCheckoutModal}
+              />
+              <CheckoutModal
+                showCheckoutModal={showCheckoutModal}
+                closeCheckoutModal={closeCheckoutModal}
+              />
+              <AiOutlineUser
+                className="w-[25px] text-white h-[25px]"
+                onClick={openModal}
+              />
+              <Modal showModal={showModal} closeModal={closeModal} />
               <select
                 name=""
                 id=""
@@ -128,8 +152,19 @@ const [isOpen, setIsOpen] = useState(false)
                 <FiPhoneCall />
                 <p>+234 9000000000</p>
               </div>
-              <PiShoppingCart className="w-[25px] text-white h-[25px]" />
-              <AiOutlineUser className="w-[25px] text-white h-[25px]" />
+              <PiShoppingCart
+                className="w-[25px] text-white h-[25px] cursor-pointer"
+                onClick={openCheckoutModal}
+              />
+              <CheckoutModal
+                showCheckoutModal={showCheckoutModal}
+                closeCheckoutModal={closeCheckoutModal}
+              />
+              <AiOutlineUser
+                className="w-[25px] text-white h-[25px] cursor-pointer"
+                onClick={openModal}
+              />
+              <Modal showModal={showModal} closeModal={closeModal} />
               <select
                 name=""
                 id=""
