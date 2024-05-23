@@ -269,7 +269,7 @@ export default function OrderManagement() {
     [statusFilterValue, filteredItems]
   );
   return (
-    <div className="pb-12">
+    <div className="pb-12" suppressHydrationWarning={true}>
       <div className="w-full overflow-x-auto py-2">
         <Suspense fallback={<TabFallback />}>{MyTabs()}</Suspense>
       </div>

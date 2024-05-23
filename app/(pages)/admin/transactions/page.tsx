@@ -13,12 +13,11 @@ import {
   TableRow,
 } from "@nextui-org/react";
 import { OrderList } from "@/app/assets/data";
-import { pages } from "next/dist/build/templates/app-page";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
-
 import { useState, useEffect, useMemo, useCallback, Suspense } from "react";
 import { CiSearch } from "react-icons/ci";
 import { TbTrash } from "react-icons/tb";
+
 interface user {
   orderId: string;
   timestamp: string;
@@ -26,6 +25,7 @@ interface user {
   totalAmount: number;
   status: string;
 }
+
 export default function Transactions() {
   const [filterValue, setFilterValue] = useState("");
   const [sortOption, setSortOption] = useState<string>("Recent");
@@ -33,6 +33,7 @@ export default function Transactions() {
   const [statusFilterValue, setStatusFilterValue] = useState("All");
   const [rowsPerPage, setRowsPerPage] = useState<any | string[]>("10");
   const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
+  console.log(statusFilterValue);
   const status = [
     "All",
     "Pending",
@@ -51,13 +52,71 @@ export default function Transactions() {
     { name: "STATUS", uid: "status" },
     { name: "ACTION", uid: "action" },
   ];
-  const pathname = usePathname();
-  const { replace } = useRouter();
+  const { push, replace } = useRouter();
   const searchParams = useSearchParams();
-
+  const pathname = usePathname();
+  
   useEffect(() => {
-    setStatusFilterValue(`${pathname}?${searchParams}`);
+    const initialStatus = searchParams.get("status") || "All";
+    const initialRowsPerPage = searchParams.get("rowsPerPage") || "10";
+    const initialPage = searchParams.get("page") || "1";
+    
+    setStatusFilterValue(initialStatus);
+    setRowsPerPage(initialRowsPerPage);
+    setPage(Number(initialPage));
   }, [searchParams]);
+
+  
+ const updateSearchParams = (newParams: any) => {
+   const params = new URLSearchParams(searchParams);
+   Object.keys(newParams).forEach((key) => {
+     params.set(key, newParams[key]);
+   });
+   replace(`${pathname}?${params.toString()}`);
+ };
+
+
+  const handleStatusChange = (status: string) => {
+    setStatusFilterValue(status);
+    setPage(1);
+    setRowsPerPage("10");
+    updateSearchParams({
+      status,
+      page: 1,
+      rowsPerPage: "10",
+      filter: filterValue,
+    });
+  };
+
+  const handleRowsPerPageChange = (rows: string) => {
+    setRowsPerPage(rows);
+    setPage(1);
+    updateSearchParams({
+      rowsPerPage: rows,
+      page: 1,
+      status: statusFilterValue,
+      filter: filterValue,
+    });
+  };
+
+  const handlePageChange = (newPage: any) => {
+    setPage(newPage);
+    updateSearchParams({
+      page: newPage,
+      status: statusFilterValue,
+      rowsPerPage,
+      filter: filterValue,
+    });
+  };
+
+ useEffect(() => {
+   updateSearchParams({ filter: filterValue });
+ }, [filterValue]);
+
+ useEffect(() => {
+   const initialFilter = searchParams.get("filter") || "";
+   setFilterValue(initialFilter);
+ }, []);
   // Filter and sort items based on sort option
   const filteredItems = useMemo(() => {
     let sortedList = OrderList.slice(); // Create a copy of the original list
@@ -66,18 +125,26 @@ export default function Transactions() {
       // Apply status and orderId filters
       if (statusFilterValue.includes("All")) {
         if (filterValue.length > 0) {
-          return item.customerName.includes(filterValue);
+          return item.customerName
+            .toLocaleLowerCase()
+            .includes(filterValue.toLocaleLowerCase());
         }
         return true;
       } else {
         if (typeof item.status === "string") {
           if (filterValue.length > 0) {
             return (
-              item.customerName.includes(filterValue) &&
-              statusFilterValue.includes(item.status)
+              item.customerName
+                .toLocaleLowerCase()
+                .includes(filterValue.toLocaleLowerCase()) &&
+              statusFilterValue
+                .toLocaleLowerCase()
+                .includes(item.status.toLocaleLowerCase())
             );
           }
-          return statusFilterValue.includes(item.status);
+          return statusFilterValue
+            .toLocaleLowerCase()
+            .includes(item.status.toLocaleLowerCase());
         }
         return false;
       }
@@ -102,40 +169,11 @@ export default function Transactions() {
     sortOption,
     rowsPerPage,
   ]);
+
   const pages = useMemo(() => {
     return Math.ceil(filteredItems.length / Number(rowsPerPage));
   }, [Items]);
 
-  const MySelect = useCallback(() => {
-    return (
-      <Select
-        aria-label={"status select"}
-        suppressHydrationWarning={true}
-        radius="none"
-        size="md"
-        classNames={{
-          trigger: ["bg-white","min-w-[200px]","w-full"],
-        }}
-        onChange={(e) => {
-          replace(e.target.value);
-          setStatusFilterValue(e.target.value);
-          setPage(1);
-        }}
-        selectedKeys={[`${pathname}?${searchParams}`]}
-      >
-        {status.map((item) => (
-          <SelectItem
-            key={searchParams ? `${pathname}?tab=${item}` : pathname}
-            value={item}
-            className=""
-          >
-            {item}
-          </SelectItem>
-        ))}
-      </Select>
-    );
-  }, [searchParams]);
-  
   function statusColor(orderStatus: string) {
     switch (orderStatus) {
       case "Pending":
@@ -156,6 +194,7 @@ export default function Transactions() {
         return "text-[#FFC600] ";
     }
   }
+
   const topContent = useMemo(() => {
     return (
       <div className="flex gap-4 lg:justify-normal justify-between w-full items-center">
@@ -181,10 +220,29 @@ export default function Transactions() {
             setFilterValue(e.target.value);
           }}
         ></Input>
-        <div><Suspense>{MySelect()}</Suspense></div>
+        <div>
+          <Select
+            aria-label={"status select"}
+            suppressHydrationWarning={true}
+            radius="none"
+            size="md"
+            classNames={{
+              trigger: ["bg-white", "min-w-[200px]", "w-full"],
+            }}
+            onChange={(e) => handleStatusChange(e.target.value)}
+            selectedKeys={[statusFilterValue]}
+          >
+            {status.map((item) => (
+              <SelectItem key={item} value={item} className="">
+                {item}
+              </SelectItem>
+            ))}
+          </Select>
+        </div>
       </div>
     );
-  }, [filterValue]);
+  }, [filterValue, statusFilterValue, Items]);
+
   const bottomContent = useMemo(() => {
     return (
       <div className="flex w-full justify-between sm:items-center gap-3">
@@ -194,9 +252,7 @@ export default function Transactions() {
             size="sm"
             className=" w-[100px]"
             selectedKeys={[rowsPerPage]}
-            onChange={(e) => {
-              setRowsPerPage(e.target.value);
-            }}
+            onChange={(e) => handleRowsPerPageChange(e.target.value)}
             aria-label="rows"
           >
             {rowsPerPageOptions.map((option) => (
@@ -219,9 +275,7 @@ export default function Transactions() {
             total={pages}
             initialPage={1}
             page={page}
-            onChange={(page) => {
-              setPage(page);
-            }}
+            onChange={handlePageChange}
           />
         </div>
       </div>
@@ -245,7 +299,9 @@ export default function Transactions() {
       case "method":
         return <p className="pl-1">CC</p>;
       case "status":
-        return <p className={`${statusColor(user.status)} pl-1`}>{user.status}</p>;
+        return (
+          <p className={`${statusColor(user.status)} pl-1`}>{user.status}</p>
+        );
       case "action":
         return (
           <Button className="text-[#1EB564] bg-transparent pl-0">
@@ -256,6 +312,7 @@ export default function Transactions() {
         return "unavailable";
     }
   }, []);
+
   return (
     <div className="pb-16">
       <Table
@@ -292,7 +349,6 @@ export default function Transactions() {
               align={"start"}
               allowsSorting={column.sortable}
               className={column.uid === "actions" ? "px-6" : "px-4"}
-              
             >
               {column.name}
             </TableColumn>

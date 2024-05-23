@@ -21,6 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${inter.className} absolute h-screen w-full`}
+        suppressHydrationWarning
       >
         <Providers>
           <AppWrapper>{children}</AppWrapper>

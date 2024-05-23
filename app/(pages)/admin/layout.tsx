@@ -22,7 +22,7 @@ export default function RootLayout({
 
   return (
     <Providers>
-      <div className="flex bg-[#FAFAFA]">
+      <div className="flex bg-[#FAFAFA]" suppressHydrationWarning>
         <Nav />
         <div className="h-screen w-full overflow-y-auto">
           <div className="sm:px-6 px-3 flex flex-col">
