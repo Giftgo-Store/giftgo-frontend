@@ -1,11 +1,10 @@
-// components/Modal.tsx
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import classNames from "classnames";
 import { FaArrowRight } from "react-icons/fa6";
 import Image from "next/image";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import BASE_URL from "../config/baseurl";
 import axios from "axios";
+import BASE_URL from "../config/baseurl";
 
 interface ModalProps {
   showModal: boolean;
@@ -16,6 +15,13 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
   const [activeNav, setActiveNav] = useState("1");
   const [showPassword, setShowPassword] = useState(false);
   const [signInData, setSignInData] = useState({ email: "", password: "" });
+  const [signUpData, setSignUpData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+  });
 
   const handlePassword = () => {
     setShowPassword(!showPassword);
@@ -25,15 +31,38 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
     setSignInData({ ...signInData, [e.target.name]: e.target.value });
   };
 
+  const handleSignUpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSignUpData({ ...signUpData, [e.target.name]: e.target.value });
+  };
+
   const handleSignInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${BASE_URL}/auth/log-in`, signInData);
+      const response = await axios.post(`${BASE_URL}/log-in`, signInData);
       // Handle successful response, e.g., save token, redirect, etc.
       console.log("Sign In Successful", response.data);
       closeModal();
     } catch (error) {
       console.error("Sign In Error", error.response?.data || error.message);
+    }
+  };
+
+  const handleSignUpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (signUpData.password !== signUpData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/api/v1/auth/sign-up`,
+        signUpData
+      );
+      // Handle successful response, e.g., show success message, redirect, etc.
+      console.log("Sign Up Successful", response.data);
+      closeModal();
+    } catch (error) {
+      console.error("Sign Up Error", error.response?.data || error.message);
     }
   };
 
@@ -75,13 +104,16 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
         </div>
         {activeNav === "1" && (
           <>
-            <form className="p-6">
+            <form className="p-6" onSubmit={handleSignInSubmit}>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-[#191C1F]">
                   Email Address
                 </label>
                 <input
                   type="email"
+                  name="email"
+                  value={signInData.email}
+                  onChange={handleSignInChange}
                   className="mt-1 block w-full p-2 border h-[44px] border-gray-300 rounded-[2px]"
                   required
                 />
@@ -94,6 +126,9 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={signInData.password}
+                    onChange={handleSignInChange}
                     className="mt-1 block w-full p-2 border h-[44px] border-gray-300 rounded-[2px]"
                     required
                   />
@@ -120,7 +155,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
             </form>
             <div className="flex justify-between px-6 items-center">
               <div className="bg-[#E4E7E9] h-[2px] w-[45%]"></div>
-              <button className="text-sm text-[#77878F">or</button>
+              <button className="text-sm text-[#77878F]">or</button>
               <div className="bg-[#E4E7E9] h-[2px] w-[45%]"></div>
             </div>
             <div className="text-center px-6 py-4">
@@ -150,13 +185,16 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
 
         {activeNav === "2" && (
           <>
-            <form className="p-6">
+            <form className="p-6" onSubmit={handleSignUpSubmit}>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-[#191C1F]">
                   Name
                 </label>
                 <input
-                  type="name"
+                  type="text"
+                  name="name"
+                  value={signUpData.name}
+                  onChange={handleSignUpChange}
                   className="mt-1 block w-full p-2 border h-[44px] border-gray-300 rounded-[2px]"
                   required
                 />
@@ -167,10 +205,27 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                 </label>
                 <input
                   type="email"
+                  name="email"
+                  value={signUpData.email}
+                  onChange={handleSignUpChange}
                   className="mt-1 block w-full p-2 border h-[44px] border-gray-300 rounded-[2px]"
                   required
                 />
               </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-[#191C1F]">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={signUpData.phone}
+                  onChange={handleSignUpChange}
+                  className="mt-1 block w-full p-2 border h-[44px] border-gray-300 rounded-[2px]"
+                  required
+                />
+              </div>
+
               <div className="mb-4">
                 <label className="text-sm font-medium text-[#191C1F] flex justify-between items-center">
                   Password
@@ -178,6 +233,9 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={signUpData.password}
+                    onChange={handleSignUpChange}
                     className="mt-1 block w-full p-2 border h-[44px] border-gray-300 rounded-[2px]"
                     placeholder="at least 8 characters"
                     required
@@ -202,6 +260,9 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    value={signUpData.confirmPassword}
+                    onChange={handleSignUpChange}
                     className="mt-1 block w-full p-2 border h-[44px] border-gray-300 rounded-[2px]"
                     required
                   />
@@ -242,7 +303,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
             </form>
             <div className="flex justify-between px-6 items-center">
               <div className="bg-[#E4E7E9] h-[2px] w-[45%]"></div>
-              <button className="text-sm text-[#77878F">or</button>
+              <button className="text-sm text-[#77878F]">or</button>
               <div className="bg-[#E4E7E9] h-[2px] w-[45%]"></div>
             </div>
             <div className="text-center px-6 py-4">
