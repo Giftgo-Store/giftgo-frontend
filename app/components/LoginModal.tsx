@@ -5,6 +5,7 @@ import { FaArrowRight } from "react-icons/fa6";
 import Image from "next/image";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import BASE_URL from "../config/baseurl";
+import axios from "axios";
 
 interface ModalProps {
   showModal: boolean;
@@ -23,6 +24,8 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
   const handleSignInChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSignInData({ ...signInData, [e.target.name]: e.target.value });
   };
+
+  
 
   return (
     <div
