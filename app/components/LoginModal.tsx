@@ -62,7 +62,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       console.log("Sign Up Successful", response.data);
       closeModal();
     } catch (error) {
-      console.error("Sign Up Error", error.response?.data || error.message);
+      // console.error("Sign Up Error", error.response?.data || error.message); 
     }
   };
 
