@@ -20,6 +20,10 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
     setShowPassword(!showPassword);
   };
 
+  const handleSignInChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSignInData({ ...signInData, [e.target.name]: e.target.value });
+  };
+
   return (
     <div
       className={classNames(
