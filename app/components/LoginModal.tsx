@@ -38,7 +38,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
   const handleSignInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${BASE_URL}/log-in`, signInData);
+      const response = await axios.post(`${BASE_URL}/api/v1/auth/log-in`, signInData);
       // Handle successful response, e.g., save token, redirect, etc.
       console.log("Sign In Successful", response.data);
       closeModal();
