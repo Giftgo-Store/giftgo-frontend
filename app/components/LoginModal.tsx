@@ -18,19 +18,6 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
         setShowPassword(!showPassword);
       }
 
-    // useEffect(() => {
-    //   if (showModal) {
-    //     document.body.classList.add("overflow-hidden");
-    //   } else {
-    //     document.body.classList.remove("overflow-hidden");
-    //   }
-
-    //   // Cleanup function to remove the class when the component is unmounted
-    //   return () => {
-    //     document.body.classList.remove("overflow-hidden");
-    //   };
-    // }, [showModal]);
-
   return (
     <div
       className={classNames(
