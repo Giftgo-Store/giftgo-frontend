@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { FaArrowRight } from "react-icons/fa6";
 import Image from "next/image";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import BASE_URL from "../config/baseurl";
 
 interface ModalProps {
   showModal: boolean;
