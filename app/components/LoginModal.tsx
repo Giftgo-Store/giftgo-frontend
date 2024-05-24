@@ -14,6 +14,7 @@ interface ModalProps {
 const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
   const [activeNav, setActiveNav] = useState("1");
   const [showPassword, setShowPassword] = useState(false);
+  const [signInData, setSignInData] = useState({ email: "", password: "" });
 
   const handlePassword = () => {
     setShowPassword(!showPassword);
