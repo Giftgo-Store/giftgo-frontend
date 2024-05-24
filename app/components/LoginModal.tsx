@@ -11,12 +11,12 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
-      const [activeNav, setActiveNav] = useState("1");
-      const [showPassword, setShowPassword] = useState(false);
+  const [activeNav, setActiveNav] = useState("1");
+  const [showPassword, setShowPassword] = useState(false);
 
-      const handlePassword = () => {
-        setShowPassword(!showPassword);
-      }
+  const handlePassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   return (
     <div
