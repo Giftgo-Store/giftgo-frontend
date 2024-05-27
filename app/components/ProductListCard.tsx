@@ -36,7 +36,7 @@ export default function ProductListCard({
   DeleteProduct,
 }: cardprops) {
   return (
-    <div className="bg-white p-4 max-w-[360px] flex flex-col gap-4 rounded-lg">
+    <div className="bg-white p-4 sm:max-w-[360px] w-full flex flex-col gap-4 rounded-lg">
       <div className="flex gap-2 w-full h-max">
         <Image
           removeWrapper
@@ -49,10 +49,12 @@ export default function ProductListCard({
         <div className="flex justify-between w-full items-start ">
           <div className="flex flex-col justify-between h-full">
             <div className="flex flex-col gap-1">
-              <p className="font-semibold text-[15px] leading-[17.63px]">
+              <p className="font-semibold text-[15px] leading-[17.63px] max-w-[150px] w-full whitespace-wrap whitespace-pre-wrap text-ellipsis overflow-hidden line-clamp-2">
                 {productName}
               </p>
-              <span className="text-sm text-[#8B909A]">{productCategory}</span>
+              <span className="text-sm text-[#8B909A] max-w-[140px] overflow-hidden text-ellipsis">
+                {productCategory}
+              </span>
             </div>
             <p className="text-[15px] font-semibold leading-[22px]">
               ₦{productPrice}
@@ -67,7 +69,6 @@ export default function ProductListCard({
                 className="object-cover rounded-lg w-[20px] h-[20px]"
                 width={100}
                 height={100}
-                
               />
             </Button>
             <div>
@@ -101,7 +102,9 @@ export default function ProductListCard({
       </div>
       <div>
         <p className="font-semibold text-base">Summary</p>
-        <p className="text-[#8B909A] text-sm">{productSummary}</p>
+        <p className="text-[#8B909A] text-sm max-h-[60px] whitespace-wrap whitespace-pre-wrap text-ellipsis overflow-hidden line-clamp-2">
+          {productSummary}
+        </p>
       </div>
       <div className="p-3 border-1 border-[#2323214D] rounded-lg">
         <div className="flex flex-col">

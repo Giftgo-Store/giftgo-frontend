@@ -2,6 +2,18 @@
 const nextConfig = {
   experimental: {
     missingSuspenseWithCSRBailout: false,
+    appDir: true,
+  },
+  images: {
+    
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+        port: '',
+        pathname: '**',
+      },
+    ],
   },
 };
 

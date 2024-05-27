@@ -11,18 +11,28 @@ import {
   Listbox,
   ListboxItem,
   Selection,
+  Skeleton,
 } from "@nextui-org/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { SlPicture } from "react-icons/sl";
 import Image from "next/image";
+
+interface Category {
+  name: string;
+  image: string;
+}
+
 export default function AddCategories() {
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [categoryName, setCategoryName] = useState("");
   const [selectedImage, setSelectedImage] = useState<any>("");
   const [imagePreview, setImagePreview] = useState("");
+  const [allCategories, setAllCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const selectedValue = useMemo(
     () => Array.from(selectedKeys).join(", "),
     [selectedKeys]
@@ -38,6 +48,69 @@ export default function AddCategories() {
       setImagePreview(imageURL);
     }
   };
+
+  const getAllCategory = async () => {
+    setLoading(true);
+
+    try {
+      const res = await fetch(
+        "https://giftgo.onrender.com/api/v1/category/all-categories",
+        {
+          headers: {
+            AUTHORIZATION:
+              "Bearer " +
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjRkZTRkNTZmNzZkZDUwZmE1MWMwODQiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTY0ODU5MTMsImV4cCI6MTcxNzA5MDcxM30.3Pf80kfMummuuI0sqoeY2NVHcQ6ToGijLSTvP744htI",
+          },
+        }
+      );
+
+      const resData = await res.json();
+      setLoading(false);
+      setAllCategories(resData.data);
+    } catch (error) {
+      // console.log(error);
+    }
+  };
+
+  const addCategory = async () => {
+    const data = new FormData();
+    data.append("image", selectedImage as unknown as Blob);
+    data.append("name", categoryName);
+
+    try {
+      const res = await fetch(
+        "https://giftgo.onrender.com/api/v1/category/add-category",
+        {
+          headers: {
+            AUTHORIZATION:
+              "Bearer " +
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjRkZTRkNTZmNzZkZDUwZmE1MWMwODQiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTY0ODU5MTMsImV4cCI6MTcxNzA5MDcxM30.3Pf80kfMummuuI0sqoeY2NVHcQ6ToGijLSTvP744htI",
+          },
+          method: "POST",
+          body: data,
+        }
+      );
+
+      const resData = await res.json();
+      // setItems(productData)
+      onClose();
+      setSelectedImage("");
+      setCategoryName("");
+      getAllCategory();
+    } catch (error) {
+      //console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getAllCategory();
+  }, []);
+
+  // Filter categories based on filterValue
+  const filteredCategories = allCategories.filter((category) =>
+    category.name.toLowerCase().includes(filterValue.toLowerCase())
+  );
+
   return (
     <div>
       <div className="flex w-full justify-between items-center gap-4">
@@ -71,7 +144,7 @@ export default function AddCategories() {
           }}
           className="text-white bg-[#1EB564]"
         >
-          Add new product
+          Add new category
         </Button>
       </div>
       <div className="py-8">
@@ -83,6 +156,7 @@ export default function AddCategories() {
             setSelectedImage("");
             setImagePreview("");
           }}
+          placement="center"
         >
           <ModalContent>
             {(onClose) => (
@@ -108,25 +182,22 @@ export default function AddCategories() {
                         "group-data-[focus=true]:bg-white",
                       ],
                     }}
-                    value={
-                      selectedValue.length < 0 ? categoryName : selectedValue
-                    }
+                    value={categoryName}
                     onChange={(e) => {
                       setCategoryName(e.target.value);
                     }}
                   ></Input>
                   <p className="text-lg py-2">Upload a picture</p>
                   {selectedImage ? (
-                      <Image
-                        src={imagePreview}
-                        alt="Preview"
-                        className="object-contain max-w-[300px] max-h-[300px] w-full h-full rounded-md mx-auto"
-                        width={100}
-                        height={100}
-                      />
-                    ) :
-                  <div className="flex justify-center items-center flex-col gap-4  p-4 py-5 bordered-input">
-                     
+                    <Image
+                      src={imagePreview}
+                      alt="Preview"
+                      className="object-contain max-w-[300px] max-h-[300px] w-full h-full rounded-md mx-auto"
+                      width={100}
+                      height={100}
+                    />
+                  ) : (
+                    <div className="flex justify-center items-center flex-col gap-4  p-4 py-5 bordered-input">
                       <div className="w-full h-full">
                         <form
                           onSubmit={(event) => {
@@ -171,11 +242,14 @@ export default function AddCategories() {
                           </label>
                         </form>
                       </div>
-                    
-                  </div>}
+                    </div>
+                  )}
                 </ModalBody>
                 <ModalFooter className="flex justify-center">
-                  <Button className="bg-[#1EB564] text-white text-sm w-[150px]">
+                  <Button
+                    className="bg-[#1EB564] text-white text-sm w-[150px]"
+                    onClick={addCategory}
+                  >
                     CONFIRM
                   </Button>
                   <Button
@@ -193,78 +267,48 @@ export default function AddCategories() {
           </ModalContent>
         </Modal>
       </div>
-      <div>
-        <Listbox
-          aria-label="Actions"
-          selectionMode="single"
-          selectedKeys={selectedKeys}
-          onSelectionChange={setSelectedKeys}
-          className="max-w-[300px] flex flex-col gap-4"
-          classNames={{
-            list: "gap-3 flex",
-          }}
-        >
-          <ListboxItem
-            className="border-1"
-            startContent={
-              <Image
-                src={"/category-img.png"}
-                alt="category image"
-                width={1000}
-                height={1000}
-                className="w-[35px] h-[35px]"
-              />
-            }
-            key="shoes"
+      <div className="w-full">
+        {!loading ? (
+          <Listbox
+            aria-label="Actions"
+            selectionMode="single"
+            selectedKeys={selectedKeys}
+            onSelectionChange={(value: any) => {
+              setSelectedKeys(value);
+              setCategoryName(selectedValue);
+            }}
+            className=" flex gap-3 flex-wrap w-full"
+            classNames={{
+              list: "gap-3 flex flex-wrap flex-row w-full",
+              base: "gap-3 flex-wrap w-full",
+            }}
           >
-            Shoes
-          </ListboxItem>
-          <ListboxItem
-            className="border-1"
-            startContent={
-              <Image
-                src={"/category-img.png"}
-                alt="category image"
-                width={1000}
-                height={1000}
-                className="w-[35px] h-[35px]"
-              />
-            }
-            key="dresses"
-          >
-            Dresses
-          </ListboxItem>
-          <ListboxItem
-            className="border-1"
-            startContent={
-              <Image
-                src={"/category-img.png"}
-                alt="category image"
-                width={1000}
-                height={1000}
-                className="w-[35px] h-[35px]"
-              />
-            }
-            key="bags"
-          >
-            Bags
-          </ListboxItem>
-          <ListboxItem
-            className="border-1"
-            startContent={
-              <Image
-                src={"/category-img.png"}
-                alt="category image"
-                width={1000}
-                height={1000}
-                className="w-[35px] h-[35px]"
-              />
-            }
-            key="toys"
-          >
-            Toys
-          </ListboxItem>
-        </Listbox>
+            {filteredCategories.map((category: Category) => (
+              <ListboxItem
+                className="border-1 max-w-[300px] w-full"
+                startContent={
+                  <Image
+                    src={category.image}
+                    alt="category image"
+                    width={1000}
+                    height={1000}
+                    className="w-[35px] h-[35px]"
+                  />
+                }
+                key={category.name}
+              >
+                {category.name}
+              </ListboxItem>
+            ))}
+          </Listbox>
+        ) : (
+          <div className="flex flex-wrap gap-3 w-full">
+            <Skeleton className="max-w-[300px] flex flex-col h-[55px] w-full"></Skeleton>
+            <Skeleton className="max-w-[300px] flex flex-col h-[55px] w-full"></Skeleton>
+            <Skeleton className="max-w-[300px] flex flex-col h-[55px] w-full"></Skeleton>
+            <Skeleton className="max-w-[300px] flex flex-col h-[55px] w-full"></Skeleton>
+          </div>
+        )}
       </div>
     </div>
   );
