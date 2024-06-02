@@ -1,11 +1,23 @@
 "use client";
 
+import ReviewModal from "@/app/components/ReviewModal";
 import Image from "next/image";
 import { useState } from "react";
-import { FiMinus, FiPlus, FiArrowLeft, FiArrowRight } from "react-icons/fi";
+import { FaStar } from "react-icons/fa6";
 
 const History = () => {
   const [showDetails, setShowDetails] = useState(true);
+  const [show, setShow] = useState(false);
+
+  const handleShow = () => {
+    setShow(true);
+  };
+
+  const handleClose = () => {
+    console.log("first");
+    setShow(!show);
+  };
+
   const handleShowDetails = () => {
     setShowDetails(false);
   };
@@ -327,11 +339,14 @@ const History = () => {
               </p>
             </div>
 
-            <div className="flex justify-center items-center gap-2">
+            <div
+              className="flex justify-center items-center gap-2 cursor-pointer"
+              onClick={handleShow}
+            >
               <p className="text-[14px] text-primary leading-[20px[">
                 Leave a Rating
               </p>
-              <Image src="/Plus.png" alt="" width={24} height={24} />
+              <Image src="/Plus.png" alt="" width={20} height={20} />
             </div>
           </div>
 
@@ -522,6 +537,88 @@ const History = () => {
               </div>
             </div>
           </div>
+
+          {show && (
+            <ReviewModal isOpen={show} onClose={handleClose}>
+              <p className="text-[14px] font-[500] text-[#191C1F] pb-[16px] border-b-[1px] border-b-[#E4E7E9] px-6 py-4 mb-[24px]">
+                LEAVE A REVIEW
+              </p>
+
+              <div className="flex justify-center items-center mb-6">
+                <div className="flex justify-center items-center gap-[24px] w-[80%]">
+                  {/* <div className=" bg-red-400"> */}
+                  <Image
+                    src="/cam.png"
+                    alt=""
+                    width={61}
+                    height={64}
+                    className="relative z-0 border-[#EDEDED] rounded-[12px] border-[6px]"
+                  />
+                  {/* </div> */}
+                  <div>
+                    <div className="">
+                      <div>
+                        <p className="font-[400] text-[14px] leading-[20px] text-[#475156]">
+                          2-Barrel Carburetor Carb 2100 Engine Increase
+                          Horsepower
+                        </p>
+                      </div>
+                      <p className="font-[500] text-[14px] leading-[20px] text-[#191C1F]">
+                        ₦13,000
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="px-6 mb-6">
+                <form action="">
+                  <fieldset className="flex flex-col items-start gap-2">
+                    <label
+                      htmlFor=""
+                      className="text-[14px] leading-[20px] text-[#191C1F]"
+                    >
+                      Rating
+                    </label>
+                    <select
+                      name=""
+                      id=""
+                      className="border-[#E4E7E9] rounded-[2px] h-[44px] outline-none w-full border-[1px] px-[18px] text-[14px] text-[#475156]"
+                    >
+                      <option value="">5 Star Rating</option>
+                      <option value="">4 Star Rating</option>{" "}
+                      <option value="">3 Star Rating</option>{" "}
+                      <option value="">2 Star Rating</option>{" "}
+                      <option value="">1 Star Rating</option>
+                    </select>
+                  </fieldset>
+                  <fieldset className="flex flex-col items-start gap-2 mb-[24px]">
+                    <label
+                      htmlFor=""
+                      className="text-[14px] leading-[20px] text-[#191C1F]"
+                    >
+                      Feedback
+                    </label>
+                    <input
+                      type="text"
+                      className="border-[#E4E7E9] rounded-[2px] h-[44px] outline-none w-full border-[1px] px-[18px] text-[14px] text-[#475156]"
+                      placeholder="Review Heading"
+                    />
+                    <textarea
+                      name=""
+                      className="border-[#E4E7E9] rounded-[2px] mt-2 h-[124px] outline-none w-full border-[1px] px-[18px] text-[14px] text-[#475156]"
+                      id=""
+                      placeholder="Write down your feedback about our product & services"
+                    ></textarea>
+                  </fieldset>
+
+                  <button className="flex justify-center items-center w-[204px] gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[14px]">
+                    PUBLISH REVIEW
+                  </button>
+                </form>
+              </div>
+            </ReviewModal>
+          )}
         </>
       )}
     </>
