@@ -3,7 +3,6 @@
 import ReviewModal from "@/app/components/ReviewModal";
 import Image from "next/image";
 import { useState } from "react";
-import { FaStar } from "react-icons/fa6";
 
 const History = () => {
   const [showDetails, setShowDetails] = useState(true);
@@ -14,7 +13,6 @@ const History = () => {
   };
 
   const handleClose = () => {
-    console.log("first");
     setShow(!show);
   };
 
