@@ -3,7 +3,7 @@ import Image from "next/image";
 const Account = () => {
   return (
     <>
-      <div className="w-[45%] pb-[32px] ">
+      <div className="w-full md:w-[50%] pb-[32px]">
         <h1 className="text-[20px] leading-[28px] font-[600] text-[#191C1F] pb-[12px]">
           Hello, Paschal
         </h1>
@@ -20,7 +20,7 @@ const Account = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-3 gap-[16px]">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-[16px] w-full">
         <div className="col-span-1 border-[#E4E7E9] border-[1px] rounded-[4px]">
           <div className="px-[24px] py-[10px] border-b-[#E4E7E9] border-b-[1px]">
             <p className="text-[#191C1F] text-[14px] leading-[20px] font-[500]">
