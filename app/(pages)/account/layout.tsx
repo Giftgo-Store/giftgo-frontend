@@ -24,8 +24,8 @@ const Account = ({ children }: ChildProps) => {
         </p>
       </div>
 
-      <div className="flex justify-between items-start px-[4%] lg:px-[8%] w-full gap-[32px] mb-[90px]">
-        <div className="py-[16px] flex justify-start items-start flex-col w-[19%] border-[#E4E7E9] border-[1px] rounded-[4px] shadow-md">
+      <div className="flex flex-col lg:flex-row justify-between items-start px-[4%] lg:px-[8%] w-full gap-[32px] mb-[90px]">
+        <div className="py-[16px] flex justify-start items-start flex-col w-full lg:w-[19%] border-[#E4E7E9] border-[1px] rounded-[4px] shadow-md">
           <Link
             href={"/account"}
             className={`${
@@ -259,7 +259,7 @@ const Account = ({ children }: ChildProps) => {
             </p>
           </Link>
         </div>
-        <div className="w-[81%] ">{children}</div>
+        <div className="flex-1">{children}</div>
       </div>
     </>
   );
