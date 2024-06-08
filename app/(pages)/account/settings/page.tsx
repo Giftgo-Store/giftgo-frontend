@@ -11,7 +11,7 @@ const Settings = () => {
   };  
 
   return (
-    <>
+    <div className="">
       <div className="p-[24px] mb-[56px]">
         <h1 className="text-[18px] font-[500] leading-[24px] text-[#191C1F] mb-[24px]">
           Account Settings
@@ -76,25 +76,25 @@ const Settings = () => {
         </h1>
 
         <form action="" className="flex flex-col items-start gap-4">
-          <div className="w-full flex justify-between items-center gap-4">
-            <fieldset className="flex flex-col items-start gap-2 w-[50%]">
+          <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-4">
+            <fieldset className="w-full flex flex-col items-start gap-2 lg:w-[50%]">
               <label htmlFor="" className="text-[#191C1F] text-[14px]">
                 User Name
               </label>
-              <div className="w-full flex justify-between items-center gap-4">
+              <div className="w-full flex-col lg:flex-row flex justify-between items-center gap-4">
                 <input
                   type="text"
-                  className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-[50%]"
+                  className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-full lg:w-[50%]"
                   placeholder="First Name"
                 />
                 <input
                   type="text"
-                  className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-[50%]"
+                  className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-full lg:w-[50%]"
                   placeholder="Last Name"
                 />
               </div>
             </fieldset>
-            <fieldset className="flex flex-col items-start gap-2 w-[50%]">
+            <fieldset className="flex w-full flex-col items-start gap-2 lg:w-[50%]">
               <label htmlFor="" className="text-[#191C1F] text-[14px]">
                 Company Name <span className="text-[#929FA5]">(Optional)</span>
               </label>
@@ -115,8 +115,8 @@ const Settings = () => {
               className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-full"
             />
           </fieldset>
-          <div className="w-full flex justify-between items-center gap-4">
-            <fieldset className="flex flex-col items-start gap-2 w-[25%]">
+          <div className="w-full flex justify-between items-center gap-4 flex-wrap lg:flex-nowrap">
+            <fieldset className="flex flex-col items-start gap-2 w-[47%] lg:w-[25%]">
               <label htmlFor="" className="text-[#191C1F] text-[14px]">
                 Country
               </label>
@@ -130,7 +130,7 @@ const Settings = () => {
                 </option>
               </select>
             </fieldset>
-            <fieldset className="flex flex-col items-start gap-2 w-[25%]">
+            <fieldset className="flex flex-col items-start gap-2 w-[47%] lg:w-[25%]">
               <label htmlFor="" className="text-[#191C1F] text-[14px]">
                 Region/State
               </label>
@@ -144,7 +144,7 @@ const Settings = () => {
                 </option>
               </select>
             </fieldset>
-            <fieldset className="flex flex-col items-start gap-2 w-[25%]">
+            <fieldset className="flex flex-col items-start gap-2 w-[47%] lg:w-[25%]">
               <label htmlFor="" className="text-[#191C1F] text-[14px]">
                 City
               </label>
@@ -158,7 +158,7 @@ const Settings = () => {
                 </option>
               </select>
             </fieldset>
-            <fieldset className="flex flex-col items-start gap-2 w-[25%]">
+            <fieldset className="flex flex-col items-start gap-2 w-[47%] lg:w-[25%]">
               <label htmlFor="" className="text-[#191C1F] text-[14px]">
                 Zip Code
               </label>
@@ -169,7 +169,7 @@ const Settings = () => {
             </fieldset>
           </div>
           <div className="w-full flex justify-between items-center gap-4">
-            <fieldset className="flex flex-col items-start gap-2 w-[50%]">
+            <fieldset className="flex flex-col items-start gap-2 lg:w-[50%]">
               <label htmlFor="" className="text-[#191C1F] text-[14px]">
                 Email Address
               </label>
@@ -178,7 +178,7 @@ const Settings = () => {
                 className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-full"
               />
             </fieldset>
-            <fieldset className="flex flex-col items-start gap-2 w-[50%]">
+            <fieldset className="flex flex-col items-start gap-2 lg:w-[50%]">
               <label htmlFor="" className="text-[#191C1F] text-[14px]">
                 Phone Number
               </label>
@@ -272,7 +272,7 @@ const Settings = () => {
           </button>
         </form>
       </div>
-    </>
+    </div>
   );
 };
 

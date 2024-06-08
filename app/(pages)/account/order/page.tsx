@@ -19,11 +19,11 @@ const Order = () => {
   return (
     <>
       {showDetails ? (
-        <div className="flex flex-col items-start gap-[16px] pb-[300px]">
+        <div className="w-[95vw] lg:w-full flex flex-col items-start gap-[16px] lg:pb-[300px]">
           <h1 className="font-[600] text-[32px] leading-[40px] text-[#191C1F]">
             Track Order
           </h1>
-          <p className="text-[16px] leading-[24px] text-[#5F6C72] w-[80%]">
+          <p className="text-[16px] leading-[24px] text-[#5F6C72] w-full lg:w-[80%]">
             Please input your order ID into the field provided below and click
             the &quot;Track Order&quot; button to monitor the status of your
             order. You can find your order ID on your receipt or in the
@@ -40,7 +40,7 @@ const Order = () => {
               </label>
               <input
                 type="text"
-                className="border-[#E4E7E9] rounded-[2px] h-[44px] outline-none w-[424px] border-[1px] px-[18px] text-[14px] text-[#475156]"
+                className="border-[#E4E7E9] rounded-[2px] h-[44px] outline-none w-full lg:w-[424px] border-[1px] px-[18px] text-[14px] text-[#475156]"
                 placeholder="ID..."
               />
             </fieldset>
