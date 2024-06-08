@@ -21,7 +21,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
       className="fixed inset-0 z-50 flex items-center justify-center bg-overlayy"
       onClick={handleOverlayClick}
     >
-      <div className="bg-white my-[150px] rounded-lg w-[40%] max-w-md mx-auto relative">
+      <div className="bg-white my-[150px] rounded-lg w-[90%] lg:w-[40%] max-w-md mx-auto relative">
         <div className="p-4 absolute top-0 right-2 flex justify-center items-center">
           <button
             onClick={onClose}

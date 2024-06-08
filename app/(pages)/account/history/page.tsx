@@ -26,18 +26,18 @@ const History = () => {
   return (
     <>
       {showDetails ? (
-        <div>
-          <p className="py-[16px] px-[24px] text-[14px] leading-[20px] font-[500] text-[#191C1F]">
+        <div className="w-[90vw] lg:w-full">
+          <p className="py-[16px] px-[24px] text-[14px] leading-[20px] font-[500] text-[#191C1F] w-fit">
             ORDER HISTORY
           </p>
 
           <div>
             <div className="flex flex-col">
-              <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
-                  <div className="overflow-hidden">
-                    <table className="min-w-full text-left text-sm font-light">
-                      <thead className="border-b font-medium border-[#D9E2E6] mx-[10px] rounded-md mb-4">
+              <div className="overflow-x-auto lg:-mx-8">
+                <div className="inline-block py-2  lg:px-8">
+                  <div className="overflow-x-auto w-full">
+                    <table className=" text-left text-sm font-light">
+                      <thead className="border-b font-medium border-[#D9E2E6] lg:mx-[10px] rounded-md mb-4">
                         <tr className="bg-[#F2F4F5] rounded-md mb-4 text-[#475156]">
                           <th
                             scope="col"
@@ -290,7 +290,7 @@ const History = () => {
                             alt=""
                             width={40}
                             height={40}
-                            className="mr-[12px]"
+                            className="lg:mr-[12px]"
                           />
                           <div className="w-[40px] text-white text-[14px] leading-[20px] h-[40px] bg-primary rounded-full border-[#E4E7E9] border-[1px] flex justify-center text-center items-center">
                             01
@@ -312,7 +312,7 @@ const History = () => {
                             alt=""
                             width={40}
                             height={40}
-                            className="ml-[12px]"
+                            className="lg:ml-[12px]"
                           />
                         </div>
                       </div>
@@ -325,7 +325,7 @@ const History = () => {
         </div>
       ) : (
         <>
-          <div className="flex justify-between items-center w-full border-[#E4E7E9] border-[1px] px-[24px] rounded-t-[4px] mb-[24px]">
+          <div className="flex justify-between items-center border-[#E4E7E9] border-[1px] px-[24px] rounded-t-[4px] mb-[24px]">
             <div
               className="flex justify-center items-center gap-2 cursor-pointer"
               onClick={handleHideDetails}
@@ -348,7 +348,7 @@ const History = () => {
             </div>
           </div>
 
-          <div className="p-[24px] border-[#FFE7D6] border-[1px] bg-[#FEEFD3] flex justify-between items-center rounded-[1px] mb-[24px]">
+          <div className=" p-[24px] border-[#FFE7D6] border-[1px] bg-[#FEEFD3] flex justify-between flex-col lg:flex-row items-start gap-2 lg:items-center rounded-[1px] mb-[24px]">
             <div className="flex justify-center items-start gap-2 flex-col text-[#475156] text-[14px] leading-[20px]">
               <p className="text-[#191C1F] text-[20px] leading-[28px]">
                 #96459761
@@ -371,11 +371,11 @@ const History = () => {
                 Product <span className="text-[#475156]">(02)</span>
               </h2>
             </div>
-            <div className="flex flex-col">
+            <div className="flex overflow-x-auto w-[90vw] lg:w-full flex-col">
               <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div className="inline-block min-w-full pb-2 sm:px-6 lg:px-8">
-                  <div className="">
-                    <table className="min-w-full text-left text-sm font-light">
+                  <div className="overflow-x-auto">
+                    <table className="overflow-x-auto min-w-full text-left text-sm font-light">
                       <thead className="font-medium00 bg-[#E4E7E9]">
                         <tr>
                           <th
@@ -477,7 +477,7 @@ const History = () => {
                 </div>
               </div>
 
-              <div className="flex items-center lg:flex-row gap-6 justify-center p-[24px]">
+              <div className="flex items-center flex-col lg:flex-row gap-6 justify-center p-[24px]">
                 <div className="w-[310px] h-[220px] border-[#E4E7E9] border-[1px] rounded-[4px]">
                   <div className="px-[24px] py-[10px] border-b-[#E4E7E9] border-b-[1px]">
                     <p className="text-[#191C1F] text-[14px] leading-[20px] font-[500]">
@@ -512,7 +512,7 @@ const History = () => {
                   </div>
                 </div>
 
-                <div className="bg-[#E4E7E9] w-[1px] h-[180px]"></div>
+                <div className="bg-[#E4E7E9] w-[1px] h-[180px] hidden lg:block"></div>
 
                 <div className="w-[310px] h-[220px] border-[#E4E7E9] border-[1px] rounded-[4px]">
                   <div className="px-[24px] py-[10px] border-b-[#E4E7E9] border-b-[1px]">
