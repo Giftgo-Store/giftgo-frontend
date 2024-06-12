@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+"use client"
+
 import Card from "./components/Card";
 import Category from "./components/Category";
 import "./globals.css";
@@ -5,8 +8,29 @@ import Image from "next/image";
 import { IoTrophyOutline } from "react-icons/io5";
 import { PiCreditCardLight, PiHeadphones } from "react-icons/pi";
 import { LiaShippingFastSolid } from "react-icons/lia";
+import axios from "axios";
+import BASE_URL from "./config/baseurl";
+import { useEffect } from "react";
 
 const Landing = () => {
+ 
+ useEffect(() => {
+   const fetchData = async () => {
+     try {
+       const response = await axios.get(`${BASE_URL}/api/v1/location`);
+       // Handle successful response, e.g., save token, redirect, etc.
+       console.log("Successful", response.data.data.token);
+     } catch (error) {
+      //@ts-ignore
+      //@ts-expect-error
+       console.error("Sign In Error", error?.response?.data || error?.message);
+     } finally {
+       // Any cleanup or final actions
+     }
+   };
+
+   fetchData();
+ }, []);
   return (
     <>
       <div className="mx-[4%] lg:mx-[8%] mt-[30px] lg:mt-[96px] bg-secondary pt-[20px] lg:pt-[40px] px-[20px] lg:px-[40px] rounded-[8px] flex justify-between item-end mb-[32px] flex-col lg:flex-row">

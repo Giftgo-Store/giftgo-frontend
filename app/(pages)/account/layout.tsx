@@ -3,15 +3,21 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 type ChildProps = {
   children: React.ReactNode;
 };
 
 const Account = ({ children }: ChildProps) => {
+  const router = useRouter()
   const pathname = usePathname();
 
-  console.log(pathname);
+  const handleLogout = () => {
+Cookies.remove("token")
+router.push("/")
+  }
   return (
     <>
       <div className="py-[20px] px-[4%] lg:px-[8%] bg-secondary text-center mb-[56px]">
@@ -220,9 +226,9 @@ const Account = ({ children }: ChildProps) => {
               Setting
             </p>
           </Link>
-          <Link
-            href={"/"}
+          <button
             className="flex justify-start px-[24px] py-[10px] items-center gap-3"
+            onClick={() => handleLogout()}
           >
             <svg
               width="20"
@@ -257,7 +263,7 @@ const Account = ({ children }: ChildProps) => {
             <p className="text-[14px] leading-[20px] font-[400] text-primary w-full">
               Log-out
             </p>
-          </Link>
+          </button>
         </div>
         <div className="flex-1">{children}</div>
       </div>

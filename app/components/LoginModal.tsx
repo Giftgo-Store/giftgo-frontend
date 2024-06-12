@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import axios from "axios";
 import BASE_URL from "../config/baseurl";
+import Cookie from 'js-cookie';
 
 interface ModalProps {
   showModal: boolean;
@@ -46,7 +47,8 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
         signInData
       );
       // Handle successful response, e.g., save token, redirect, etc.
-      console.log("Sign In Successful", response.data);
+      console.log("Sign In Successful", response.data.data.token);
+      Cookie.set('token', response.data.data.token);
       closeModal();
     } catch (error) {
       // console.error("Sign In Error", error.response?.data || error.message);
