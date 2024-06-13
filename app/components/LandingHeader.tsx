@@ -11,9 +11,11 @@ import Link from "next/link";
 import { useState } from "react";
 import Modal from "./LoginModal";
 import CheckoutModal from "./CheckoutModal";
-
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const LandingHeader = () => {
+  const router = useRouter();
 const [isOpen, setIsOpen] = useState(false)
 
  const [showModal, setShowModal] = useState(false);
@@ -30,6 +32,8 @@ const [isOpen, setIsOpen] = useState(false)
       window.scroll(0, 0);
       setIsOpen(!isOpen);
     };
+
+    const token = Cookies.get('token');
 
     return (
       <>
@@ -104,7 +108,7 @@ const [isOpen, setIsOpen] = useState(false)
               />
               <AiOutlineUser
                 className="w-[25px] text-white h-[25px]"
-                onClick={openModal}
+                onClick={() => (token ? router.push("/account") : openModal())}
               />
               <Modal showModal={showModal} closeModal={closeModal} />
               <select
@@ -162,7 +166,7 @@ const [isOpen, setIsOpen] = useState(false)
               />
               <AiOutlineUser
                 className="w-[25px] text-white h-[25px] cursor-pointer"
-                onClick={openModal}
+                onClick={() => (token ? router.push("/account") : openModal())}
               />
               <Modal showModal={showModal} closeModal={closeModal} />
               <select
