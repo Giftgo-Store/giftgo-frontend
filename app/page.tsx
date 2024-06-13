@@ -10,20 +10,23 @@ import { PiCreditCardLight, PiHeadphones } from "react-icons/pi";
 import { LiaShippingFastSolid } from "react-icons/lia";
 import axios from "axios";
 import BASE_URL from "./config/baseurl";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const Landing = () => {
+  const [location, setLocation] = useState([])
  
  useEffect(() => {
    const fetchData = async () => {
      try {
        const response = await axios.get(`${BASE_URL}/api/v1/location`);
+       setLocation(response.data.data)
        // Handle successful response, e.g., save token, redirect, etc.
-       console.log("Successful", response.data.data.token);
+       console.log("Successful", response.data.data);
      } catch (error) {
       //@ts-ignore
       //@ts-expect-error
-       console.error("Sign In Error", error?.response?.data || error?.message);
+       console.error("Error fetching resource", error?.response?.data || error?.message);
      } finally {
        // Any cleanup or final actions
      }
@@ -31,6 +34,8 @@ const Landing = () => {
 
    fetchData();
  }, []);
+
+ 
   return (
     <>
       <div className="mx-[4%] lg:mx-[8%] mt-[30px] lg:mt-[96px] bg-secondary pt-[20px] lg:pt-[40px] px-[20px] lg:px-[40px] rounded-[8px] flex justify-between item-end mb-[32px] flex-col lg:flex-row">
@@ -107,60 +112,16 @@ const Landing = () => {
         </h2>
 
         <div className="bg-[#F5F5F5] py-10 px-10 lg:px-20 w-full flex justify-center items-center lg:gap-x-[140px] gap-y-5 gap-x-14 lg:gap-y-10 flex-wrap">
-          <div className="flex flex-col items-center justify-center gap-1">
-            <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
-              <Image src="/um.png" alt="" width={68} height={50} />
-            </div>
-            <p className="text-[20px]">USA</p>
-          </div>
-          <div className="flex flex-col items-center justify-center gap-1">
-            <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
-              <Image src="/gb.png" alt="" width={68} height={50} />
-            </div>
-            <p className="text-[20px]">UK</p>
-          </div>
-          <div className="flex flex-col items-center justify-center gap-1">
-            <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
-              <Image src="/de.png" alt="" width={68} height={50} />
-            </div>
-            <p className="text-[20px]">Germany</p>
-          </div>
-          <div className="flex flex-col items-center justify-center gap-1">
-            <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
-              <Image src="/ca.png" alt="" width={68} height={50} />
-            </div>
-            <p className="text-[20px]">Canada</p>
-          </div>
-          <div className="flex flex-col items-center justify-center gap-1">
-            <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
-              <Image src="/au.png" alt="" width={68} height={50} />
-            </div>
-            <p className="text-[20px]">Australia</p>
-          </div>
-          <div className="flex flex-col items-center justify-center gap-1">
-            <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
-              <Image src="/br.png" alt="" width={68} height={50} />
-            </div>
-            <p className="text-[20px]">Brazil</p>
-          </div>
-          <div className="flex flex-col items-center justify-center gap-1">
-            <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
-              <Image src="/asia.png" alt="" width={68} height={50} />
-            </div>
-            <p className="text-[20px]">Asia</p>
-          </div>
-          <div className="flex flex-col items-center justify-center gap-1">
-            <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
-              <Image src="/na.png" alt="" width={68} height={50} />
-            </div>
-            <p className="text-[20px] text-center">North <br className="lg:hidden" /> America</p>
-          </div>
-          <div className="flex flex-col items-center justify-center gap-1">
-            <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
-              <Image src="/europe.png" alt="" width={68} height={50} />
-            </div>
-            <p className="text-[20px]">Rest of Europe</p>
-          </div>
+          {location.length > 0 && location.map((loc:any, i:any) => {
+            return (
+              <Link href={`/category/${loc._id}`} key={i} className="flex flex-col items-center justify-center gap-1">
+                <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
+                  <Image src={loc.image} alt="" width={68} height={50} />
+                </div>
+                <p className="text-[20px]">{loc.location}</p>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </>

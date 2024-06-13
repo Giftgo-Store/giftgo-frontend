@@ -1,16 +1,55 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable react-hooks/exhaustive-deps */
+"use client"
+
 import Card from "@/app/components/Card";
 import Category from "@/app/components/Category";
 import { FaArrowRight, FaArrowLeft } from "react-icons/fa6";
 import Image from "next/image";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import BASE_URL from "@/app/config/baseurl";
+import axios from "axios";
+import { useState, useEffect } from "react";
 
 const page = () => {
+  const params = useParams()
+  console.log(params.category)
+    const [locate, setLocate] = useState<any>([]);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(`${BASE_URL}/api/v1/location/${params.category}`);
+          setLocate(response.data.data.data);
+          // Handle successful response, e.g., save token, redirect, etc.
+          console.log("Successful", response.data.data.data);
+           console.log(
+             "Successful",
+             response.data.data.data.location,
+             locate.length
+           );
+        } catch (error) {
+          //@ts-ignore
+          //@ts-expect-error
+          console.error("Error fetching resource", error?.response?.data || error?.message
+          );
+        } finally {
+          // Any cleanup or final actions
+        }
+      };
+
+      fetchData();
+    }, [params.category]);
+
+    
     return (
       <>
         <div className="py-[20px] px-[4%] lg:px-[8%] bg-secondary mb-[56px]">
           <h2 className="font-[600] leading-[32px] text-[28px] text-[#191C1F]">
-            USA Store
+            {locate && locate?.location} Store
           </h2>
-          <p className="text-[#475156] text-[18px] font-[500]">Home / Search</p>
+          <p className="text-[#475156] text-[18px] font-[500]"><Link href={'/'}>Home</Link> / Search</p>
         </div>
 
         <div className="py-4 bg-[#F5F5F5] px-[4%] lg:mx-[8%] mb-[32px]">
@@ -43,10 +82,10 @@ const page = () => {
               <h2 className="text-[#191C1F] text-[24px] text-center font-[600]">
                 Products you may like
               </h2>
-              <p className="hidden lg:flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2">
+              <Link href={`/category/${params.category}/category-detail/${params.category}`} className="hidden lg:flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2">
                 Browse All Products
                 <FaArrowRight />
-              </p>
+              </Link>
             </div>
             <div className="flex justify-center items-center flex-wrap gap-6">
               <Card />
@@ -57,9 +96,9 @@ const page = () => {
               <Card />
               <Card express={true} />
               <Card />
-              <button className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]">
+              <Link href={`/category/${params.category}/category-detail/${params.category}`} className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]">
                 <p> Browse All Products</p>
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -133,10 +172,10 @@ const page = () => {
               <h2 className="text-[#191C1F] text-[24px] text-center font-[600]">
                 Fastest Delivery Available
               </h2>
-              <p className="hidden lg:flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2">
+              <Link href={`/category/${params.category}/category-detail/${params.category}`} className="hidden lg:flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2">
                 Browse All Products
                 <FaArrowRight />
-              </p>
+              </Link>
             </div>
             <div className="flex justify-center items-center flex-wrap gap-6">
               <Card express={true} />
@@ -147,9 +186,9 @@ const page = () => {
               <Card />
               <Card express={true} />
               <Card express={true} />
-              <button className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]">
+              <Link href={`/category/${params.category}/category-detail/${params.category}`} className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]">
                 <p> Browse All Products</p>
-              </button>
+              </Link>
             </div>
           </div>
         </div>
