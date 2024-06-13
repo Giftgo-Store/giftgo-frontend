@@ -18,7 +18,8 @@ import { CiSearch } from "react-icons/ci";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { SlPicture } from "react-icons/sl";
 import Image from "next/image";
-
+import { useSession } from "next-auth/react";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 interface Category {
   name: string;
   image: string;
@@ -32,12 +33,24 @@ export default function AddCategories() {
   const [imagePreview, setImagePreview] = useState("");
   const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  //secure page
+  const sesssion = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/admin/auth/login");
+    },
+  });
+  const session: any = useSession();
+  const token = session?.data?.token;
+  const API = process.env.NEXT_PUBLIC_API_ROUTE;
+
 
   const selectedValue = useMemo(
     () => Array.from(selectedKeys).join(", "),
     [selectedKeys]
   );
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const imageFile = event.target.files?.[0];
@@ -53,16 +66,11 @@ export default function AddCategories() {
     setLoading(true);
 
     try {
-      const res = await fetch(
-        "https://giftgo.onrender.com/api/v1/category/all-categories",
-        {
-          headers: {
-            AUTHORIZATION:
-              "Bearer " +
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjRkZTRkNTZmNzZkZDUwZmE1MWMwODQiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTY0ODU5MTMsImV4cCI6MTcxNzA5MDcxM30.3Pf80kfMummuuI0sqoeY2NVHcQ6ToGijLSTvP744htI",
-          },
-        }
-      );
+      const res = await fetch(`${API}/category/all-categories`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
 
       const resData = await res.json();
       setLoading(false);
@@ -78,18 +86,13 @@ export default function AddCategories() {
     data.append("name", categoryName);
 
     try {
-      const res = await fetch(
-        "https://giftgo.onrender.com/api/v1/category/add-category",
-        {
-          headers: {
-            AUTHORIZATION:
-              "Bearer " +
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjRkZTRkNTZmNzZkZDUwZmE1MWMwODQiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTY0ODU5MTMsImV4cCI6MTcxNzA5MDcxM30.3Pf80kfMummuuI0sqoeY2NVHcQ6ToGijLSTvP744htI",
-          },
-          method: "POST",
-          body: data,
-        }
-      );
+      const res = await fetch(`${API}/category/add-category`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+        method: "POST",
+        body: data,
+      });
 
       const resData = await res.json();
       // setItems(productData)
@@ -103,11 +106,13 @@ export default function AddCategories() {
   };
 
   useEffect(() => {
-    getAllCategory();
-  }, []);
+    if (token) {
+      getAllCategory();
+    }
+  }, [token]);
 
   // Filter categories based on filterValue
-  const filteredCategories = allCategories.filter((category) =>
+  const filteredCategories = allCategories?.filter((category) =>
     category.name.toLowerCase().includes(filterValue.toLowerCase())
   );
 
@@ -283,23 +288,24 @@ export default function AddCategories() {
               base: "gap-3 flex-wrap w-full",
             }}
           >
-            {filteredCategories.map((category: Category) => (
-              <ListboxItem
-                className="border-1 max-w-[300px] w-full"
-                startContent={
-                  <Image
-                    src={category.image}
-                    alt="category image"
-                    width={1000}
-                    height={1000}
-                    className="w-[35px] h-[35px]"
-                  />
-                }
-                key={category.name}
-              >
-                {category.name}
-              </ListboxItem>
-            ))}
+            {filteredCategories &&
+              filteredCategories.map((category: Category) => (
+                <ListboxItem
+                  className="border-1 max-w-[300px] w-full"
+                  startContent={
+                    <Image
+                      src={category.image}
+                      alt="category image"
+                      width={1000}
+                      height={1000}
+                      className="w-[35px] h-[35px]"
+                    />
+                  }
+                  key={category.name}
+                >
+                  {category.name}
+                </ListboxItem>
+              ))}
           </Listbox>
         ) : (
           <div className="flex flex-wrap gap-3 w-full">
@@ -313,3 +319,4 @@ export default function AddCategories() {
     </div>
   );
 }
+AddCategories.requireAuth = true;

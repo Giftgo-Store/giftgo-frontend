@@ -13,7 +13,8 @@ import {
 import { CiSearch } from "react-icons/ci";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { ProductListSkeletonCard } from "@/app/components/productlistskeletonLoad";
-import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { redirect,useRouter} from "next/navigation";
 interface item {
   _id: string;
   productName: string;
@@ -37,20 +38,29 @@ export default function ProductList() {
   const [loading, setLoading] = useState(true);
   const [pinnedList, setPinnedList] = useState<item[]>([]);
   const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
-  console.log(Items);
+  const sesssion = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/admin/auth/login");
+    },
+  });
+  const session: any = useSession();
+  const token = session?.data?.token;
+  const API = process.env.NEXT_PUBLIC_API_ROUTE;
+
   const router = useRouter();
+
   const fetchProducts = async () => {
     try {
-      const data = await fetch("https://giftgo.onrender.com/api/v1/products", {
+      const data = await fetch(`${API}/products`, {
         headers: {
-          AUTHORIZATION:
-            "Bearer " +
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjRkZTRkNTZmNzZkZDUwZmE1MWMwODQiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTY0ODU5MTMsImV4cCI6MTcxNzA5MDcxM30.3Pf80kfMummuuI0sqoeY2NVHcQ6ToGijLSTvP744htI",
+          AUTHORIZATION: "Bearer " + token,
         },
         method: "GET",
       });
       const productData = await data.json();
       setLoading(false);
+      // console.log(productData);
       if (productData.data) {
         setItems(productData.data);
       } else if (productData.data === null) {
@@ -86,8 +96,10 @@ export default function ProductList() {
     setPinnedList(loadedPinnedItems);
   }, []);
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    if (token) {
+      fetchProducts();
+    }
+  }, [token]);
 
   const filteredItems = useMemo(() => {
     return Items.filter((item: item) => {
@@ -124,17 +136,12 @@ export default function ProductList() {
     } else {
       // Remove from main product list and send a delete request to the server
       try {
-        const data = await fetch(
-          `https://giftgo.onrender.com/api/v1/products/${id}`,
-          {
-            headers: {
-              AUTHORIZATION:
-                "Bearer " +
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjRkZTRkNTZmNzZkZDUwZmE1MWMwODQiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTY0ODU5MTMsImV4cCI6MTcxNzA5MDcxM30.3Pf80kfMummuuI0sqoeY2NVHcQ6ToGijLSTvP744htI",
-            },
-            method: "DELETE",
-          }
-        );
+        const data = await fetch(`${API}/products/${id}`, {
+          headers: {
+            AUTHORIZATION: "Bearer " + token,
+          },
+          method: "DELETE",
+        });
         await data.json();
 
         const updatedItems = [...Items];
@@ -207,7 +214,7 @@ export default function ProductList() {
               avatar={item.images[0]}
               productCategory={item.category.name}
               productName={item.productName}
-              productPrice={item.salePrice}
+              productPrice={Number(item.salePrice).toLocaleString()}
               productSold={""}
               productStock={item.stockQuantity}
               productSummary={item.description}
@@ -240,7 +247,7 @@ export default function ProductList() {
                   avatar={item.images[0]}
                   productCategory={item.category.name}
                   productName={item.productName}
-                  productPrice={item.salePrice}
+                  productPrice={Number(item.salePrice).toLocaleString()}
                   productSold={""}
                   productStock={item.stockQuantity}
                   productSummary={item.description}
@@ -308,3 +315,4 @@ export default function ProductList() {
     </div>
   );
 }
+ProductList.requireAuth = true;

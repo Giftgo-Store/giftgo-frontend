@@ -14,7 +14,8 @@ import {
   Spacer,
   Button,
 } from "@nextui-org/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import {
   ChangeEvent,
   MouseEvent,
@@ -24,7 +25,7 @@ import {
   useMemo,
 } from "react";
 import { SlPicture } from "react-icons/sl";
-
+import { countries } from "@/app/assets/data";
 interface Form {
   USD: string;
   GBP: string;
@@ -81,11 +82,11 @@ export default function AddProducts() {
   const [brandName, setBrandName] = useState("");
   const [salePrice, setSalePrice] = useState("");
   const [stockQuantity, setstockQuantity] = useState("");
+  const [location, setLocation] = useState("");
   const [sku, setSku] = useState("");
   const [expressShipping, setExpressShipping] = useState<boolean>(false);
   const [categories, setCategories] = useState([]);
-  const [productId, setProductId] = useState("");
-  console.log(productCategory);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<Form>({
     USD: "",
     GBP: "",
@@ -96,8 +97,18 @@ export default function AddProducts() {
     NGN: "",
   });
   const searchParams = useSearchParams();
-  const edit = searchParams.get("edit");
+  const edit = searchParams?.get("edit");
 
+  //secure page
+  const sesssion = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/admin/auth/login");
+    },
+  });
+  const session: any = useSession();
+  const token = session?.data?.token;
+  const API = process.env.NEXT_PUBLIC_API_ROUTE;
   const flags: Flag[] = [
     {
       currency: "NGN",
@@ -272,6 +283,7 @@ export default function AddProducts() {
     setSelectedImages([]);
     setImagePreviews([]);
     setImageNames([]);
+    setLocation("");
     setForm({
       USD: "",
       GBP: "",
@@ -297,15 +309,14 @@ export default function AddProducts() {
     formdata.append("salePrice", form.NGN);
     formdata.append("stockQuantity", stockQuantity);
     formdata.append("expressShipping", expressShipping.toString());
-
+    formdata.append("location", location);
+    setLoading(true);
     try {
       const res = await fetch(
-        "https://giftgo.onrender.com/api/v1/products/add-product",
+        `${API}/products/add-product`,
         {
           headers: {
-            AUTHORIZATION:
-              "Bearer " +
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjRkZTRkNTZmNzZkZDUwZmE1MWMwODQiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTY0ODU5MTMsImV4cCI6MTcxNzA5MDcxM30.3Pf80kfMummuuI0sqoeY2NVHcQ6ToGijLSTvP744htI",
+            AUTHORIZATION: "Bearer " + token,
           },
           method: "POST",
           body: formdata,
@@ -315,9 +326,11 @@ export default function AddProducts() {
       const productData = await res.json();
       if (res.ok) {
         resetForm();
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error adding product:", error);
+      setLoading(false);
     }
   };
 
@@ -332,29 +345,27 @@ export default function AddProducts() {
       stockQuantity: String(stockQuantity),
       regularPrice: String(regularPrice),
       category: productCategory,
+      location,
     };
-
+    setLoading(true);
     try {
-      const res = await fetch(
-        `https://giftgo.onrender.com/api/v1/products/${edit}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            AUTHORIZATION:
-              "Bearer " +
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjRkZTRkNTZmNzZkZDUwZmE1MWMwODQiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTY0ODU5MTMsImV4cCI6MTcxNzA5MDcxM30.3Pf80kfMummuuI0sqoeY2NVHcQ6ToGijLSTvP744htI",
-          },
-          method: "PUT",
-          body: JSON.stringify(payload),
-        }
-      );
+      const res = await fetch(`${API}/products/${edit}`, {
+        headers: {
+          "Content-Type": "application/json",
+          AUTHORIZATION: "Bearer " + token,
+        },
+        method: "PUT",
+        body: JSON.stringify(payload),
+      });
 
       const productData = await res.json();
       if (res.ok) {
         resetForm();
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error editing product:", error);
+      setLoading(false);
     }
   };
 
@@ -382,15 +393,16 @@ export default function AddProducts() {
   //     console.log(error);
   //   }
   // };
+  // useEffect(() => {
+  //   loginAdmin()
+  // },[])
   const getAllCategory = async () => {
     try {
       const res = await fetch(
-        "https://giftgo.onrender.com/api/v1/category/all-categories",
+        `${API}/category/all-categories`,
         {
           headers: {
-            AUTHORIZATION:
-              "Bearer " +
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjRkZTRkNTZmNzZkZDUwZmE1MWMwODQiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTY0ODU5MTMsImV4cCI6MTcxNzA5MDcxM30.3Pf80kfMummuuI0sqoeY2NVHcQ6ToGijLSTvP744htI",
+            AUTHORIZATION: "Bearer " + token,
           },
         }
       );
@@ -400,17 +412,17 @@ export default function AddProducts() {
     } catch (error) {}
   };
   useEffect(() => {
-    getAllCategory();
-  }, []);
+    if (token) {
+      getAllCategory();
+    }
+  }, [token]);
   const fetchProduct = async (id: string) => {
     try {
       const res = await fetch(
-        `https://giftgo.onrender.com/api/v1/products/${id}`,
+        `${API}/products/${id}`,
         {
           headers: {
-            AUTHORIZATION:
-              "Bearer " +
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjRkZTRkNTZmNzZkZDUwZmE1MWMwODQiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTY0ODU5MTMsImV4cCI6MTcxNzA5MDcxM30.3Pf80kfMummuuI0sqoeY2NVHcQ6ToGijLSTvP744htI",
+            AUTHORIZATION: "Bearer " + token,
           },
         }
       );
@@ -435,7 +447,7 @@ export default function AddProducts() {
           setstockQuantity(productData.stockQuantity);
           setSku(productData.sku);
           setExpressShipping(productData.expressShipping === "true");
-          setProductId(productData._id);
+          setLocation(productData.location);
           // Handle image previews if necessary
           setSelectedImages(productData.images);
           setImagePreviews(productData.images);
@@ -513,7 +525,7 @@ export default function AddProducts() {
       };
       getProduct();
     }
-  }, [edit, conversionRates]);
+  }, [edit, conversionRates, token]);
 
   return (
     <div className="pb-8">
@@ -622,9 +634,10 @@ export default function AddProducts() {
               }}
               selectedKeys={[productCategory]}
             >
-              {categories.map((category: { name: string }) => (
-                <SelectItem key={category.name}>{category.name}</SelectItem>
-              ))}
+              {categories &&
+                categories.map((category: { name: string }) => (
+                  <SelectItem key={category.name}>{category.name}</SelectItem>
+                ))}
             </Select>
           </div>
           <div className="flex flex-col gap-3">
@@ -703,6 +716,34 @@ export default function AddProducts() {
                     setstockQuantity(e.target.value);
                   }}
                 ></Input>
+              </div>
+              <div className="flex w-full flex-col gap-3">
+                <p>Location</p>
+                <Select
+                  size="md"
+                  radius="sm"
+                  className="w-full bg-white shadow-none border-1 rounded-lg"
+                  placeholder="Select category"
+                  variant="flat"
+                  aria-label="filter select"
+                  classNames={{
+                    trigger: [
+                      "bg-white",
+                      "data-focus-[within=true]:bg-white",
+                      "data-[hover=true]:bg-white",
+                      "group-data-[focus=true]:bg-white",
+                    ],
+                  }}
+                  onChange={(e) => {
+                    setLocation(e.target.value);
+                  }}
+                  selectedKeys={[location]}
+                >
+                  {countries &&
+                    countries.map((country: { name: string }) => (
+                      <SelectItem key={country.name}>{country.name}</SelectItem>
+                    ))}
+                </Select>
               </div>
             </div>
             <div className="flex md:flex-row flex-col w-full justify-between gap-2">
@@ -845,6 +886,7 @@ export default function AddProducts() {
                 type="submit"
                 size="lg"
                 className="bg-[#1EB564] text-white w-full"
+                isLoading={loading}
               >
                 {edit ? "Edit" : "Confirm"}
               </Button>
@@ -870,3 +912,4 @@ export default function AddProducts() {
     </div>
   );
 }
+AddProducts.requireAuth = true;
