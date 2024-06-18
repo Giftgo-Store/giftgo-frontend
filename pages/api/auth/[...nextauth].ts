@@ -58,23 +58,21 @@ export const authOptions = {
       }
       return token;
     },
-  //     async redirect({ url, baseUrl }:any) {
-  //   // Allows relative callback URLs
-  //   if (url.startsWith("/admin")) return `${baseUrl}${url}`
-  //   // Allows callback URLs on the same origin
-  //   else if (new URL(url).origin === baseUrl) return url
-  //   return baseUrl
-  // },
+    //     async redirect({ url, baseUrl }:any) {
+    //   // Allows relative callback URLs
+    //   if (url.startsWith("/admin")) return `${baseUrl}${url}`
+    //   // Allows callback URLs on the same origin
+    //   else if (new URL(url).origin === baseUrl) return url
+    //   return baseUrl
+    // },
 
     async session({ session, token }: any) {
       session.token = token.accessToken;
       return session;
     },
-  
   },
 
   secret: process.env.NEXTAUTH_SECRET,
 };
-
 
 export default NextAuth(authOptions);
