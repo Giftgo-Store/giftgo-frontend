@@ -12,7 +12,7 @@ const Page = () => {
   };
   return (
     <>
-      <div className="pt-[20px] px-[4%] lg:px-[8%] text-center bg-secondary ">
+      <div className="py-[20px] px-[4%] lg:px-[8%] text-center bg-secondary ">
         <h2 className="font-[600] leading-[32px] text-[28px] text-[#191C1F] pb-1">
           Search results for “Flower”
         </h2>
