@@ -14,13 +14,13 @@ import { useState, useEffect } from "react";
 
 const page = () => {
   const params = useParams()
-  console.log(params.category)
+  console.log(params?.category)
     const [locate, setLocate] = useState<any>([]);
 
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const response = await axios.get(`${BASE_URL}/api/v1/location/${params.category}`);
+          const response = await axios.get(`${BASE_URL}/api/v1/location/${params?.category}`);
           setLocate(response.data.data.data);
           // Handle successful response, e.g., save token, redirect, etc.
           console.log("Successful", response.data.data.data);
@@ -40,7 +40,7 @@ const page = () => {
       };
 
       fetchData();
-    }, [params.category]);
+    }, [params?.category]);
 
     
     return (
@@ -82,7 +82,7 @@ const page = () => {
               <h2 className="text-[#191C1F] text-[24px] text-center font-[600]">
                 Products you may like
               </h2>
-              <Link href={`/category/${params.category}/category-detail/${params.category}`} className="hidden lg:flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2">
+              <Link href={`/category/${params?.category}/category-detail/${params?.category}`} className="hidden lg:flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2">
                 Browse All Products
                 <FaArrowRight />
               </Link>
@@ -96,7 +96,7 @@ const page = () => {
               <Card />
               <Card express={true} />
               <Card />
-              <Link href={`/category/${params.category}/category-detail/${params.category}`} className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]">
+              <Link href={`/category/${params?.category}/category-detail/${params?.category}`} className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]">
                 <p> Browse All Products</p>
               </Link>
             </div>
@@ -172,7 +172,7 @@ const page = () => {
               <h2 className="text-[#191C1F] text-[24px] text-center font-[600]">
                 Fastest Delivery Available
               </h2>
-              <Link href={`/category/${params.category}/category-detail/${params.category}`} className="hidden lg:flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2">
+              <Link href={`/category/${params?.category}/category-detail/${params?.category}`} className="hidden lg:flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2">
                 Browse All Products
                 <FaArrowRight />
               </Link>
@@ -186,7 +186,7 @@ const page = () => {
               <Card />
               <Card express={true} />
               <Card express={true} />
-              <Link href={`/category/${params.category}/category-detail/${params.category}`} className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]">
+              <Link href={`/category/${params?.category}/category-detail/${params?.category}`} className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]">
                 <p> Browse All Products</p>
               </Link>
             </div>
