@@ -17,7 +17,7 @@ import {
   Chip,
   User,
 } from "@nextui-org/react";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { TbBell } from "react-icons/tb";
 import { IoArrowDownOutline, IoArrowUpOutline } from "react-icons/io5";
 import { DashboardCard } from "@/app/components/dashboardCard";
@@ -37,8 +37,18 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 import { HiDotsVertical } from "react-icons/hi";
 import { SlArrowDown } from "react-icons/sl";
 import { SlArrowUp } from "react-icons/sl";
+import { useSession } from "next-auth/react";
+
 export default function Dashboard() {
-  const canvasref = useRef<any>();
+  const sesssion = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/admin/auth/login");
+    },
+  });
+
+  const session = useSession();
+  //  console.log(session);
   const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
   const series = [
     {
@@ -397,9 +407,7 @@ export default function Dashboard() {
     return (
       <div className="flex justify-between py-3 w-full">
         <div className="flex flex-col">
-          <p className="font-semibold text-lg text-[#23272E]">
-            Recent Orders
-          </p>
+          <p className="font-semibold text-lg text-[#23272E]">Recent Orders</p>
         </div>
         <Button
           isIconOnly
@@ -525,7 +533,10 @@ export default function Dashboard() {
               </div>
               <div className="flex justify-between w-full">
                 {days.map((day: string) => (
-                  <span key={day} className="text-[#8B909A] font-medium text-[0.625rem] leading-[20px]">
+                  <span
+                    key={day}
+                    className="text-[#8B909A] font-medium text-[0.625rem] leading-[20px]"
+                  >
                     {day}
                   </span>
                 ))}
@@ -851,7 +862,10 @@ export default function Dashboard() {
           />
           <div className="flex flex-col gap-2">
             {products.map((product, index) => (
-              <div className="flex justify-between items-center w-full " key={index}>
+              <div
+                className="flex justify-between items-center w-full "
+                key={index}
+              >
                 <User
                   key={index}
                   name={<p className="font-bold text-base">{product.name}</p>}
@@ -947,3 +961,4 @@ export default function Dashboard() {
     </div>
   );
 }
+Dashboard.requireAuth = true;

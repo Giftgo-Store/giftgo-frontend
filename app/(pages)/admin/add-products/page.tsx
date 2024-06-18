@@ -14,6 +14,8 @@ import {
   Spacer,
   Button,
 } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import {
   ChangeEvent,
   MouseEvent,
@@ -23,7 +25,7 @@ import {
   useMemo,
 } from "react";
 import { SlPicture } from "react-icons/sl";
-
+import { countries } from "@/app/assets/data";
 interface Form {
   USD: string;
   GBP: string;
@@ -66,28 +68,6 @@ function useDebounceValue(value: string, time = 250) {
   }, [value, debouncevalue]);
   return debouncevalue;
 }
-function reducer(state: Form, action: ActionType) {
-  switch (action.type) {
-    case "USD":
-      return { ...state, USD: action.payload };
-    case "GBP":
-      return { ...state, GBP: action.payload };
-    case "EUR":
-      return { ...state, EUR: action.payload };
-    case "CAD":
-      return { ...state, CAD: action.payload };
-    case "AUD":
-      return { ...state, AUD: action.payload };
-    case "JPY":
-      return { ...state, JPY: action.payload };
-    case "NGN":
-      return { ...state, NGN: action.payload };
-    case "SET_ALL":
-      return { ...state, ...action.payload };
-    default:
-      return { ...state };
-  }
-}
 
 export default function AddProducts() {
   const [loadingCurrency, setLoadingCurrency] = useState(false);
@@ -95,7 +75,18 @@ export default function AddProducts() {
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [imageNames, setImageNames] = useState<string[]>([]);
-
+  const [productName, setProductName] = useState("");
+  const [productCategory, setProductCategory] = useState("");
+  const [productDescription, setProductDescription] = useState("");
+  const [regularPrice, setRegularPrice] = useState<number | any>();
+  const [brandName, setBrandName] = useState("");
+  const [salePrice, setSalePrice] = useState("");
+  const [stockQuantity, setstockQuantity] = useState("");
+  const [location, setLocation] = useState("");
+  const [sku, setSku] = useState("");
+  const [expressShipping, setExpressShipping] = useState<boolean>(false);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<Form>({
     USD: "",
     GBP: "",
@@ -105,10 +96,19 @@ export default function AddProducts() {
     JPY: "",
     NGN: "",
   });
-  const nairaQuery = useDebounceValue(form.NGN);
+  const searchParams = useSearchParams();
+  const edit = searchParams?.get("edit");
 
-  const categories = ["shoes", "clothes", "suits", "jewelry", "furniture"];
-
+  //secure page
+  const sesssion = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/admin/auth/login");
+    },
+  });
+  const session: any = useSession();
+  const token = session?.data?.token;
+  const API = process.env.NEXT_PUBLIC_API_ROUTE;
   const flags: Flag[] = [
     {
       currency: "NGN",
@@ -154,32 +154,11 @@ export default function AddProducts() {
       );
       const resData = await res.json();
       setConversionRates(resData.conversion_rates);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
   useEffect(() => {
     getConversionRates();
   }, []);
-
-  const setAllParameters = (values: Partial<Form>) => {
-    setForm((prevForm) => ({ ...prevForm, ...values }));
-  };
-
-  const calculateConvertedValues = () => {
-    const convertedValues: Partial<Form> = {};
-    if (form.NGN) {
-      for (const currency in conversionRates) {
-        if (currency !== "NGN") {
-          convertedValues[currency as Currency] = (
-            conversionRates[currency] * Number(form.NGN)
-          ).toFixed(4);
-        }
-      }
-      console.log(convertedValues);
-    }
-    setAllParameters(convertedValues);
-  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -278,16 +257,294 @@ export default function AddProducts() {
         name={imageNames[index]}
         avatar={imagePreview}
         removeCard={() => removeImage(index)}
+        isEditable={edit ? true : false}
       />
     ));
   }, [imagePreviews, imageNames]);
+
+  function randomStr(len: number, arr: string) {
+    let ans = "";
+    for (let i = len; i > 0; i--) {
+      ans += arr[Math.floor(Math.random() * arr.length)];
+    }
+    return ans;
+  }
+
+  const resetForm = () => {
+    setProductName("");
+    setProductCategory("");
+    setProductDescription("");
+    setRegularPrice("");
+    setBrandName("");
+    setSalePrice("");
+    setstockQuantity("");
+    setSku("");
+    setExpressShipping(false);
+    setSelectedImages([]);
+    setImagePreviews([]);
+    setImageNames([]);
+    setLocation("");
+    setForm({
+      USD: "",
+      GBP: "",
+      EUR: "",
+      CAD: "",
+      AUD: "",
+      JPY: "",
+      NGN: "",
+    });
+  };
+
+  const addProducts = async () => {
+    const formdata = new FormData();
+    selectedImages.forEach((image) => {
+      formdata.append("images", image);
+    });
+    formdata.append("sku", sku);
+    formdata.append("productName", productName);
+    formdata.append("description", productDescription);
+    formdata.append("category", productCategory);
+    formdata.append("regularPrice", regularPrice);
+    formdata.append("brandName", brandName);
+    formdata.append("salePrice", form.NGN);
+    formdata.append("stockQuantity", stockQuantity);
+    formdata.append("expressShipping", expressShipping.toString());
+    formdata.append("location", location);
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `${API}/products/add-product`,
+        {
+          headers: {
+            AUTHORIZATION: "Bearer " + token,
+          },
+          method: "POST",
+          body: formdata,
+        }
+      );
+
+      const productData = await res.json();
+      if (res.ok) {
+        resetForm();
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error adding product:", error);
+      setLoading(false);
+    }
+  };
+
+  const editProducts = async () => {
+    const payload = {
+      sku,
+      productName,
+      description: productDescription,
+      brandName,
+      salePrice: form.NGN,
+      expressShipping: expressShipping ? "true" : "false",
+      stockQuantity: String(stockQuantity),
+      regularPrice: String(regularPrice),
+      category: productCategory,
+      location,
+    };
+    setLoading(true);
+    try {
+      const res = await fetch(`${API}/products/${edit}`, {
+        headers: {
+          "Content-Type": "application/json",
+          AUTHORIZATION: "Bearer " + token,
+        },
+        method: "PUT",
+        body: JSON.stringify(payload),
+      });
+
+      const productData = await res.json();
+      if (res.ok) {
+        resetForm();
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error editing product:", error);
+      setLoading(false);
+    }
+  };
+
+  // const loginAdmin = async () => {
+  //   const data = {
+  //     email: "giftgo@gmail.com",
+  //     password: "etrtrfhn",
+  //   };
+  //   try {
+  //     const res = await fetch(
+  //       "https://giftgo.onrender.com/api/v1/auth/sign-in",
+  //       {
+  //         headers: {
+  //           Accept: "application/json",
+  //           "Content-Type": `application/json`,
+  //         },
+  //         method: "POST",
+  //         body: JSON.stringify(data),
+  //       }
+  //     );
+  //     const resData = await res.json();
+  //     // setItems(productData)
+  //     console.log(resData);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+  // useEffect(() => {
+  //   loginAdmin()
+  // },[])
+  const getAllCategory = async () => {
+    try {
+      const res = await fetch(
+        `${API}/category/all-categories`,
+        {
+          headers: {
+            AUTHORIZATION: "Bearer " + token,
+          },
+        }
+      );
+
+      const resData = await res.json();
+      setCategories(resData.data);
+    } catch (error) {}
+  };
+  useEffect(() => {
+    if (token) {
+      getAllCategory();
+    }
+  }, [token]);
+  const fetchProduct = async (id: string) => {
+    try {
+      const res = await fetch(
+        `${API}/products/${id}`,
+        {
+          headers: {
+            AUTHORIZATION: "Bearer " + token,
+          },
+        }
+      );
+      const productData = await res.json();
+      return productData.data;
+    } catch (error) {
+      console.error("Error fetching product:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (edit && conversionRates && Object.keys(conversionRates).length > 0) {
+      const getProduct = async () => {
+        const productData = await fetchProduct(edit);
+        if (productData) {
+          setProductName(productData.productName);
+          setProductCategory(productData.category.name);
+          setProductDescription(productData.description);
+          setRegularPrice(productData.regularPrice);
+          setBrandName(productData.brandName);
+          setSalePrice(productData.salePrice);
+          setstockQuantity(productData.stockQuantity);
+          setSku(productData.sku);
+          setExpressShipping(productData.expressShipping === "true");
+          setLocation(productData.location);
+          // Handle image previews if necessary
+          setSelectedImages(productData.images);
+          setImagePreviews(productData.images);
+
+          const salePrice = parseFloat(productData.salePrice);
+
+          // Check if salePrice is a valid number
+          if (!isNaN(salePrice)) {
+            setForm((prevForm) => ({
+              ...prevForm,
+              NGN: salePrice.toString(),
+            }));
+
+            // Ensure conversionRates are valid numbers
+            const usdRate = conversionRates.USD;
+            const gbpRate = conversionRates.GBP;
+            const audRate = conversionRates.AUD;
+            const jpyRate = conversionRates.JPY;
+            const cadRate = conversionRates.CAD;
+            const eurRate = conversionRates.EUR;
+
+            if (!isNaN(usdRate)) {
+              setForm((prevForm) => ({
+                ...prevForm,
+                USD: (salePrice * usdRate).toFixed(2).toString(),
+              }));
+            }
+
+            if (!isNaN(gbpRate)) {
+              setForm((prevForm) => ({
+                ...prevForm,
+                GBP: (salePrice * gbpRate).toFixed(2).toString(),
+              }));
+            }
+
+            if (!isNaN(audRate)) {
+              setForm((prevForm) => ({
+                ...prevForm,
+                AUD: (salePrice * audRate).toFixed(2).toString(),
+              }));
+            }
+
+            if (!isNaN(jpyRate)) {
+              setForm((prevForm) => ({
+                ...prevForm,
+                JPY: (salePrice * jpyRate).toFixed(2).toString(),
+              }));
+            }
+
+            if (!isNaN(cadRate)) {
+              setForm((prevForm) => ({
+                ...prevForm,
+                CAD: (salePrice * cadRate).toFixed(2).toString(),
+              }));
+            }
+
+            if (!isNaN(eurRate)) {
+              setForm((prevForm) => ({
+                ...prevForm,
+                EUR: (salePrice * eurRate).toFixed(2).toString(),
+              }));
+            }
+          } else {
+            console.error("Invalid sale price:", salePrice);
+          }
+          const newImageNames: string[] = [];
+          for (var i = 0; i < productData.images.length; i++) {
+            newImageNames.push(`Photo ${i + 1}`);
+          }
+          setImageNames((prevImageNames) => [
+            ...prevImageNames,
+            ...newImageNames,
+          ]);
+        }
+      };
+      getProduct();
+    }
+  }, [edit, conversionRates, token]);
+
   return (
     <div className="pb-8">
-      <form className="p-5 bg-white rounded-lg flex flex-col lg:flex-row gap-5">
+      <form
+        className="p-5 bg-white rounded-lg flex flex-col lg:flex-row gap-5"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (edit) {
+            editProducts();
+          } else {
+            addProducts();
+          }
+        }}
+      >
         <div className=" w-full flex flex-col gap-4">
           <div className="flex flex-col gap-3">
             <p>Product Name</p>
             <Input
+              isRequired
               placeholder="Type name here"
               size="md"
               radius="sm"
@@ -303,11 +560,16 @@ export default function AddProducts() {
                   "group-data-[focus=true]:bg-white",
                 ],
               }}
+              value={productName}
+              onChange={(e) => {
+                setProductName(e.target.value);
+              }}
             ></Input>
           </div>
           <div className="flex flex-col gap-3">
             <p>Description</p>
             <Textarea
+              isRequired
               minRows={8}
               maxRows={12}
               aria-label="description"
@@ -322,6 +584,10 @@ export default function AddProducts() {
                   "data-[hover=true]:bg-white",
                   "group-data-[focus=true]:bg-white",
                 ],
+              }}
+              value={productDescription}
+              onChange={(e) => {
+                setProductDescription(e.target.value);
               }}
             />
           </div>
@@ -342,6 +608,8 @@ export default function AddProducts() {
                   "group-data-[selected=true]:bg-[#1EB564] bg-white border-[#DDDDDD] border-[2px]"
                 ),
               }}
+              isSelected={expressShipping}
+              onValueChange={setExpressShipping}
             ></Switch>
           </div>
           <div className="flex flex-col gap-3">
@@ -361,15 +629,21 @@ export default function AddProducts() {
                   "group-data-[focus=true]:bg-white",
                 ],
               }}
+              onChange={(e) => {
+                setProductCategory(e.target.value);
+              }}
+              selectedKeys={[productCategory]}
             >
-              {categories.map((category) => (
-                <SelectItem key={category}>{category}</SelectItem>
-              ))}
+              {categories &&
+                categories.map((category: { name: string }) => (
+                  <SelectItem key={category.name}>{category.name}</SelectItem>
+                ))}
             </Select>
           </div>
           <div className="flex flex-col gap-3">
             <p>Brand Name</p>
             <Input
+              isRequired
               placeholder="Type brand name here"
               size="md"
               radius="sm"
@@ -385,6 +659,10 @@ export default function AddProducts() {
                   "group-data-[focus=true]:bg-white",
                 ],
               }}
+              value={brandName}
+              onChange={(e) => {
+                setBrandName(e.target.value);
+              }}
             ></Input>
           </div>
           <div className="flex w-full flex-col gap-4">
@@ -392,6 +670,7 @@ export default function AddProducts() {
               <div className="flex w-full flex-col gap-3">
                 <p>SKU</p>
                 <Input
+                  isRequired
                   placeholder="fox-3983"
                   size="md"
                   radius="sm"
@@ -407,11 +686,16 @@ export default function AddProducts() {
                       "group-data-[focus=true]:bg-white",
                     ],
                   }}
+                  value={sku}
+                  onChange={(e) => {
+                    setSku(e.target.value);
+                  }}
                 ></Input>
               </div>
               <div className="flex w-full flex-col gap-3">
                 <p>Stock Quantity</p>
                 <Input
+                  isRequired
                   placeholder="1258"
                   size="md"
                   radius="sm"
@@ -427,13 +711,46 @@ export default function AddProducts() {
                       "group-data-[focus=true]:bg-white",
                     ],
                   }}
+                  value={stockQuantity}
+                  onChange={(e) => {
+                    setstockQuantity(e.target.value);
+                  }}
                 ></Input>
+              </div>
+              <div className="flex w-full flex-col gap-3">
+                <p>Location</p>
+                <Select
+                  size="md"
+                  radius="sm"
+                  className="w-full bg-white shadow-none border-1 rounded-lg"
+                  placeholder="Select category"
+                  variant="flat"
+                  aria-label="filter select"
+                  classNames={{
+                    trigger: [
+                      "bg-white",
+                      "data-focus-[within=true]:bg-white",
+                      "data-[hover=true]:bg-white",
+                      "group-data-[focus=true]:bg-white",
+                    ],
+                  }}
+                  onChange={(e) => {
+                    setLocation(e.target.value);
+                  }}
+                  selectedKeys={[location]}
+                >
+                  {countries &&
+                    countries.map((country: { name: string }) => (
+                      <SelectItem key={country.name}>{country.name}</SelectItem>
+                    ))}
+                </Select>
               </div>
             </div>
             <div className="flex md:flex-row flex-col w-full justify-between gap-2">
               <div className="flex w-full flex-col gap-3">
                 <p>Regular Price</p>
                 <Input
+                  isRequired
                   placeholder="Type name here"
                   size="md"
                   radius="sm"
@@ -449,12 +766,17 @@ export default function AddProducts() {
                       "group-data-[focus=true]:bg-white",
                     ],
                   }}
+                  value={regularPrice}
+                  onChange={(e) => {
+                    setRegularPrice(e.target.value);
+                  }}
                 ></Input>
               </div>
               <div className="flex w-full flex-col gap-3">
                 <p>Sale Price</p>
                 {flags.map((flag) => (
                   <Input
+                    isRequired={flag.currency === "NGN"}
                     key={flag.currency}
                     placeholder={flag.placeholder}
                     startContent={
@@ -515,59 +837,70 @@ export default function AddProducts() {
             )}
           </div>
           <Spacer y={12}></Spacer>
-          <div className="w-full relative p-5 bordered-input">
-            <input
-              type="file"
-              name="file input drag"
-              multiple
-              className="opacity-0 absolute w-full h-full"
-              accept="image/*"
-              onChange={handleImageChange}
-            ></input>
-            <label
-              className="cursor-pointer flex justify-center items-center flex-col"
-              htmlFor="file input drag"
-            >
-              <SlPicture size={48} color="#1EB564" />
-              <div className="w-full h-full">
-                <div className="flex justify-center gap-1">
-                  <p>Drop your Images here or </p>
-                  <p>
-                    <input
-                      type="file"
-                      name="file input"
-                      className="opacity-0 z-50 absolute w-[50px]"
-                      multiple
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    ></input>
-                    <label
-                      className="cursor-pointer text-[#1EB564]"
-                      htmlFor="file input"
-                    >
-                      Browse
-                    </label>
-                  </p>
+          {!edit && (
+            <div className="w-full relative p-5 bordered-input">
+              <input
+                type="file"
+                name="file input drag"
+                multiple
+                className="opacity-0 absolute w-full h-full"
+                accept="image/*"
+                onChange={handleImageChange}
+              ></input>
+              <label
+                className="cursor-pointer flex justify-center items-center flex-col"
+                htmlFor="file input drag"
+              >
+                <SlPicture size={48} color="#1EB564" />
+                <div className="w-full h-full">
+                  <div className="flex justify-center gap-1">
+                    <p>Drop your Images here or </p>
+                    <p>
+                      <input
+                        type="file"
+                        name="file input"
+                        className="opacity-0 z-50 absolute w-[50px]"
+                        multiple
+                        accept="image/*"
+                        onChange={handleImageChange}
+                      ></input>
+                      <label
+                        className="cursor-pointer text-[#1EB564]"
+                        htmlFor="file input"
+                      >
+                        Browse
+                      </label>
+                    </p>
+                  </div>
+                  <p className="text-center">Jpeg,png,jpj are allowed</p>
                 </div>
-                <p className="text-center">Jpeg,png,jpj are allowed</p>
-              </div>
-            </label>
-          </div>
+              </label>
+            </div>
+          )}
           <Spacer y={12}></Spacer>
           <div className=" flex flex-col gap-3 h-fit">{ImageUploadCards}</div>
           <Spacer y={12}></Spacer>
           {selectedImages.length > 0 && (
             <div className=" flex justify-between gap-4">
-              <Button size="lg" className="bg-[#1EB564] text-white w-full">
-                Confirm
+              <Button
+                type="submit"
+                size="lg"
+                className="bg-[#1EB564] text-white w-full"
+                isLoading={loading}
+              >
+                {edit ? "Edit" : "Confirm"}
               </Button>
               <Button
                 size="lg"
                 className="bg-transparent border-1 w-full"
                 onClick={() => {
-                  setImageNames([]);
-                  setSelectedImages([]);
-                  setImagePreviews([]);
+                  if (!edit) {
+                    setImageNames([]);
+                    setSelectedImages([]);
+                    setImagePreviews([]);
+                  } else {
+                    alert("Images of product cannot be edited");
+                  }
                 }}
               >
                 Cancel
@@ -579,3 +912,4 @@ export default function AddProducts() {
     </div>
   );
 }
+AddProducts.requireAuth = true;
