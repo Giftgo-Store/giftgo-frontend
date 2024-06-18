@@ -127,7 +127,7 @@ const AdminLogin = () => {
           >
             Login
           </Button>
-          <Button
+          {/* <Button
             onClick={() => {
               signOut();
             }}
@@ -135,7 +135,7 @@ const AdminLogin = () => {
             color="primary"
           >
             Logout
-          </Button>
+          </Button> */}
         </div>
       </form>
     </div>
