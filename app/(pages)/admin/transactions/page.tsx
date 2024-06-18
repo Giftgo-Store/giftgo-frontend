@@ -33,7 +33,7 @@ export default function Transactions() {
   const [statusFilterValue, setStatusFilterValue] = useState("All");
   const [rowsPerPage, setRowsPerPage] = useState<any | string[]>("10");
   const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
-  console.log(statusFilterValue);
+  // console.log(statusFilterValue);
   const status = [
     "All",
     "Pending",
