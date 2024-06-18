@@ -236,7 +236,7 @@ export default function ProductList() {
       <div>
         {!loading ? (
           <div
-            className={`flex gap-3 ${
+            className={`flex gap-5  ${
               paginatedItems.length > 3 ? "justify-between" : "justify-stretch"
             } flex-wrap`}
           >
