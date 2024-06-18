@@ -427,6 +427,7 @@ export default function AddProducts() {
         }
       );
       const productData = await res.json();
+      // console.log(productData.data);
       return productData.data;
     } catch (error) {
       console.error("Error fetching product:", error);
@@ -447,7 +448,7 @@ export default function AddProducts() {
           setstockQuantity(productData.stockQuantity);
           setSku(productData.sku);
           setExpressShipping(productData.expressShipping === "true");
-          setLocation(productData.location);
+          setLocation(productData.location.location.toUpperCase());
           // Handle image previews if necessary
           setSelectedImages(productData.images);
           setImagePreviews(productData.images);
@@ -738,10 +739,11 @@ export default function AddProducts() {
                     setLocation(e.target.value);
                   }}
                   selectedKeys={[location]}
+                  // defaultSelectedKeys={[location]}
                 >
                   {countries &&
                     countries.map((country: { name: string }) => (
-                      <SelectItem key={country.name}>{country.name}</SelectItem>
+                      <SelectItem key={country.name.toUpperCase()}>{country.name}</SelectItem>
                     ))}
                 </Select>
               </div>
