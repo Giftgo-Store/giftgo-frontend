@@ -3,23 +3,68 @@
 import Card from "@/app/components/Card";
 import { FaArrowRight } from "react-icons/fa6";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
+import BASE_URL from "@/app/config/baseurl";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 const Page = () => {
   const router = useRouter();
+    const params = useParams();
+    const [category, setCategory] = useState([]);
 
+      const handleBack = () => {
+        router.back();
+      };
+
+  console.log(params);
+    const location = Cookies.get("location");
+
+     useEffect(() => {
+       const fetchData = async () => {
+         try {
+           const response = await axios.get(
+             `${BASE_URL}/api/v1/products/location/${location}`
+           );
+           console.log(response.data.data.data);
+           setCategory(response.data.data);
+           // Handle successful response, e.g., save token, redirect, etc.
+           console.log("Successful", response.data.data[0].products)
+           
+         } catch (error) {
+           //@ts-ignore
+           //@ts-expect-error
+           console.error("Error fetching resource", error?.response?.data || error?.message
+           );
+         } finally {
+           // Any cleanup or final actions
+         }
+       };
+
+       fetchData();
+     }, [location, params.category]);
+
+       console.log(category)
+
+       const cat: any = category && category.filter((cat:any) => cat._id === params.detail)
+
+       console.log(cat[0])
   return (
     <>
       <div className="py-[20px] px-[4%] lg:px-[8%] bg-secondary mb-[56px]">
         <h2 className="font-[600] leading-[32px] text-[28px] text-[#191C1F]">
-          USA Store
+          {location} Store
         </h2>
         <p className="text-[#475156] text-[18px] font-[500]">
           <span className="cursor-pointer" onClick={() => router.push("/")}>
             Home
           </span>{" "}
           / <span className="cursor-pointer">Shop</span> /{" "}
-          <span className="cursor-pointer">USA store</span> / Kids items
+          <span className="cursor-pointer" onClick={handleBack}>
+            {location} store
+          </span>{" "}
+          / {cat && cat[0]?.name}
         </p>
       </div>
 
@@ -45,14 +90,18 @@ const Page = () => {
             </div>
           </div>
           <div className="flex justify-center items-center flex-wrap gap-6">
-            <Card />
+            {cat && cat[0]?.products.length > 0 ?
+              cat[0]?.products.map((product: any, i: any) => {
+                return <Card key={i} lists={product} />;
+              }) : <>No product available</>}
+            {/* <Card />
             <Card express={true} />
             <Card />
             <Card />
             <Card express={true} />
             <Card />
             <Card express={true} />
-            <Card />
+            <Card /> */}
           </div>
         </div>
 

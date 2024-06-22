@@ -1,14 +1,35 @@
 "use client";
 
 import Image from "next/image";
-import { FiMinus, FiPlus, FiArrowLeft, FiArrowRight } from "react-icons/fi";
-import { useRef, useState } from "react";
+import { FiArrowRight } from "react-icons/fi";
+import { useEffect, useRef, useState } from "react";
+import Modal from "@/app/components/LoginModal";
+import Cookies from "js-cookie";
+import BASE_URL from "@/app/config/baseurl";
+import axios from "axios";
 
 const Page = () => {
   const [image, setImage] = useState<string[]>([]);
   const [customizable, setCustomizable] = useState(true);
   const photoInput: React.MutableRefObject<HTMLInputElement | null> =
     useRef(null);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [address, setAddress] = useState("");
+  const [country, setCountry] = useState("");
+  const [region, setRegion] = useState("");
+  const [city, setCity] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
+
+  const [showModal, setShowModal] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+
+  const openModal = () => setShowModal(true);
+  const closeModal = () => setShowModal(false);
 
   const handleValidChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -25,8 +46,122 @@ const Page = () => {
       // }
     }
   };
+
+    const [cartItems, setCartItems] = useState([]);
+    const [user, setUser] = useState<any>([]);
+
+    useEffect(() => {
+      const fetchCartItems = async () => {
+        try {
+          const response = await axios.get(`${BASE_URL}/api/v1/cart`, {
+            headers: {
+              Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+          });
+          console.log(response.data.data);
+          // Handle successful response, e.g., save token, redirect, etc.
+          setCartItems(response.data.data);
+          console.log("Successful", response.data.data);
+        } catch (error) {
+          console.error(
+            //@ts-ignore
+            "Error fetching resource",error?.response?.data || error?.message);
+        } finally {
+          // Any cleanup or final actions
+        }
+      };
+      fetchCartItems();
+    }, []);
+
+        useEffect(() => {
+          const fetchUser = async () => {
+            try {
+              const response = await axios.get(
+                `${BASE_URL}/api/v1/user/profile`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${Cookies.get("token")}`,
+                  },
+                }
+              );
+              console.log(response.data.data);
+              // Handle successful response, e.g., save token, redirect, etc.
+              setUser(response.data.data);
+              console.log("Successful", response.data.data);
+            } catch (error) {
+              console.error(
+                //@ts-ignore
+                "Error fetching resource",error?.response?.data || error?.message);
+            } finally {
+              // Any cleanup or final actions
+            }
+          };
+          fetchUser();
+        }, []);
+
+  const handlePlaceOrder = async () => {
+    const token = Cookies.get("token");
+    if (!token) {
+      console.log("No token");
+      openModal();
+      setShowLogin(true);
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/api/v1/carts`,
+        {
+          customerAddress: {
+            address,
+            city,
+            state: region,
+            country,
+            postal_code: zipCode,
+          },
+          customerPhoneNumber: {
+            phoneNumber,
+          },
+          orderedItems: [
+            {
+              product_id: "",
+              quantity: 2,
+              price: "",
+              lifetime: "",
+              validity: 2,
+              productName: "",
+              licenses: [],
+            },
+          ],
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+      console.log(response.data.data);
+      // Handle successful response, e.g., save token, redirect, etc.
+      console.log("Successful", response.data.data);
+    } catch (error) {
+      //@ts-ignore
+      console.error("Error fetching resource", error?.response?.data || error?.message
+      );
+    } finally {
+      // Any cleanup or final actions
+    }
+  };
+
+    const total = cartItems.map(
+      (item: any) => Number(item.quantity) * Number(item.product.salePrice)
+    );
+
+    function formatNumberWithCommas(amount: number): string {
+      return new Intl.NumberFormat("en-US").format(amount);
+    }
+
   return (
     <>
+      {showLogin && <Modal showModal={showModal} closeModal={closeModal} />}
       <div className="py-[20px] px-[4%] lg:px-[8%] text-center bg-secondary mb-[56px]">
         <h2 className="font-[600] leading-[32px] text-[28px] text-[#191C1F] pb-1">
           Checkout
@@ -60,6 +195,8 @@ const Page = () => {
                   id="username"
                   className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none"
                   placeholder="First name"
+                  value={user && user?.name.split(" ")[0]}
+                  onChange={(e) => setFirstName(e.target.value)}
                 />
               </div>
               <div className="flex flex-col gap-2 w-full lg:w-[30%]">
@@ -67,6 +204,8 @@ const Page = () => {
                   type="text"
                   className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none"
                   placeholder="Last name"
+                  value={user && user?.name.split(" ")[1]}
+                  onChange={(e) => setLastName(e.target.value)}
                 />
               </div>
               <div className="flex flex-col gap-2 w-full lg:w-[40%]">
@@ -83,6 +222,8 @@ const Page = () => {
                   id="username"
                   className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none"
                   placeholder="Company name"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
                 />
               </div>
             </div>
@@ -96,6 +237,8 @@ const Page = () => {
                 id="username"
                 className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none"
                 placeholder="Address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
               />
             </div>
             <div className="flex justify-between items-start flex-wrap lg:items-end w-full gap-4">
@@ -106,7 +249,11 @@ const Page = () => {
                 >
                   Country
                 </label>
-                <select className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none text-[#929FA5]">
+                <select
+                  className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none text-[#929FA5]"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                >
                   <option value="">select</option>
                 </select>
               </div>
@@ -117,7 +264,11 @@ const Page = () => {
                 >
                   Region/State
                 </label>
-                <select className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none text-[#929FA5]">
+                <select
+                  className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none text-[#929FA5]"
+                  value={region}
+                  onChange={(e) => setRegion(e.target.value)}
+                >
                   <option value="">select</option>
                 </select>
               </div>
@@ -128,7 +279,11 @@ const Page = () => {
                 >
                   City
                 </label>
-                <select className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none text-[#929FA5]">
+                <select
+                  className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none text-[#929FA5]"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                >
                   <option value="">select</option>
                 </select>
               </div>
@@ -140,11 +295,13 @@ const Page = () => {
                   Zip Code
                 </label>
                 <input
-                  type="text"
+                  type="number"
                   name="username"
                   id="username"
                   className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none"
                   placeholder="Zip Code"
+                  value={zipCode}
+                  onChange={(e) => setZipCode(e.target.value)}
                 />
               </div>
             </div>
@@ -162,6 +319,8 @@ const Page = () => {
                   id="username"
                   className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none"
                   placeholder="Email Address"
+                  value={user && user.email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="flex flex-col gap-2 w-full lg:w-[48%]">
@@ -175,6 +334,8 @@ const Page = () => {
                   type="tel"
                   className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none"
                   placeholder="Phone number"
+                  value={user && user.phone}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
                 />
               </div>
             </div>
@@ -197,6 +358,8 @@ const Page = () => {
                 <textarea
                   className="border-[#E4E7E9] text-[14px] border-[1px] h-[150px] lg:h-full py-2 px-5 outline-none"
                   placeholder="Notes about your order, e.g. special notes for delivery. This notes may or may not be checked."
+                  value={additionalInfo}
+                  onChange={(e) => setAdditionalInfo(e.target.value)}
                 />
               </div>
 
@@ -245,6 +408,8 @@ const Page = () => {
               <textarea
                 className="border-[#E4E7E9] text-[14px] border-[1px] h-[150px] py-2 px-5 outline-none"
                 placeholder="Notes about your order, e.g. special notes for delivery. This notes may or may not be checked."
+                value={additionalInfo}
+                onChange={(e) => setAdditionalInfo(e.target.value)}
               />
             </div>
           )}
@@ -256,47 +421,55 @@ const Page = () => {
             </h2>
           </div>
 
-          <div className="flex flex-col items-start gap-4 px-5">
-            <div className="flex justify-between w-full items-center">
-              <Image
-                src="/cam.png"
-                alt=""
-                width={72}
-                height={72}
-                className="relative z-0"
-              />
-              <div>
-                <p className="text-[14px] font-[400]">
-                  Canon EOS 1500D DSLR Camera Body+ 18-5..
-                </p>
-                <p className="text-[14px] font-[400]">
-                  1 x <span className="font-[700] text-[14px]">₦250</span>
-                </p>
-              </div>
-            </div>
-            <div className="flex justify-between w-full items-center">
-              <Image
-                src="/cam.png"
-                alt=""
-                width={72}
-                height={72}
-                className="relative z-0"
-              />
-              <div>
-                <p className="text-[14px] font-[400]">
-                  Canon EOS 1500D DSLR Camera Body+ 18-5..
-                </p>
-                <p className="text-[14px] font-[400]">
-                  1 x <span className="font-[700] text-[14px]">₦250</span>
-                </p>
-              </div>
-            </div>
+          <div className="flex flex-col items-start gap-4 px-5 w-full">
+            {cartItems.length > 0 &&
+              cartItems.map((item: any, i: any) => {
+                return (
+                  <div
+                    key={i}
+                    className="flex justify-between w-full items-center gap-4"
+                  >
+                    <Image
+                      src={item && item?.product?.images[0]}
+                      alt=""
+                      width={72}
+                      height={72}
+                      className="relative z-0 object-cover w-[72px] h-[72px]"
+                    />
+                    <div className="">
+                      <p className="text-[14px] font-[400]">
+                        {item && item?.product?.brandName}{" "}
+                        {item && item?.product?.productName}{" "}
+                        {item && item?.product?.description.split(0, 20)}...
+                      </p>
+                      <p className="text-[14px] font-[400]">
+                        {item.quantity} x{" "}
+                        <span className="font-[700] text-[14px]">
+                          ₦
+                          {formatNumberWithCommas(
+                            item && item?.product.salePrice
+                          )}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
           </div>
 
           <div className="flex flex-col items-start gap-3 px-5 pt-4">
             <div className="flex justify-between items-center w-full">
               <p className="text-[#5F6C72] text-[14px]">Sub-total</p>
-              <p className="text-[#191C1F] text-[14px] font-[700]">₦32220</p>
+              <p className="text-[#191C1F] text-[14px] font-[700]">
+                ₦{" "}
+                {formatNumberWithCommas(
+                  total.reduce(
+                    (accumulator: any, currentValue: any) =>
+                      accumulator + currentValue,
+                    0
+                  )
+                )}
+              </p>
             </div>
             <div className="flex justify-between items-center w-full">
               <p className="text-[#5F6C72] text-[14px]">Shipping</p>
@@ -308,7 +481,16 @@ const Page = () => {
 
           <div className="flex justify-between items-center w-full px-5">
             <p className="text-[#191C1F] text-[16px]">Sub-total</p>
-            <p className="text-[#191C1F] text-[16px] font-[700]">₦32220</p>
+            <p className="text-[#191C1F] text-[16px] font-[700]">
+              ₦{" "}
+              {formatNumberWithCommas(
+                total.reduce(
+                  (accumulator: any, currentValue: any) =>
+                    accumulator + currentValue,
+                  0
+                )
+              )}
+            </p>
           </div>
 
           <div className="flex justify-center items-center my-6">

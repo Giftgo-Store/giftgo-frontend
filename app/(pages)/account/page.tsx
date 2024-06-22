@@ -1,11 +1,50 @@
+"use client"
+
 import Image from "next/image";
+import Cookies from "js-cookie";
+import BASE_URL from "@/app/config/baseurl";
+import axios from "axios";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+
 
 const Account = () => {
+      const [user, setUser] = useState<any>([]);
+        useEffect(() => {
+          const fetchUser = async () => {
+            try {
+              const response = await axios.get(
+                `${BASE_URL}/api/v1/user/profile`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${Cookies.get("token")}`,
+                  },
+                }
+              );
+              console.log(response.data.data);
+              // Handle successful response, e.g., save token, redirect, etc.
+              setUser(response.data.data);
+              console.log("Successful", response.data.data);
+            } catch (error) {
+              console.error(
+                //@ts-ignore
+                "Error fetching resource", error?.response?.data || error?.message);
+            } finally {
+              // Any cleanup or final actions
+            }
+          };
+          fetchUser();
+        }, []);
+
+
+        const pendingOrders = user && user.orders && user.orders.filter((item:any) => item.orderStatus === 'pending')
+         const completedOrders = user && user.orders && user.orders.filter((item: any) => item.orderStatus === "complete");
+
   return (
     <>
       <div className="w-full md:w-[50%] pb-[32px]">
         <h1 className="text-[20px] leading-[28px] font-[600] text-[#191C1F] pb-[12px]">
-          Hello, Paschal
+          Hello, {user && user?.name && user?.name.split(" ")[0]}
         </h1>
         <p className="text-[14px] leading-[20px] font-[400]">
           From your account dashboard. you can easily check & view your{" "}
@@ -32,7 +71,7 @@ const Account = () => {
               <Image src="/avatarr.svg" alt="" width={48} height={48} />
               <div className="flex justify-start items-start flex-col gap-1">
                 <p className="font-[500] text-[14px] leading-[20px] text-[#191C1F]">
-                  Paschal Nwanks
+                  {user && user?.name && user?.name}
                 </p>
                 <p className="font-[500] text-[14px] leading-[20px] text-[#5F6C72]">
                   My address here
@@ -43,20 +82,22 @@ const Account = () => {
             <div className="mb-[32px]">
               <p className="font-[500] text-[14px] leading-[20px] text-[#191C1F] mb-[8px]">
                 Email:{" "}
-                <span className="text-[#5F6C72]">
-                  nwankwopaschal017@gmail.com
-                </span>
+                <span className="text-[#5F6C72]">{user && user?.email}</span>
               </p>
 
               <p className="font-[500] text-[14px] leading-[20px] text-[#191C1F]">
-                Phone: <span className="text-[#5F6C72]">+234 909090909</span>
+                Phone:{" "}
+                <span className="text-[#5F6C72]">{user && user?.phone}</span>
               </p>
             </div>
 
             <div className="mb-[24px]">
-              <button className="border-[#D5EDFD] border-[3px] px-[24px] text-[14px] font-[700] leading-[48px] text-primary rounded-[2px]">
+              <Link
+                href={"/account/settings"}
+                className="border-[#D5EDFD] border-[3px] px-[24px] text-[14px] font-[700] leading-[48px] text-primary rounded-[2px]"
+              >
                 EDIT ACCOUNT
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -70,7 +111,7 @@ const Account = () => {
             <div className="flex justify-start items-center gap-4 mb-[20px]">
               <div className="flex justify-start items-start flex-col gap-1">
                 <p className="font-[500] text-[14px] leading-[20px] text-[#191C1F]">
-                  Paschal Nwanks
+                  {user && user?.name}
                 </p>
                 <p className="font-[500] text-[14px] leading-[20px] text-[#5F6C72]">
                   Detailed address here
@@ -80,20 +121,22 @@ const Account = () => {
 
             <div className="mb-[32px]">
               <p className="font-[500] text-[14px] leading-[20px] text-[#191C1F]">
-                Phone: <span className="text-[#5F6C72]">+234 909090909</span>
+                Phone:{" "}
+                <span className="text-[#5F6C72]">{user && user?.phone}</span>
               </p>
               <p className="font-[500] text-[14px] leading-[20px] text-[#191C1F] mb-[8px]">
                 Email:{" "}
-                <span className="text-[#5F6C72]">
-                  nwankwopaschal017@gmail.com
-                </span>
+                <span className="text-[#5F6C72]">{user && user?.email} </span>
               </p>
             </div>
 
             <div className="mb-[24px]">
-              <button className="border-[#D5EDFD] border-[3px] px-[24px] text-[14px] font-[700] leading-[48px] text-primary rounded-[2px]">
+              <Link
+                href={"/account/settings"}
+                className="border-[#D5EDFD] border-[3px] px-[24px] text-[14px] font-[700] leading-[48px] text-primary rounded-[2px]"
+              >
                 EDIT ADDRESS
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -102,7 +145,7 @@ const Account = () => {
             <Image src="/icon1.svg" alt="" width={56} height={56} />
             <div className="flex flex-col justify-start items-start gap-1">
               <p className="font-[600] text-[20px] leading-[28px] text-[#191C1F]">
-                222
+                {user && user.orders ? user.orders.length : 0}
               </p>
               <p className="text-[14px] font-[400] leading-[20px] text-[#475156]">
                 Total Orders
@@ -113,7 +156,7 @@ const Account = () => {
             <Image src="/icon2.svg" alt="" width={56} height={56} />
             <div className="flex flex-col justify-start items-start gap-1">
               <p className="font-[600] text-[20px] leading-[28px] text-[#191C1F]">
-                22
+                {user && pendingOrders ? pendingOrders.length : 0}
               </p>
               <p className="text-[14px] font-[400] leading-[20px] text-[#475156]">
                 Pending Orders
@@ -124,7 +167,7 @@ const Account = () => {
             <Image src="/icon3.svg" alt="" width={56} height={56} />
             <div className="flex flex-col justify-start items-start gap-1">
               <p className="font-[600] text-[20px] leading-[28px] text-[#191C1F]">
-                22
+                {user && completedOrders ? completedOrders.length : 0}
               </p>
               <p className="text-[14px] font-[400] leading-[20px] text-[#475156]">
                 Completed Orders

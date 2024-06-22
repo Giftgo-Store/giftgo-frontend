@@ -9,7 +9,7 @@ import {
   FaFacebook,
 } from "react-icons/fa6";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { FaStar } from "react-icons/fa6";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import {
@@ -22,32 +22,126 @@ import { IoCopyOutline } from "react-icons/io5";
 import { LiaFighterJetSolid } from "react-icons/lia";
 import { LiaShippingFastSolid } from "react-icons/lia";
 import { GoArrowDown, GoArrowUp } from "react-icons/go";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Cookies from "js-cookie";
+import BASE_URL from "@/app/config/baseurl";
+import axios from "axios";
+import Modal from "@/app/components/LoginModal";
 
 const Page = () => {
+  const params = useParams();
   const router = useRouter();
   const [activeNav, setActiveNav] = useState("1");
   const [showMore, setShowMore] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+  const [showLogin, setShowLogin] = useState(false);
+
+   const [showModal, setShowModal] = useState(false);
+
+   const openModal = () => setShowModal(true);
+   const closeModal = () => setShowModal(false);
+
+  const [product, setProduct] = useState<any>([]);
+  const location = Cookies.get("location");
+  console.log(params);
+  const token = Cookies.get("token");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/api/v1/products/${params.id}`
+        );
+        console.log(response.data.data.data);
+        setProduct(response.data.data);
+        // Handle successful response, e.g., save token, redirect, etc.
+        console.log("Successful", response.data);
+      } catch (error) {
+        //@ts-ignore
+        //@ts-expect-error
+        console.error("Error fetching resource",error?.response?.data || error?.message
+        );
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+
+    fetchData();
+  }, [location, params.id]);
+
+  console.log(product);
+
+  const handleIncrease = () => {
+    setQuantity(quantity + 1);
+  };
+
+  const handleDecrease = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
+
+  const handleAddToCart = async () => {
+      const token = Cookies.get("token");
+    if (!token) {
+      console.log("No token")
+      openModal()
+      setShowLogin(true);
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/api/v1/cart/add`,
+        {
+          productId: params.id,
+          quantity: quantity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+      console.log(response.data.data);
+      // Handle successful response, e.g., save token, redirect, etc.
+      alert("Item added to cart")
+      console.log("Successful", response.data.data);
+    } catch (error) {
+      //@ts-ignore
+      //@ts-expect-error
+      console.error("Error fetching resource", error?.response?.data || error?.message
+      );
+    } finally {
+      // Any cleanup or final actions
+    }
+  };
+
+  console.log(showLogin)
 
   return (
-    <>
+    <div className="">
+      {showLogin && <Modal showModal={showModal} closeModal={closeModal} />}
       <div className="py-[20px] px-[8%] bg-secondary mb-[56px]">
-        <h2 className="font-[600] leading-[32px] text-[28px] text-[#191C1F]">
-          USA Store
+        <h2
+          className="font-[600] leading-[32px] text-[28px] text-[#191C1F]"
+          onClick={() => (token ? router.push("/account") : openModal())}
+        >
+          {location} Store
         </h2>
         <p className="text-[#475156] text-[18px] font-[500]">
           <span className="cursor-pointer" onClick={() => router.push("/")}>
             Home
           </span>{" "}
           / <span className="cursor-pointer">Shop</span> /{" "}
-          <span className="cursor-pointer">USA store</span> / Kids items
+          <span className="cursor-pointer">{location} store</span> /{" "}
+          {product && product?.category?.name}
         </p>
       </div>
 
       <div className="flex justify-center lg:justify-between items-center flex-col lg:flex-row px-[4%] lg:px-[8%] mt-[20px] lg:mt-[56px] mb-[24px] w-full">
         <div className="lg:w-[50%] flex-col justify-start items-start lg:px-[24px] gap-2 h-full">
           <Image
-            src="/small.png"
+            src={product && product?.images && product?.images[0]}
             alt=""
             width={174}
             height={148}
@@ -87,7 +181,7 @@ const Page = () => {
         <div className="flex lg:w-[50%] pt-[50px] lg:pt-0 flex-col items-start lg:pl-[4%]">
           <div className="mb-[20px] lg:mb-[48px]">
             <h2 className="text-[#191C1F] text-[28px] font-[600]">
-              Playwood Armchair
+              {product && product?.productName}
             </h2>
             <div className="flex justify-start items-center gap-[2px]">
               <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
@@ -100,18 +194,25 @@ const Page = () => {
           </div>
 
           <p className="text-[#505050] lg:pr-[14%] mb-[20px]">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam.
+            {product && product?.description}
           </p>
 
           <div className="flex flex-col lg:flex-row justify-between w-full gap-4 items-start lg:items-center">
             <div className="flex w-full lg:w-fit justify-center items-center gap-[35px] text-[#191C1F] px-6 py-4 border-[#E4E7E9] border-[2px] rounded-[3px]">
-              <FiMinus className="w-4 h-4 cursor-pointer" />
-              <p>1</p>
-              <FiPlus className="w-4 h-4 cursor-pointer" />
+              <FiMinus
+                className="w-4 h-4 cursor-pointer"
+                onClick={handleDecrease}
+              />
+              <p>{quantity}</p>
+              <FiPlus
+                className="w-4 h-4 cursor-pointer"
+                onClick={handleIncrease}
+              />
             </div>
-            <button className="flex w-full lg:w-fit justify-center items-center gap-2 text-white px-8 py-4 bg-primary rounded-[3px] font-[700]">
+            <button
+              className="flex w-full lg:w-fit justify-center items-center gap-2 text-white px-8 py-4 bg-primary rounded-[3px] font-[700]"
+              onClick={handleAddToCart}
+            >
               <p>ADD TO CART</p>
               <PiShoppingCart className="w-6 h-6 cursor-pointer" />
             </button>
@@ -357,21 +458,21 @@ const Page = () => {
             </p>
           </div>
           <div className="flex justify-center items-center flex-wrap gap-6">
-            <Card />
+            {/* <Card />
             <Card express={true} />
             <Card />
             <Card />
             <Card express={true} />
             <Card />
             <Card express={true} />
-            <Card />
+            <Card /> */}
             <button className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]">
               <p> Browse All Products</p>
             </button>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
