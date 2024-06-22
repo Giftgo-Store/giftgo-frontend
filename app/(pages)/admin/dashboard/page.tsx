@@ -16,6 +16,7 @@ import {
   getKeyValue,
   Chip,
   User,
+  Skeleton,
 } from "@nextui-org/react";
 import { redirect, usePathname } from "next/navigation";
 import { TbBell } from "react-icons/tb";
@@ -30,6 +31,7 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from "react";
 
 import dynamic from "next/dynamic";
@@ -39,7 +41,38 @@ import { SlArrowDown } from "react-icons/sl";
 import { SlArrowUp } from "react-icons/sl";
 import { useSession } from "next-auth/react";
 
+interface TopSellingCategory {
+  totalSales: number;
+  categoryName: string;
+}
+
+interface BestSellingProduct {
+  totalSales: number;
+  name: string;
+}
+
+interface productStats {
+  topSellingCategories: TopSellingCategory[];
+  bestSellingProducts: BestSellingProduct[];
+}
+interface weeklystats {
+  week: string;
+  totalOrders: number;
+  totalRevenue: number;
+}
+interface salesAnalytics {
+  totalCustomers: number;
+  totalOrders: number;
+  totalRevenue: number;
+  totalSales: number;
+  weeklyStats: weeklystats[];
+}
 export default function Dashboard() {
+  const [productStats, setProductStats] = useState<productStats | null>(null);
+  const [orderStats, setOrderStats] = useState<salesAnalytics | null>(null);
+  const topSellingCategories = productStats?.topSellingCategories;
+  const bestSellingProducts = productStats?.bestSellingProducts;
+
   const sesssion = useSession({
     required: true,
     onUnauthenticated() {
@@ -47,8 +80,10 @@ export default function Dashboard() {
     },
   });
 
-  const session = useSession();
-  //  console.log(session);
+  const session: any = useSession();
+  const token = session?.data?.token;
+  const API = process.env.NEXT_PUBLIC_API_ROUTE;
+
   const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
   const series = [
     {
@@ -482,7 +517,53 @@ export default function Dashboard() {
   function option() {
     alert("yes");
   }
+  const getProductStats = async () => {
+    try {
+      const res = await fetch(`${API}/products/product/stats`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
 
+      const resData = await res.json();
+      console.log(resData);
+      setProductStats(resData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getOrderStats = async () => {
+    try {
+      const res = await fetch(`${API}/orders/order`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+        method: "POST",
+      });
+
+      const resData = await res.json();
+      setOrderStats(resData);
+      console.log(resData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  function formatNumber(x: number) {
+    if (x >= 1_000_000) {
+      return (x / 1_000_000).toFixed(1) + "M";
+    } else if (x >= 1_000) {
+      return (x / 1_000).toFixed(1) + "K";
+    } else if (x === 0) {
+      return x
+    } else {
+      return x.toString();
+    }
+  }
+
+  useEffect(() => {
+    getProductStats();
+    getOrderStats();
+  }, []);
   return (
     <div>
       {/* total sales and cost section */}
@@ -496,7 +577,13 @@ export default function Dashboard() {
               </div>
               <div className="flex flex-col gap-5 pt-3">
                 <div className="flex gap-6 items-end justify-normal">
-                  <span className="font-bold text-3xl text-[2rem]">₦1.7M</span>
+                  {orderStats ? (
+                    <span className="font-bold text-3xl text-[2rem]">
+                      ₦{formatNumber(orderStats?.totalRevenue)}
+                    </span>
+                  ) : (
+                    <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+                  )}
                   <span className="font-bold text-[#1EB564]">₦1.5M</span>
                 </div>
                 <div className="flex gap-2">
@@ -559,7 +646,7 @@ export default function Dashboard() {
         <DashboardCard
           customstyle="min-w-[270px] lg:max-w-[unset]"
           title={"Total Orders"}
-          amount={700}
+          amount={orderStats&&formatNumber(orderStats?.totalRevenue)}
           profit={true}
           percentage={6}
         ></DashboardCard>
@@ -763,19 +850,63 @@ export default function Dashboard() {
           </div>
           <div className="relative max-h-[350px] w-fit mx-auto">
             <div className="w-[220px] h-[220px] rounded-full flex flex-col gap-2 items-center justify-center bg-[#EB6363] text-white">
-              <span className="opacity-[80%]">Gifts</span>
-              <span className="font-bold text-2xl">500</span>
-              <span className="opacity-[80%]">Per Day</span>
+              <span className="opacity-[80%]">
+                {topSellingCategories ? (
+                  <span className="opacity-[80%]">
+                    {topSellingCategories[0].categoryName}
+                  </span>
+                ) : (
+                  <Skeleton className="w-[70px] h-[40px]" />
+                )}
+              </span>
+              {topSellingCategories ? (
+                <span className="font-bold text-2xl">
+                  {topSellingCategories[0].totalSales}
+                </span>
+              ) : (
+                <Skeleton className="w-[100px] h-[30px]" />
+              )}
+              <span className="opacity-[80%]">Sold</span>
             </div>
             <div className="w-[200px] h-[200px] rounded-full flex flex-col gap-2 items-center justify-center bg-[#FEEFD3] text-black -top-20 relative left-28">
-              <span className="opacity-[80%]">Perfumes</span>
-              <span className="font-bold text-2xl">500</span>
-              <span className="opacity-[80%]">Per Day</span>
+              {topSellingCategories ? (
+                <span className="opacity-[80%]">
+                  {topSellingCategories[1].categoryName}
+                </span>
+              ) : (
+                <Skeleton className="w-[70px] h-[40px]" />
+              )}
+
+              <span className="font-bold text-2xl">
+                {topSellingCategories ? (
+                  <span className="font-bold text-2xl">
+                    {topSellingCategories[1].totalSales}
+                  </span>
+                ) : (
+                  <Skeleton className="w-[100px] h-[30px]" />
+                )}
+              </span>
+              <span className="opacity-[80%]">Sold</span>
             </div>
             <div className="w-[160px] h-[160px] rounded-full flex flex-col gap-2 items-center justify-center bg-[#1EB564] text-white relative z-10 -top-64 -left-8">
-              <span className="opacity-[80%]">Teddy bears</span>
-              <span className="font-bold text-2xl">500</span>
-              <span className="opacity-[80%]">Per Day</span>
+              {topSellingCategories ? (
+                <span className="opacity-[80%]">
+                  {topSellingCategories[2].categoryName}
+                </span>
+              ) : (
+                <Skeleton className="w-[70px] h-[40px]" />
+              )}
+
+              <span className="font-bold text-2xl">
+                {topSellingCategories ? (
+                  <span className="font-bold text-2xl">
+                    {topSellingCategories[2].totalSales}
+                  </span>
+                ) : (
+                  <Skeleton className="w-[100px] h-[30px]" />
+                )}
+              </span>
+              <span className="opacity-[80%]">Sold</span>
             </div>
           </div>
         </div>
@@ -894,9 +1025,13 @@ export default function Dashboard() {
                 <p className="font-semibold text-lg text-[#23272E]">
                   Total Orders
                 </p>
-                <span className="font-bold text-[2.0rem] leading-[2.0rem]">
-                  2k
-                </span>
+                {orderStats ? (
+                  <span className="font-bold text-[2.0rem] leading-[2.0rem]">
+                    {formatNumber(orderStats?.totalOrders)}
+                  </span>
+                ) : (
+                  <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+                )}
                 <p className="text-[#8B909A] text-base">Users per minute</p>
               </div>
             </div>

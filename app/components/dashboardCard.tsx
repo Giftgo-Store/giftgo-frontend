@@ -2,7 +2,7 @@ import { IoArrowDownOutline, IoArrowUpOutline } from "react-icons/io5";
 import { Image } from "@nextui-org/react";
 interface dashboardCard {
   title: string;
-  amount: number;
+  amount: number|string|null;
   profit: boolean;
   percentage: number;
   customstyle?: string;
@@ -23,7 +23,7 @@ export function DashboardCard({
       <div className="flex flex-col gap-5">
         <div className="flex gap-5 flex-wrap sm:flex-nowrap flex-row justify-between ">
           <div className="flex gap-6 items-end justify-normal">
-            <span className="font-bold text-3xl text-[2rem]">₦{amount}K</span>
+            <span className="font-bold text-3xl text-[2rem]">{amount}</span>
           </div>
           <Image
             src={profit ? "/green-rise.png" : "/red-dip.png"}
