@@ -1,7 +1,6 @@
 "use client";
 import ProductListCard from "@/app/components/ProductListCard";
-import { OrderList } from "@/app/assets/data";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Input,
@@ -13,19 +12,99 @@ import {
 } from "@nextui-org/react";
 import { CiSearch } from "react-icons/ci";
 import { IoMdAddCircleOutline } from "react-icons/io";
+import { ProductListSkeletonCard } from "@/app/components/productlistskeletonLoad";
+import { useSession } from "next-auth/react";
+import { redirect,useRouter} from "next/navigation";
+interface item {
+  _id: string;
+  productName: string;
+  description: string;
+  category: {
+    name: string;
+  };
+  regularPrice: number;
+  brandName: string;
+  salePrice: string;
+  sku: string;
+  images: string[];
+  stockQuantity: number;
+}
+
 export default function ProductList() {
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState<any | string[]>("10");
   const [filterValue, setFilterValue] = useState("");
-  const [Items, setItems] = useState(OrderList);
-  const [pinnedList, setPinnedList] = useState<any>([]);
-  console.log(Items);
+  const [Items, setItems] = useState<item[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [pinnedList, setPinnedList] = useState<item[]>([]);
   const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
+  const sesssion = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/admin/auth/login");
+    },
+  });
+  const session: any = useSession();
+  const token = session?.data?.token;
+  const API = process.env.NEXT_PUBLIC_API_ROUTE;
+
+  const router = useRouter();
+
+  const fetchProducts = async () => {
+    try {
+      const data = await fetch(`${API}/products`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+        method: "GET",
+      });
+      const productData = await data.json();
+      setLoading(false);
+      // console.log(productData);
+      if (productData.data) {
+        setItems(productData.data);
+      } else if (productData.data === null) {
+        setItems([]);
+      }
+    } catch (error) {
+      //  console.error(error);
+    }
+  };
+
+  // Function to load pinned items from local storage
+  const loadPinnedItems = () => {
+    const pinnedItems =
+      typeof window !== "undefined"
+        ? window.localStorage.getItem("pinnedList")
+        : false;
+    return pinnedItems ? JSON.parse(pinnedItems) : [];
+  };
+
+  // Function to save pinned items to local storage
+  const savePinnedList = (pinnedItems: item[]) => {
+    localStorage.setItem("pinnedList", JSON.stringify(pinnedItems));
+  };
+
+  useEffect(() => {
+    if (pinnedList.length > 0) {
+      savePinnedList(pinnedList);
+    }
+  }, [pinnedList]);
+
+  useEffect(() => {
+    const loadedPinnedItems = loadPinnedItems();
+    setPinnedList(loadedPinnedItems);
+  }, []);
+  useEffect(() => {
+    if (token) {
+      fetchProducts();
+    }
+  }, [token]);
 
   const filteredItems = useMemo(() => {
-    return Items.filter((item) => {
+    return Items.filter((item: item) => {
       if (filterValue.length > 0) {
-        return item.products[0].productName
+        return item.productName
           .toLocaleLowerCase()
           .includes(filterValue.toLocaleLowerCase());
       }
@@ -38,26 +117,54 @@ export default function ProductList() {
     const end = start + Number(rowsPerPage);
 
     return filteredItems.slice(start, end);
-  }, [page, filteredItems, rowsPerPage, Items]);
+  }, [page, filteredItems, rowsPerPage]);
 
   const pages = useMemo(() => {
     return Math.ceil(filteredItems.length / Number(rowsPerPage));
   }, [filteredItems, rowsPerPage]);
 
-  const DeleteProduct = (index: number) => {
-    // Create a copy of the current Items array and remove the item at the specified index
-    const updatedItems = [...Items];
-    updatedItems.splice(index, 1);
-    setItems(updatedItems);
+  const DeleteProduct = async (
+    index: number,
+    id: string,
+    isPinned: boolean
+  ) => {
+    if (isPinned) {
+      // Remove from pinned list without sending a delete request to the server
+      const updatedPinnedList = [...pinnedList];
+      updatedPinnedList.splice(index, 1);
+      setPinnedList(updatedPinnedList);
+    } else {
+      // Remove from main product list and send a delete request to the server
+      try {
+        const data = await fetch(`${API}/products/${id}`, {
+          headers: {
+            AUTHORIZATION: "Bearer " + token,
+          },
+          method: "DELETE",
+        });
+        await data.json();
+
+        const updatedItems = [...Items];
+        updatedItems.splice(index, 1);
+        setItems(updatedItems);
+      } catch (error) {
+        //console.error(error);
+      }
+    }
   };
+
   const PinProduct = (index: number) => {
-    setPinnedList((pinnedlist: any) => [...pinnedlist, Items[index]]);
+    const product: item = Items[index];
+    if (!pinnedList.some((item: item) => item._id === product._id)) {
+      setPinnedList((pinnedlist) => [...pinnedlist, product]);
+    }
   };
+
   return (
     <div className="pb-12">
       <div className="flex justify-between gap-3 pt-4 py-3">
         <Input
-          placeholder="Search by order id"
+          placeholder="Search by product name"
           endContent={<CiSearch size={28} color="#8B909A" />}
           size="md"
           radius="sm"
@@ -82,76 +189,92 @@ export default function ProductList() {
           startContent={<IoMdAddCircleOutline size={20} color="white" />}
           radius="sm"
           as={Link}
-          href="/admin/add-product"
+          href="/admin/add-products"
           className="text-white bg-[#1EB564]"
         >
           Add new product
         </Button>
       </div>
-      <Spacer y={10}></Spacer>
-      {pinnedList.length > 0 && (
+      <Spacer y={6}></Spacer>
+      {pinnedList.length > 0 && filterValue.length < 1 && (
         <div className="pb-5">
           <p className="text-2xl font-bold">Pinned List</p>
         </div>
       )}
-         <div
+      <div
         className={`flex gap-3 ${
           pinnedList.length > 3 ? "justify-between" : "justify-stretch"
         } flex-wrap`}
       >
-      {pinnedList &&
-        pinnedList.map((item: any, index: number) => (
-          <ProductListCard
-            key={index}
-            avatar="/teddy.png"
-            productCategory="shoes"
-            productName={item.products[0].productName}
-            productPrice={item.products[0].price}
-            productSold={item.products[0].sellingPrice}
-            productStock={item.products[0].originalPrice}
-            productSummary="loremLorem ipsum is placeholder text commonly used in the graphic."
-            DeleteProduct={() => {
-              DeleteProduct(index);
-            }}
-            EditProduct={() => {
-              alert("Edit product");
-            }}
-            PinProduct={() => alert("pin product")}
-          />
-        ))}
+        {pinnedList &&
+          filterValue.length < 1 &&
+          pinnedList.map((item: item, index: number) => (
+            <ProductListCard
+              key={item._id}
+              avatar={item.images[0]}
+              productCategory={item.category.name}
+              productName={item.productName}
+              productPrice={Number(item.salePrice).toLocaleString()}
+              productSold={""}
+              productStock={item.stockQuantity}
+              productSummary={item.description}
+              DeleteProduct={() => {
+                DeleteProduct(index, item._id, true);
+              }}
+              EditProduct={() => {
+                alert("Pinned product cannot be edited");
+              }}
+              PinProduct={() => PinProduct(index)}
+            />
+          ))}
       </div>
       <Spacer y={10}></Spacer>
       <div className="pb-5">
         <p className="text-2xl font-bold">All Products</p>
       </div>
 
-      <div
-        className={`flex gap-3 ${
-          paginatedItems.length > 3 ? "justify-between" : "justify-stretch"
-        } flex-wrap`}
-      >
-        {paginatedItems.length ? (
-          paginatedItems.map((item, index) => (
-            <ProductListCard
-              key={index}
-              avatar="/teddy.png"
-              productCategory="shoes"
-              productName={item.products[0].productName}
-              productPrice={item.products[0].price}
-              productSold={item.products[0].sellingPrice}
-              productStock={item.products[0].originalPrice}
-              productSummary="loremLorem ipsum is placeholder text commonly used in the graphic."
-              DeleteProduct={() => {
-                DeleteProduct(index);
-              }}
-              EditProduct={() => {
-                alert("Edit product");
-              }}
-              PinProduct={() => PinProduct(index)}
-            />
-          ))
+      <div>
+        {!loading ? (
+          <div
+            className={`flex gap-5  ${
+              paginatedItems.length > 3 ? "justify-between" : "justify-stretch"
+            } flex-wrap`}
+          >
+            {paginatedItems.length ? (
+              paginatedItems.map((item: item, index) => (
+                <ProductListCard
+                  key={item._id}
+                  avatar={item.images[0]}
+                  productCategory={item.category.name}
+                  productName={item.productName}
+                  productPrice={Number(item.salePrice).toLocaleString()}
+                  productSold={""}
+                  productStock={item.stockQuantity}
+                  productSummary={item.description}
+                  DeleteProduct={() => {
+                    DeleteProduct(index, item._id, false);
+                  }}
+                  EditProduct={() => {
+                    router.push(`/admin/add-products?edit=${item._id}`);
+                  }}
+                  PinProduct={() => PinProduct(index)}
+                />
+              ))
+            ) : (
+              <div className="h-[40vh] flex justify-center items-center w-full">
+                <p className="text-center">No products found !</p>
+              </div>
+            )}
+          </div>
         ) : (
-          <p>No products found</p>
+          <div className="flex flex-wrap gap-3 justify-between w-full">
+            <ProductListSkeletonCard />
+            <ProductListSkeletonCard />
+            <ProductListSkeletonCard />
+            <ProductListSkeletonCard />
+            <ProductListSkeletonCard />
+            <ProductListSkeletonCard />
+          </div>
         )}
       </div>
       <div className="flex justify-between items-center py-2 px-3">
@@ -192,3 +315,4 @@ export default function ProductList() {
     </div>
   );
 }
+ProductList.requireAuth = true;

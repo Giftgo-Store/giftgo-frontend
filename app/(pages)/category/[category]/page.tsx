@@ -15,7 +15,7 @@ import Cookies from "js-cookie";
 
 const page = () => {
   const params = useParams()
-  console.log(params.category)
+  console.log(params?.category)
     const [locate, setLocate] = useState<any>([]);
     const [category, setCategory] = useState([]);
     const [product, setProduct] = useState<any>([])
@@ -47,7 +47,7 @@ const page = () => {
       };
 
       fetchData();
-    }, [params.category]);
+    }, [params?.category]);
 
      useEffect(() => {
        const fetchData = async () => {
@@ -230,18 +230,11 @@ const page = () => {
                     product?.expressShipping && <Card key={i} lists={product} />
                   );
                 })}
-              {/* <Card express={true} />
-              <Card />
-              <Card />
-              <Card express={true} />
-              <Card />
-              <Card />
-              <Card express={true} />
-              <Card express={true} /> */}
               <Link
                 href={`/category/${params.category}/category-detail/${params.category}`}
                 className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]"
               >
+
                 <p> Browse All Products</p>
               </Link>
             </div>

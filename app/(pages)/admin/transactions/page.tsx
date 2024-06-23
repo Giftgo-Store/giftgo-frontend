@@ -33,7 +33,7 @@ export default function Transactions() {
   const [statusFilterValue, setStatusFilterValue] = useState("All");
   const [rowsPerPage, setRowsPerPage] = useState<any | string[]>("10");
   const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
-  console.log(statusFilterValue);
+  // console.log(statusFilterValue);
   const status = [
     "All",
     "Pending",
@@ -57,9 +57,9 @@ export default function Transactions() {
   const pathname = usePathname();
   
   useEffect(() => {
-    const initialStatus = searchParams.get("status") || "All";
-    const initialRowsPerPage = searchParams.get("rowsPerPage") || "10";
-    const initialPage = searchParams.get("page") || "1";
+    const initialStatus = searchParams?.get("status") || "All";
+    const initialRowsPerPage = searchParams?.get("rowsPerPage") || "10";
+    const initialPage = searchParams?.get("page") || "1";
     
     setStatusFilterValue(initialStatus);
     setRowsPerPage(initialRowsPerPage);
@@ -68,7 +68,7 @@ export default function Transactions() {
 
   
  const updateSearchParams = (newParams: any) => {
-   const params = new URLSearchParams(searchParams);
+   const params = new URLSearchParams(searchParams||"");
    Object.keys(newParams).forEach((key) => {
      params.set(key, newParams[key]);
    });
@@ -114,7 +114,7 @@ export default function Transactions() {
  }, [filterValue]);
 
  useEffect(() => {
-   const initialFilter = searchParams.get("filter") || "";
+   const initialFilter = searchParams?.get("filter") || "";
    setFilterValue(initialFilter);
  }, []);
   // Filter and sort items based on sort option
