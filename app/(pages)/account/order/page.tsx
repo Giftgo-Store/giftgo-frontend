@@ -1,21 +1,62 @@
 "use client";
 
 import { FaArrowRight } from "react-icons/fa6";
-import { useState } from "react";
 import Image from "next/image";
+import Cookies from "js-cookie";
+import BASE_URL from "@/app/config/baseurl";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 const Order = () => {
   const [showDetails, setShowDetails] = useState(true);
+  const [single, setSingle] = useState<any>([]);
+  const [id, setId] = useState<any>("");
+
+  const location = Cookies.get("location");
+  const handleFetchOrder = async () => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/api/v1/orders/track/track?orderId=${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+      console.log(response.data.data);
+      // Handle successful response, e.g., save token, redirect, etc.
+      setSingle(response.data.data);
+      setShowDetails(false);
+      console.log("Successful", response.data.data);
+    } catch (error) {
+      console.error(
+        //@ts-ignore
+        "Error fetching resource", error?.response?.data || error?.message);
+    } finally {
+      // Any cleanup or final actions
+    }
+  };
+  
 
   const handleShowDetails = () => {
-    setShowDetails(false);
+    setShowDetails(!showDetails);
   };
 
   const handleHideDetails = () => {
-    setShowDetails(true);
+    setShowDetails(!showDetails);
   };
 
-  const progress = 70;
+  const progress =
+    single.status === "pending"
+      ? 5
+      : single.status === "processing"
+      ? 30
+      : single.status === "shipped"
+      ? 70
+      : single.status === "delivered"
+      ? 100
+      : 0;
+
   return (
     <>
       {showDetails ? (
@@ -42,6 +83,8 @@ const Order = () => {
                 type="text"
                 className="border-[#E4E7E9] rounded-[2px] h-[44px] outline-none w-full lg:w-[424px] border-[1px] px-[18px] text-[14px] text-[#475156]"
                 placeholder="ID..."
+                value={id}
+                onChange={(e) => setId(e.target.value)}
               />
             </fieldset>
           </form>
@@ -80,7 +123,7 @@ const Order = () => {
           <div className="flex w-full justify-center items-center">
             <button
               className="py-[14px] px-[24px] rounded-[2px] bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2"
-              onClick={handleShowDetails}
+              onClick={handleFetchOrder}
             >
               TRACK ORDER <FaArrowRight className="w-5 h-5" />
             </button>
@@ -105,22 +148,39 @@ const Order = () => {
             <div className="flex justify-start items-center gap-[26px] pb-[18px]">
               <Image src="/truck.svg" alt="" width={40} height={30} />
               <p className="text-[24px] font-[600] leading-[30px]">
-                ID TRK35E279H{" "}
+                ID {single.orderId}{" "}
               </p>
             </div>
 
             <div className="flex px-[90px] justify-between w-full items-center gap-[26px] pb-[22px]">
               <p className="text-[15px] text-[#787C82] leading-[19px]">
-                From : <span className="text-black font-[500]"> USA</span>
+                From :{" "}
+                <span className="text-black font-[500]"> {location}</span>
               </p>{" "}
               <p className="text-[15px] text-[#787C82] leading-[19px]">
-                To : <span className="text-black font-[500]"> Nigeria</span>
+                To :{" "}
+                <span className="text-black font-[500]">
+                  {" "}
+                  {single &&
+                    single.customerAddress &&
+                    single.customerAddress.address}
+                </span>
               </p>
             </div>
 
             <div className="px-[90px]">
               <p className="text-[15px] text-[#787C82] leading-[19px]">
-                Delivery progress - 87%
+                Delivery progress -{" "}
+                {single && single.status === "pending"
+                  ? 5
+                  : single.status === "processing"
+                  ? 30
+                  : single.status === "shipped"
+                  ? 70
+                  : single.status === "delivered"
+                  ? 100
+                  : 0}
+                %
               </p>
               <div className="flex justify-between w-full items-center pt-[10px]">
                 <div className="w-[80%]">
@@ -142,8 +202,22 @@ const Order = () => {
           <div className="flex justify-between items-start mt-4">
             <div className="flex flex-col items-start">
               <div className="flex justify-start items-center gap-[40px] pb-[56px] relative">
-                <div className="w-[1px] h-[80px] top-8 left-3 absolute bg-[#FF7A00]"></div>
-                <div className="w-[25px] h-[25px] rounded-full bg-[#FF7A00]"></div>
+                <div
+                  className={`w-[1px] h-[80px] top-8 left-3 absolute ${
+                    single.status !== "shipped" && single.status !== "delivered"
+                      ? "bg-[#FF7A00]"
+                      : single.status === "processing"
+                      ? "bg-[#FF7A00]"
+                      : "bg-[#B6B9C1]"
+                  } `}
+                ></div>
+                <div
+                  className={`w-[25px] h-[25px] rounded-full ${
+                    single.status !== "shipped" && single.status !== "delivered"
+                      ? "bg-[#FF7A00]"
+                      : "bg-[#B6B9C1]"
+                  }`}
+                ></div>
                 <div>
                   <p className="text-[16px] font-[600] leading-[24px]">
                     Courier service picks up package{" "}
@@ -154,8 +228,20 @@ const Order = () => {
                 </div>
               </div>
               <div className="flex justify-start items-center gap-[40px] pb-[56px] relative">
-                <div className="w-[1px] h-[80px] top-8 left-3 absolute bg-[#B6B9C1]"></div>
-                <div className="w-[25px] h-[25px] rounded-full bg-[#FF7A00]"></div>
+                <div
+                  className={`w-[1px] h-[80px] top-8 left-3 absolute ${
+                    single.status === "delivered"
+                      ? "bg-[#FF7A00]"
+                      : "bg-[#B6B9C1]"
+                  }`}
+                ></div>
+                <div
+                  className={`w-[25px] h-[25px] rounded-full ${
+                    single.status === "delivered"
+                      ? "bg-[#FF7A00]"
+                      : "bg-[#B6B9C1]"
+                  }`}
+                ></div>
                 <div>
                   <p className="text-[16px] font-[600] leading-[24px]">
                     Package sorted and loaded
@@ -166,7 +252,13 @@ const Order = () => {
                 </div>
               </div>
               <div className="flex justify-start items-center gap-[40px] pb-[56px]">
-                <div className="w-[25px] h-[25px] rounded-full bg-[#B6B9C1]"></div>
+                <div
+                  className={`w-[25px] h-[25px] rounded-full ${
+                    single.status === "delivered"
+                      ? "bg-[#FF7A00]"
+                      : "bg-[#B6B9C1]"
+                  }`}
+                ></div>
                 <div>
                   <p className="text-[16px] font-[600] leading-[24px]">
                     Package delivered{" "}
@@ -179,7 +271,10 @@ const Order = () => {
             </div>
             <div>
               <p className="text-[20px] font-[600] leading-[24px] text-[#A0A1A4]">
-                Status : <span className="text-primary">In Transit</span>
+                Status :{" "}
+                <span className="text-primary">
+                  {single.status === "completed" ? "Arrived" : "In Transit"}
+                </span>
               </p>
             </div>
           </div>

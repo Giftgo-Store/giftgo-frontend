@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers/providers";
 import AppWrapper from "./components/AppWrapper";
+import { RefetchProvider } from "./context/refetchContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,9 +24,11 @@ export default function RootLayout({
         className={`${inter.className} absolute h-screen w-full`}
         suppressHydrationWarning
       >
-        <Providers>
-          <AppWrapper>{children}</AppWrapper>
-        </Providers>
+        <RefetchProvider>
+          <Providers>
+            <AppWrapper>{children}</AppWrapper>
+          </Providers>
+        </RefetchProvider>
       </body>
     </html>
   );

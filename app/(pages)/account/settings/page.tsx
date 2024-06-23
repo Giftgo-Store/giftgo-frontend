@@ -2,13 +2,55 @@
 
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import React, { useState } from "react";
+import BASE_URL from "@/app/config/baseurl";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const Settings = () => {
   const [showPassword, setShowPassword] = useState(false);
-
+const [currentPassword, setCurrentPassword] = useState("");
+const [newPassword, setNewPassword] = useState("");
+const [confirmPassword, setConfirmPassword] = useState('')
   const handlePassword = () => {
     setShowPassword(!showPassword);
   };  
+
+    const handlePasswordChange = async (e: { preventDefault: () => void }) => {
+      e.preventDefault();
+      if(newPassword.length < 8) {
+        alert("Password must be at least 8 characters")
+        return
+      }
+      if(newPassword !== confirmPassword) {
+        alert("Passwords do not match")
+        return
+      }
+
+      try {
+        const response = await axios.put(
+          `${BASE_URL}/api/v1/user/change-password`,
+          {
+            currentPassword,
+            newPassword,
+            confirmPassword,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+          }
+        );
+        console.log(response.data);
+        // Handle successful response, e.g., save token, redirect, etc.
+        alert("Successful" + response);
+      } catch (error) {
+        //@ts-ignore
+        //@ts-expect-error
+        alert("Error fetching resource", error?.response?.data || error?.message);
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
 
   return (
     <div className="">
@@ -122,7 +164,6 @@ const Settings = () => {
               </label>
               <select
                 name=""
-                id=""
                 className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] text-[#929FA5] w-full"
               >
                 <option value="" selected disabled>
@@ -136,7 +177,6 @@ const Settings = () => {
               </label>
               <select
                 name=""
-                id=""
                 className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] text-[#929FA5] w-full"
               >
                 <option value="" selected disabled>
@@ -150,7 +190,6 @@ const Settings = () => {
               </label>
               <select
                 name=""
-                id=""
                 className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] text-[#929FA5] w-full"
               >
                 <option value="" selected disabled>
@@ -208,6 +247,8 @@ const Settings = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-full"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
               />
               {!showPassword ? (
                 <FiEyeOff
@@ -231,6 +272,8 @@ const Settings = () => {
                 type={showPassword ? "text" : "password"}
                 className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-full"
                 placeholder="8+ characters"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
               />
               {!showPassword ? (
                 <FiEyeOff
@@ -253,6 +296,8 @@ const Settings = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-full"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
               />
               {!showPassword ? (
                 <FiEyeOff
@@ -267,7 +312,10 @@ const Settings = () => {
               )}
             </div>
           </fieldset>
-          <button className="mt-2 flex justify-center items-center w-[204px] gap-[35px] text-white px-6 py-4 bg-primary rounded-[3px] font-[700] text-[14px]">
+          <button
+            onClick={(e) => handlePasswordChange(e)}
+            className="mt-2 flex justify-center items-center w-[204px] gap-[35px] text-white px-6 py-4 bg-primary rounded-[3px] font-[700] text-[14px]"
+          >
             CHANGE PASSWORD
           </button>
         </form>

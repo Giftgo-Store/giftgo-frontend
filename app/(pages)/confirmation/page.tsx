@@ -1,5 +1,5 @@
 import Image from "next/image";
-
+import Link from "next/link";
 const page = () => {
   return (
     <>
@@ -26,9 +26,9 @@ const page = () => {
               confirmation when your order is completed.
             </p>
           </div>
-          <button className="py-[14px] px-[24px] rounded-[2px] bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2">
+          <Link href='/' className="py-[14px] px-[24px] rounded-[2px] bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2">
             CONTINUE SHOPPING
-          </button>
+          </Link>
         </div>
       </div>
     </>
