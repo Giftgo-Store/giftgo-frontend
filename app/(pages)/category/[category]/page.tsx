@@ -64,19 +64,18 @@ const page = () => {
              response.data.data.data.location,
              locate.length
            );
-           
          } catch (error) {
            //@ts-ignore
-           //@ts-expect-error
-           console.error("Error fetching resource", error?.response?.data || error?.message
-           );
+           console.error(
+             //@ts-expect-error
+             "Error fetching resource", error?.response?.data || error?.message);
          } finally {
            // Any cleanup or final actions
          }
        };
 
        fetchData();
-     }, [params.category]);
+     }, [params && params.category]);
 
      console.log(category)
      console.log(product?.products)
@@ -107,7 +106,7 @@ const page = () => {
             {category &&
               category.map((cat: any, i: any) => {
                 return (
-                  <Category key={i} catId={cat} paramId={params.category} />
+                  <Category key={i} catId={cat} paramId={params && params.category} />
                 );
               })}
           </div>
@@ -120,7 +119,7 @@ const page = () => {
                 Products you may like
               </h2>
               <Link
-                href={`/category/${params.category}/category-detail/${params.category}`}
+                href={`/category/${params && params.category}/category-detail/${params && params.category}`}
                 className="hidden lg:flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2"
               >
                 Browse All Products
@@ -135,7 +134,7 @@ const page = () => {
                 })}
 
               <Link
-                href={`/category/${params.category}/category-detail/${params.category}`}
+                href={`/category/${params && params.category}/category-detail/${params && params.category}`}
                 className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]"
               >
                 <p> Browse All Products</p>
@@ -214,7 +213,7 @@ const page = () => {
                 Fastest Delivery Available
               </h2>
               <Link
-                href={`/category/${params.category}/category-detail/${params.category}`}
+                href={`/category/${params && params.category}/category-detail/${params && params.category}`}
                 className="hidden lg:flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2"
               >
                 Browse All Products
@@ -231,7 +230,7 @@ const page = () => {
                   );
                 })}
               <Link
-                href={`/category/${params.category}/category-detail/${params.category}`}
+                href={`/category/${params && params.category}/category-detail/${params && params.category}`}
                 className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]"
               >
 

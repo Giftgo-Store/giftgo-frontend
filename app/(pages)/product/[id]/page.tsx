@@ -53,7 +53,7 @@ const Page = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}/api/v1/products/${params.id}`
+          `${BASE_URL}/api/v1/products/${params && params.id}`
         );
         console.log(response.data.data.data);
         setProduct(response.data.data);
@@ -70,7 +70,7 @@ const Page = () => {
     };
 
     fetchData();
-  }, [location, params.id]);
+  }, [location, params && params.id]);
 
   console.log(product);
 
@@ -96,7 +96,7 @@ const Page = () => {
       const response = await axios.post(
         `${BASE_URL}/api/v1/cart/add`,
         {
-          productId: params.id,
+          productId: params && params.id,
           quantity: quantity,
         },
         {
