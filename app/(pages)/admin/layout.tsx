@@ -7,7 +7,7 @@ import { Providers } from "../../providers/providers";
 import { Header } from "../../components/Header";
 import { Suspense } from "react";
 import { redirect, usePathname, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 const inter = Inter({ subsets: ["latin"] });
 
 // export const metadata: Metadata = {
