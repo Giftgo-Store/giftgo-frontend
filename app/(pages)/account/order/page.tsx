@@ -36,6 +36,7 @@ const Order = () => {
       // Any cleanup or final actions
     }
   };
+  
 
   const handleShowDetails = () => {
     setShowDetails(!showDetails);
@@ -122,7 +123,7 @@ const Order = () => {
           <div className="flex w-full justify-center items-center">
             <button
               className="py-[14px] px-[24px] rounded-[2px] bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2"
-              onClick={handleShowDetails}
+              onClick={handleFetchOrder}
             >
               TRACK ORDER <FaArrowRight className="w-5 h-5" />
             </button>
@@ -204,7 +205,9 @@ const Order = () => {
                 <div
                   className={`w-[1px] h-[80px] top-8 left-3 absolute ${
                     single.status !== "shipped" && single.status !== "delivered"
-                      ? "bg-[#FF7A00]" : single.status === 'processing' ? "bg-[#FF7A00]"
+                      ? "bg-[#FF7A00]"
+                      : single.status === "processing"
+                      ? "bg-[#FF7A00]"
                       : "bg-[#B6B9C1]"
                   } `}
                 ></div>

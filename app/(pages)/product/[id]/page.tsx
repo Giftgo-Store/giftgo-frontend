@@ -27,8 +27,11 @@ import Cookies from "js-cookie";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
 import Modal from "@/app/components/LoginModal";
+import {useRefetch} from "@/app/context/refetchContext"
+import Link from "next/link";
 
 const Page = () => {
+    const { triggerRefetch } = useRefetch();
   const params = useParams();
   const router = useRouter();
   const [activeNav, setActiveNav] = useState("1");
@@ -102,6 +105,7 @@ const Page = () => {
           },
         }
       );
+          triggerRefetch();
       console.log(response.data.data);
       // Handle successful response, e.g., save token, redirect, etc.
       alert("Item added to cart")
@@ -216,9 +220,9 @@ const Page = () => {
               <p>ADD TO CART</p>
               <PiShoppingCart className="w-6 h-6 cursor-pointer" />
             </button>
-            <button className="flex w-full lg:w-fit justify-center items-center gap-[35px] text-[#191C1F] px-7 py-4 border-primary border-[2px] rounded-[3px] font-[700] text-[16px]">
+            <Link href={'/checkout'} className="flex w-full lg:w-fit justify-center items-center gap-[35px] text-[#191C1F] px-7 py-4 border-primary border-[2px] rounded-[3px] font-[700] text-[16px]">
               <p>BUY NOW</p>
-            </button>
+            </Link>
           </div>
 
           <div className="flex justify-end items-center w-full text-[#475156] gap-3 mt-1">

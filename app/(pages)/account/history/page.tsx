@@ -11,7 +11,7 @@ import Link from "next/link";
 const History = () => {
   const [showDetails, setShowDetails] = useState(true);
   const [show, setShow] = useState(false);
-  const [single, setSingle] = useState<any>([])
+  const [single, setSingle] = useState<any>([]);
 
   const handleShow = () => {
     setShow(true);
@@ -21,110 +21,124 @@ const History = () => {
     setShow(!show);
   };
 
-  const handleShowDetails = (order:any) => {
-    setSingle(order)
+  const handleShowDetails = async (id: any) => {
+     try {
+       const response = await axios.get(`${BASE_URL}/api/v1/orders/${id}`, {
+         headers: {
+           Authorization: `Bearer ${Cookies.get("token")}`,
+         },
+       });
+       console.log(response.data.data);
+       // Handle successful response, e.g., save token, redirect, etc.
+       setSingle(response.data.data);
+       console.log("Successful", response.data.data);
+     } catch (error) {
+       console.error(
+         //@ts-ignore
+         "Error fetching resource",error?.response?.data || error?.message);
+     } finally {
+       // Any cleanup or final actions
+     }
     setShowDetails(false);
   };
+  console.log(single);
 
   const handleHideDetails = () => {
     setShowDetails(true);
   };
 
-        const [user, setUser] = useState<any>([]);
-        const [order, setOrder] = useState<any>([]);
+  const [user, setUser] = useState<any>([]);
+  const [order, setOrder] = useState<any>([]);
 
-        useEffect(() => {
-          const fetchUser = async () => {
-            try {
-              const response = await axios.get(
-                `${BASE_URL}/api/v1/user/profile`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${Cookies.get("token")}`,
-                  },
-                }
-              );
-              console.log(response.data.data);
-              // Handle successful response, e.g., save token, redirect, etc.
-              setUser(response.data.data);
-              console.log("Successful", response.data.data);
-            } catch (error) {
-              console.error(
-                //@ts-ignore
-                "Error fetching resource",error?.response?.data || error?.message);
-            } finally {
-              // Any cleanup or final actions
-            }
-          };
-          fetchUser();
-        }, []);
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/v1/user/profile`, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        });
+        console.log(response.data.data);
+        // Handle successful response, e.g., save token, redirect, etc.
+        setUser(response.data.data);
+        console.log("Successful", response.data.data);
+      } catch (error) {
+        console.error(
+          //@ts-ignore
+          "Error fetching resource", error?.response?.data || error?.message);
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+    fetchUser();
+  }, []);
 
-                useEffect(() => {
-                  const fetchUser = async () => {
-                    try {
-                      const response = await axios.get(
-                        `${BASE_URL}/api/v1/orders/order/all`,
-                        {
-                          headers: {
-                            Authorization: `Bearer ${Cookies.get("token")}`,
-                          },
-                        }
-                      );
-                      console.log(response.data.data);
-                      // Handle successful response, e.g., save token, redirect, etc.
-                      setOrder(response.data.data);
-                      console.log("Successful", response.data.data);
-                    } catch (error) {
-                      console.error(
-                        //@ts-ignore
-                        "Error fetching resource", error?.response?.data || error?.message);
-                    } finally {
-                      // Any cleanup or final actions
-                    }
-                  };
-                  fetchUser();
-                }, []);
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/api/v1/orders/order/all`,
+          {
+            headers: {
+              Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+          }
+        );
+        console.log(response.data.data);
+        // Handle successful response, e.g., save token, redirect, etc.
+        setOrder(response.data.data);
+        console.log("Successful", response.data.data);
+      } catch (error) {
+        console.error(
+          //@ts-ignore
+          "Error fetching resource",error?.response?.data || error?.message);
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+    fetchUser();
+  }, []);
 
-        function formatDateString(dateString: string): string {
-          const date = new Date(dateString);
+  function formatDateString(dateString: string): string {
+    const date = new Date(dateString);
 
-          // Format the date part
-          const dateOptions: Intl.DateTimeFormatOptions = {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          };
-          const formattedDate = new Intl.DateTimeFormat(
-            "en-US",
-            dateOptions
-          ).format(date);
+    // Format the date part
+    const dateOptions: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    const formattedDate = new Intl.DateTimeFormat("en-US", dateOptions).format(
+      date
+    );
 
-          // Format the time part
-          const timeOptions: Intl.DateTimeFormatOptions = {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false, // for 24-hour format
-            timeZone: "UTC", // ensure the time is in UTC
-          };
-          const formattedTime = new Intl.DateTimeFormat(
-            "en-US",
-            timeOptions
-          ).format(date);
+    // Format the time part
+    const timeOptions: Intl.DateTimeFormatOptions = {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false, // for 24-hour format
+      timeZone: "UTC", // ensure the time is in UTC
+    };
+    const formattedTime = new Intl.DateTimeFormat("en-US", timeOptions).format(
+      date
+    );
 
-          return `${formattedDate} ${formattedTime}`;
-        }  
+    return `${formattedDate} ${formattedTime}`;
+  }
 
-          const total = single && single.orderedItems &&
-            single.orderedItems.map(
-              (item: any) =>
-                Number(item.quantity) * Number(item.product.salePrice)
-            ); 
+  const total =
+    single &&
+    single.orderedItems &&
+    single.orderedItems.map(
+      (item: any) =>
+        Number(item.quantity) * Number(item && item.salePrice)
+    );
 
-                function formatNumberWithCommas(amount: number): string {
-                  return new Intl.NumberFormat("en-US").format(amount);
-                }
+  function formatNumberWithCommas(amount: number): string {
+    return new Intl.NumberFormat("en-US").format(amount);
+  }
 
-        console.log(user && user.orders)
+  console.log(user && user.orders);
 
   return (
     <>
@@ -188,24 +202,24 @@ const History = () => {
                                 </td>
                                 <td
                                   className={`${
-                                    order.orderStatus === "complete"
+                                    order.orderStatus === "delivered"
                                       ? "text-[#2DB224]"
                                       : order.orderStatus === "pending"
                                       ? "text-[#FA8232]"
                                       : "text-primary"
                                   } whitespace-nowrap px-6 py-4 font-[600]  text-[14px]`}
                                 >
-                                  {order.orderStatus}
+                                  {order.orderStatus.toUpperCase()}
                                 </td>
                                 <td className="whitespace-nowrap px-6 py-4 font-medium leading-[20px] text-[14px] text-[#5F6C72]">
                                   {formatDateString(order.createdAt)}
                                 </td>
                                 <td className="whitespace-nowrap px-6 py-4 font-medium text-[#475156] leading-[20px] text-[14px]">
-                                  ₦160 ({order.quantity} Products)
+                                  ₦160 ({order.orderedItems.length} Products)
                                 </td>
                                 <td
                                   className="whitespace-nowrap px-6 py-4 text-[14px] font-[600] cursor-pointer text-primary flex justify-center items-start gap-2"
-                                  onClick={() => handleShowDetails(order)}
+                                  onClick={() => handleShowDetails(order._id)}
                                 >
                                   View Details
                                   <Image
@@ -529,7 +543,7 @@ const History = () => {
               <h2 className="text-[18px] font-[400] text-[#191C1F] mb-[20px]">
                 Product{" "}
                 <span className="text-[#475156]">
-                  ({" "}
+                  (
                   {single && single.orderedItems && single.orderedItems.length})
                 </span>
               </h2>
@@ -579,27 +593,24 @@ const History = () => {
                                 <td className=" px-2 lg:px-6 py-4 text-[14px] text-[#191C1F] ">
                                   <div className="flex justify-start items-center gap-2 lg:gap-3">
                                     <Image
-                                      src={item && item?.product?.images[0]}
+                                      src={item && item?.images}
                                       alt=""
                                       width={72}
                                       height={72}
-                                      className="relative z-0"
+                                      className="relative z-0 object-cover h-[72px] w-[72px]"
                                     />
                                     <div>
                                       <h1 className="text-primary text-[12px] font-[600] mb-1">
-                                        SMARTPHONE
+                                        {item.productName}
                                       </h1>
                                       <p className="text-[#191C1F] lg:text-[14px] font-[400]">
-                                        {item.product.description}
+                                        {item.description.split(0, 20)}...
                                       </p>
                                     </div>
                                   </div>
                                 </td>
                                 <td className="text-[14px] font-[400] px-2 lg:px-6 text-[#475156] py-4">
-                                  ₦
-                                  {formatNumberWithCommas(
-                                    item.product.salePrice
-                                  )}
+                                  ₦{formatNumberWithCommas(item.salePrice)}
                                 </td>
                                 <td className=" px-1 lg:px-6 py-4">
                                   <p className="font-[400] text-[#475156] text-[14px]">
@@ -607,48 +618,11 @@ const History = () => {
                                   </p>
                                 </td>
                                 <td className="text-[14px] font-[600] text-[#475156] px-2 lg:px-6 py-4">
-                                  ₦
-                                  {formatNumberWithCommas(
-                                    item.product.salePrice
-                                  )}
+                                  ₦{formatNumberWithCommas(item.salePrice)}
                                 </td>
                               </tr>
                             );
                           })}
-
-                        <tr className="transition duration-300 ease-in-out">
-                          <td className=" px-2 lg:px-6 py-4 text-[14px] text-[#191C1F]">
-                            <div className="flex justify-start items-center gap-2 lg:gap-3">
-                              <Image
-                                src="/cam.png"
-                                alt=""
-                                width={72}
-                                height={72}
-                                className="relative z-0"
-                              />
-                              <div>
-                                <h1 className="text-primary text-[12px] font-[600] mb-1">
-                                  ACCESSORIES
-                                </h1>
-                                <p className="text-[#191C1F] lg:text-[14px] font-[400]">
-                                  Simple Mobile 5G LTE Galexy 12 Mini 512GB
-                                  Gaming Phone
-                                </p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="text-[14px] font-[400] px-2 lg:px-6 text-[#475156] py-4">
-                            ₦12,000
-                          </td>
-                          <td className=" px-1 lg:px-6 py-4">
-                            <p className="font-[400] text-[#475156] text-[14px]">
-                              x1
-                            </p>
-                          </td>
-                          <td className="text-[14px] font-[600] text-[#475156] px-2 lg:px-6 py-4">
-                            ₦12,000
-                          </td>
-                        </tr>
                       </tbody>
                     </table>
                   </div>

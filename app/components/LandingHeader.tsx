@@ -8,15 +8,46 @@ import { IoCloseOutline } from "react-icons/io5";
 import { AiOutlineUser } from "react-icons/ai";
 import { GiHamburgerMenu } from "react-icons/gi";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "./LoginModal";
 import CheckoutModal from "./CheckoutModal";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import BASE_URL from "@/app/config/baseurl";
+import axios from "axios";
+import { useRefetch } from "../context/refetchContext";
 
 const LandingHeader = () => {
+      const { refetch } = useRefetch();
+
   const router = useRouter();
 const [isOpen, setIsOpen] = useState(false)
+
+  const [cartItems, setCartItems] = useState([]);
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/v1/cart`, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        });
+        console.log(response.data.data);
+        // Handle successful response, e.g., save token, redirect, etc.
+        setCartItems(response.data.data);
+        console.log("Successful", response.data.data);
+      } catch (error) {
+        console.error(
+          //@ts-ignore
+          "Error fetching resource",error?.response?.data || error?.message);
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+    fetchCartItems();
+  }, [refetch]);
+
 
  const [showModal, setShowModal] = useState(false);
 
@@ -98,10 +129,15 @@ const [isOpen, setIsOpen] = useState(false)
             </div>
 
             <div className="flex justify-center items-center gap-[20px] lg:hidden">
-              <PiShoppingCart
-                className="w-[25px] text-white h-[25px]"
-                onClick={openCheckoutModal}
-              />
+              <div className="relative">
+                <PiShoppingCart
+                  className="w-[25px] text-white h-[25px] cursor-pointer"
+                  onClick={openCheckoutModal}
+                />
+                <p className="absolute bg-white h-4 w-4 rounded-full text-xs flex justify-center items-center font-semibold top-[-4px] right-[-10px]">
+                  {cartItems.length}
+                </p>
+              </div>
               <CheckoutModal
                 showCheckoutModal={showCheckoutModal}
                 closeCheckoutModal={closeCheckoutModal}
@@ -156,10 +192,15 @@ const [isOpen, setIsOpen] = useState(false)
                 <FiPhoneCall />
                 <p>+234 9000000000</p>
               </div>
-              <PiShoppingCart
-                className="w-[25px] text-white h-[25px] cursor-pointer"
-                onClick={openCheckoutModal}
-              />
+              <div className="relative">
+                <PiShoppingCart
+                  className="w-[25px] text-white h-[25px] cursor-pointer"
+                  onClick={openCheckoutModal}
+                />
+                <p className="absolute bg-white h-4 w-4 rounded-full text-xs flex justify-center items-center font-semibold top-[-4px] right-[-10px]">
+                  {cartItems.length}
+                </p>
+              </div>
               <CheckoutModal
                 showCheckoutModal={showCheckoutModal}
                 closeCheckoutModal={closeCheckoutModal}

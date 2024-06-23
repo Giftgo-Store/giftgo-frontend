@@ -10,6 +10,7 @@ import Link from "next/link";
 import Cookies from "js-cookie";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
+import { useRefetch } from "../context/refetchContext";
 interface ModalProps {
   showCheckoutModal: boolean;
   closeCheckoutModal: () => void;
@@ -19,7 +20,8 @@ const CheckoutModal: React.FC<ModalProps> = ({
   showCheckoutModal,
   closeCheckoutModal,
 }) => {
-  
+    const { refetch, triggerRefetch } = useRefetch();
+
   const [cartItems, setCartItems] = useState([]);
 
 
@@ -38,29 +40,16 @@ const CheckoutModal: React.FC<ModalProps> = ({
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource",error?.response?.data || error?.message
-        );
+          "Error fetching resource",error?.response?.data || error?.message);
       } finally {
         // Any cleanup or final actions
       }
     };
     fetchCartItems();
-  },[])
+  }, [refetch]);
 
   console.log(cartItems)
 
-  // useEffect(() => {
-  //   if (showCheckoutModal) {
-  //     document.body.classList.add("overflow-hidden");
-  //   } else {
-  //     document.body.classList.remove("overflow-hidden");
-  //   }
-
-  //   // Cleanup function to remove the class when the component is unmounted
-  //   return () => {
-  //     document.body.classList.remove("overflow-hidden");
-  //   };
-  // }, [showCheckoutModal]);
   const handleDeleteCartItem = async (id:string) => {
     try {
       const response = await axios.delete(
@@ -90,6 +79,7 @@ const CheckoutModal: React.FC<ModalProps> = ({
        } finally {
          // Any cleanup or final actions
        }
+       triggerRefetch();
       alert("Item deleted from cart");
       console.log("Successful", response.data.data);
     } catch (error) {

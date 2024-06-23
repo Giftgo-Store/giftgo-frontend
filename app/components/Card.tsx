@@ -92,7 +92,7 @@ const Card = ({ lists }: CardProps) => {
             <p className="text-[#77878F] text-[12px] pl-1">(583)</p>
           </div>
           <p className="text-[#05031A] text-[16px] font-[600] pt-2">
-            ₦ {formatNumberWithCommas(lists && lists?.regularPrice)}
+            ₦ {formatNumberWithCommas(lists && lists?.salePrice)}
           </p>
         </div>
       </div>

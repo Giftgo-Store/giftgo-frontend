@@ -7,8 +7,12 @@ import Modal from "@/app/components/LoginModal";
 import Cookies from "js-cookie";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
+import { useRefetch } from "@/app/context/refetchContext";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
+  const router = useRouter();
+  const { triggerRefetch } = useRefetch();
   const [image, setImage] = useState<string[]>([]);
   const [customizable, setCustomizable] = useState(true);
   const photoInput: React.MutableRefObject<HTMLInputElement | null> =
@@ -47,57 +51,125 @@ const Page = () => {
     }
   };
 
-    const [cartItems, setCartItems] = useState([]);
-    const [user, setUser] = useState<any>([]);
+  const [cartItems, setCartItems] = useState<any>([]);
+  const [user, setUser] = useState<any>([]);
+  const [countries, setCountries] = useState<any>([]);
+  const [countCity, setCountCity] = useState<any>([]);
 
-    useEffect(() => {
-      const fetchCartItems = async () => {
-        try {
-          const response = await axios.get(`${BASE_URL}/api/v1/cart`, {
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/v1/cart`, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        });
+        // Handle successful response, e.g., save token, redirect, etc.
+        setCartItems(response.data.data);
+      } catch (error) {
+        console.error(
+          //@ts-ignore
+          "Error fetching resource", error?.response?.data || error?.message
+        );
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+    fetchCartItems();
+  }, []);
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await axios.get(
+          `https://countriesnow.space/api/v0.1/countries/states`,
+          {
             headers: {
-              Authorization: `Bearer ${Cookies.get("token")}`,
+              "Content-Type": "application/json",
             },
-          });
-          console.log(response.data.data);
-          // Handle successful response, e.g., save token, redirect, etc.
-          setCartItems(response.data.data);
-          console.log("Successful", response.data.data);
-        } catch (error) {
-          console.error(
-            //@ts-ignore
-            "Error fetching resource",error?.response?.data || error?.message);
-        } finally {
-          // Any cleanup or final actions
-        }
-      };
-      fetchCartItems();
-    }, []);
+          }
+        );
+        // Handle successful response, e.g., save token, redirect, etc.
+        setCountries(response.data.data);
+      } catch (error) {
+        console.error(
+          //@ts-ignore
+          "Error fetching resource", error?.response?.data || error?.message
+        );
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+    fetchCountries();
+  }, []);
 
-        useEffect(() => {
-          const fetchUser = async () => {
-            try {
-              const response = await axios.get(
-                `${BASE_URL}/api/v1/user/profile`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${Cookies.get("token")}`,
-                  },
-                }
-              );
-              console.log(response.data.data);
-              // Handle successful response, e.g., save token, redirect, etc.
-              setUser(response.data.data);
-              console.log("Successful", response.data.data);
-            } catch (error) {
-              console.error(
-                //@ts-ignore
-                "Error fetching resource",error?.response?.data || error?.message);
-            } finally {
-              // Any cleanup or final actions
-            }
-          };
-          fetchUser();
-        }, []);
+  const selectedState =
+    countries && countries.filter((count: any) => count.name === country);
+
+  useEffect(() => {
+    const fetchCountCity = async () => {
+      try {
+        const response = await axios.get(
+          `https://countriesnow.space/api/v0.1/countries`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        // Handle successful response, e.g., save token, redirect, etc.
+        setCountCity(response.data.data);
+      } catch (error) {
+        console.error(
+          //@ts-ignore
+          "Error fetching resource", error?.response?.data || error?.message
+        );
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+    fetchCountCity();
+  }, []);
+
+  const selectedCity =
+    countCity && countCity.filter((count: any) => count.country === country);
+
+  console.log(selectedCity);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/v1/user/profile`, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        });
+        // Handle successful response, e.g., save token, redirect, etc.
+        setUser(response.data.data);
+      } catch (error) {
+        console.error(
+          //@ts-ignore
+          "Error fetching resource", error?.response?.data || error?.message
+        );
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const orderedItems =
+    cartItems &&
+    cartItems &&
+    cartItems.map((item: any) => ({
+      productId: item.product._id,
+      quantity: item.quantity,
+      price: item.product.salePrice,
+      lifetime: false,
+      validity: 30,
+      productName: item.product.productName,
+      licenses: [],
+    }));
 
   const handlePlaceOrder = async () => {
     const token = Cookies.get("token");
@@ -109,7 +181,7 @@ const Page = () => {
     }
     try {
       const response = await axios.post(
-        `${BASE_URL}/api/v1/carts`,
+        `${BASE_URL}/api/v1/orders/make-order`,
         {
           customerAddress: {
             address,
@@ -118,20 +190,8 @@ const Page = () => {
             country,
             postal_code: zipCode,
           },
-          customerPhoneNumber: {
-            phoneNumber,
-          },
-          orderedItems: [
-            {
-              product_id: "",
-              quantity: 2,
-              price: "",
-              lifetime: "",
-              validity: 2,
-              productName: "",
-              licenses: [],
-            },
-          ],
+          customerPhoneNumber: user.phone,
+          orderedItems,
         },
         {
           headers: {
@@ -140,24 +200,47 @@ const Page = () => {
         }
       );
       console.log(response.data.data);
+      alert("successfulll");
+      router.push('/confirmation')
       // Handle successful response, e.g., save token, redirect, etc.
-      console.log("Successful", response.data.data);
+      try {
+        const response = await axios.delete(
+          `${BASE_URL}/api/v1/cart`,
+          {
+            headers: {
+              Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+          }
+        );
+        triggerRefetch();
+        alert("successfulll");
+        // Handle successful response, e.g., save token, redirect, etc.
+      } catch (error) {
+        console.error(
+          //@ts-ignore
+          "Error fetching resource", error?.response?.data || error?.message);
+        alert("error");
+      } finally {
+        // Any cleanup or final actions
+      }
+
     } catch (error) {
-      //@ts-ignore
-      console.error("Error fetching resource", error?.response?.data || error?.message
-      );
+      console.error(
+        //@ts-ignore
+        "Error fetching resource", error?.response?.data || error?.message);
+      alert("error");
     } finally {
       // Any cleanup or final actions
     }
   };
 
-    const total = cartItems.map(
-      (item: any) => Number(item.quantity) * Number(item.product.salePrice)
-    );
+  const total = cartItems.map(
+    (item: any) => Number(item.quantity) * Number(item.product.salePrice)
+  );
 
-    function formatNumberWithCommas(amount: number): string {
-      return new Intl.NumberFormat("en-US").format(amount);
-    }
+  function formatNumberWithCommas(amount: number): string {
+    return new Intl.NumberFormat("en-US").format(amount);
+  }
 
   return (
     <>
@@ -195,7 +278,7 @@ const Page = () => {
                   id="username"
                   className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none"
                   placeholder="First name"
-                  value={user && user?.name.split(" ")[0]}
+                  value={user && user?.name && user?.name.split(" ")[0]}
                   onChange={(e) => setFirstName(e.target.value)}
                 />
               </div>
@@ -204,7 +287,7 @@ const Page = () => {
                   type="text"
                   className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none"
                   placeholder="Last name"
-                  value={user && user?.name.split(" ")[1]}
+                  value={user && user?.name && user?.name.split(" ")[1]}
                   onChange={(e) => setLastName(e.target.value)}
                 />
               </div>
@@ -254,6 +337,14 @@ const Page = () => {
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
                 >
+                  {countries.length > 0 &&
+                    countries.map((count: any, i: any) => {
+                      return (
+                        <option key={i} value={count.name}>
+                          {count.name}
+                        </option>
+                      );
+                    })}
                   <option value="">select</option>
                 </select>
               </div>
@@ -269,6 +360,16 @@ const Page = () => {
                   value={region}
                   onChange={(e) => setRegion(e.target.value)}
                 >
+                  {selectedState.length > 0 &&
+                    selectedState[0] &&
+                    selectedState[0].states &&
+                    selectedState[0].states.map((state: any, i: any) => {
+                      return (
+                        <option key={i} value={state.name}>
+                          {state.name}
+                        </option>
+                      );
+                    })}
                   <option value="">select</option>
                 </select>
               </div>
@@ -284,6 +385,16 @@ const Page = () => {
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                 >
+                  {selectedCity.length > 0 &&
+                    selectedCity[0] &&
+                    selectedCity[0].cities &&
+                    selectedCity[0].cities.map((city: any, i: any) => {
+                      return (
+                        <option key={i} value={city}>
+                          {city}
+                        </option>
+                      );
+                    })}
                   <option value="">select</option>
                 </select>
               </div>
@@ -494,7 +605,10 @@ const Page = () => {
           </div>
 
           <div className="flex justify-center items-center my-6">
-            <button className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary rounded-[3px] font-[700]">
+            <button
+              onClick={handlePlaceOrder}
+              className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary rounded-[3px] font-[700]"
+            >
               <p>PLACE ORDER</p>
               <FiArrowRight className="w-4 h-4 cursor-pointer" />
             </button>
