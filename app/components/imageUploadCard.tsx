@@ -5,13 +5,16 @@ interface imageUploadCard {
   name: string;
   avatar: string;
   removeCard: MouseEventHandler<HTMLButtonElement>;
+  isEditable:boolean
 }
-export function ImageUploadCard({ name, avatar,removeCard }: imageUploadCard) {
-   
+export function ImageUploadCard({
+  name,
+  avatar,
+  removeCard,
+  isEditable,
+}: imageUploadCard) {
   return (
-    <div
-      className="py-3 px-5 flex justify-between items-center bg-[#FAFAFA] rounded-lg gap-3"
-    >
+    <div className="py-3 px-5 flex justify-between items-center bg-[#FAFAFA] rounded-lg gap-3">
       {avatar ? (
         <Image
           removeWrapper
@@ -36,7 +39,12 @@ export function ImageUploadCard({ name, avatar,removeCard }: imageUploadCard) {
           size="sm"
         />
       </div>
-      <Button onClick={removeCard} isIconOnly className="bg-transparent">
+      <Button
+        onClick={removeCard}
+        isIconOnly
+        className="bg-transparent"
+        isDisabled={isEditable}
+      >
         <AiFillCloseCircle size={20} color="red" />
       </Button>
     </div>

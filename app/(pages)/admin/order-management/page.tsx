@@ -139,7 +139,7 @@ export default function OrderManagement() {
                 .includes(item.status.toLocaleLowerCase())
             );
           }
-          return statusFilterValue.includes(item.status);
+          return statusFilterValue.toLocaleLowerCase().includes(item.status.toLocaleLowerCase());
         }
         return false;
       }
