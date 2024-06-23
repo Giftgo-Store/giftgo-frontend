@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image";
-import Card from "@/app/components/Card";
+// import Card from "@/app/components/Card";
 import { useState } from "react";
 
 const Page = () => {
@@ -55,14 +55,14 @@ const Page = () => {
               </div>
             </div>
             <div className="flex justify-center items-center flex-wrap gap-6">
-              <Card />
+              {/* <Card />
               <Card express={true} />
               <Card />
               <Card />
               <Card express={true} />
               <Card />
               <Card express={true} />
-              <Card />
+              <Card /> */}
             </div>
           </div>
         </div>
