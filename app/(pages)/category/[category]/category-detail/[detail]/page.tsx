@@ -30,12 +30,12 @@ const Page = () => {
            console.log(response.data.data.data);
            setCategory(response.data.data);
            // Handle successful response, e.g., save token, redirect, etc.
-           console.log("Successful", response.data.data[0].products)
-           
+           console.log("Successful", response.data.data[0].products);
          } catch (error) {
            //@ts-ignore
-           //@ts-expect-error
-           console.error("Error fetching resource", error?.response?.data || error?.message
+           console.error(
+             //@ts-expect-error
+             "Error fetching resource",error?.response?.data || error?.message
            );
          } finally {
            // Any cleanup or final actions
@@ -43,11 +43,13 @@ const Page = () => {
        };
 
        fetchData();
-     }, [location, params.category]);
+     }, [location, params && params.category]);
 
        console.log(category)
 
-       const cat: any = category && category.filter((cat:any) => cat._id === params.detail)
+       const cat: any =
+         category &&
+         category.filter((cat: any) => cat._id === (params && params.detail));
 
        console.log(cat[0])
   return (
