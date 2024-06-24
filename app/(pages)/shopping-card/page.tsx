@@ -6,21 +6,22 @@ import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useAppToast } from "@/app/providers/useAppToast";
 
 const Page = () => {
+  const toast = useAppToast();
   const [cartItems, setCartItems] = useState([]);
   const [quantity, setQuantity] = useState(1);
 
-    const handleIncrease = () => {
-      setQuantity(quantity + 1);
-    };
+  const handleIncrease = () => {
+    setQuantity(quantity + 1);
+  };
 
-    const handleDecrease = () => {
-      if (quantity > 1) {
-        setQuantity(quantity - 1);
-      }
-    };
-
+  const handleDecrease = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -30,14 +31,11 @@ const Page = () => {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
         });
-        console.log(response.data.data);
-        // Handle successful response, e.g., save token, redirect, etc.
         setCartItems(response.data.data);
-        console.log("Successful", response.data.data);
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource",error?.response?.data || error?.message
+          "Error fetching resource", error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
@@ -46,51 +44,63 @@ const Page = () => {
     fetchCartItems();
   }, []);
 
-    const handleDeleteCartItem = async (id: string) => {
+  const handleDeleteCartItem = async (id: string) => {
+    try {
+      const response = await axios.delete(`${BASE_URL}/api/v1/cart/${id}`, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
+      console.log(response.data.data);
+      toast({
+        status: "success",
+        description: response.data.message || "Success",
+      });
+      // Handle successful response, e.g., save token, redirect, etc.
       try {
-        const response = await axios.delete(`${BASE_URL}/api/v1/cart/${id}`, {
+        const response = await axios.get(`${BASE_URL}/api/v1/cart`, {
           headers: {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
         });
         console.log(response.data.data);
         // Handle successful response, e.g., save token, redirect, etc.
-        try {
-          const response = await axios.get(`${BASE_URL}/api/v1/cart`, {
-            headers: {
-              Authorization: `Bearer ${Cookies.get("token")}`,
-            },
-          });
-          console.log(response.data.data);
-          // Handle successful response, e.g., save token, redirect, etc.
-          setCartItems(response.data.data);
-          console.log("Successful", response.data.data);
-        } catch (error) {
-          console.error(
-            //@ts-ignore
-            "Error fetching resource", error?.response?.data || error?.message
-          );
-        } finally {
-          // Any cleanup or final actions
-        }
-        alert("Item deleted from cart");
-        console.log("Successful", response.data.data);
+        setCartItems(response.data.data);
+        toast({
+          status: "success",
+          description: response.data.message || "Success",
+        });
       } catch (error) {
-        console.error(
-          //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message);
+        toast({
+          status: "error",
+          description:
+            //@ts-expect-error
+            error?.response?.data || error?.message || "an error occurred ",
+        });
       } finally {
         // Any cleanup or final actions
       }
-    };
-
-    const total = cartItems.map(
-      (item: any) => Number(item.quantity) * Number(item.product.salePrice)
-    );
-
-    function formatNumberWithCommas(amount: number): string {
-      return new Intl.NumberFormat("en-US").format(amount);
+      alert("Item deleted from cart");
+      console.log("Successful", response.data.data);
+    } catch (error) {
+      toast({
+        status: "error",
+        description:
+          //@ts-expect-error
+          error?.response?.data || error?.message || "an error occurred ",
+      });
+    } finally {
+      // Any cleanup or final actions
     }
+  };
+
+  const total = cartItems.map(
+    (item: any) => Number(item.quantity) * Number(item.product.salePrice)
+  );
+
+  function formatNumberWithCommas(amount: number): string {
+    return new Intl.NumberFormat("en-US").format(amount);
+  }
 
   return (
     <>
@@ -219,7 +229,10 @@ const Page = () => {
             </div>
 
             <div className="border-y-[#E4E7E9] border-y-[1px] flex flex-col lg:flex-row gap-4 justify-between p-[24px]">
-              <Link href={'/'} className="flex justify-center items-center gap-[12px] text-primary px-7 py-4 border-primary border-[2px] rounded-[3px] font-[700] text-[14px]">
+              <Link
+                href={"/"}
+                className="flex justify-center items-center gap-[12px] text-primary px-7 py-4 border-primary border-[2px] rounded-[3px] font-[700] text-[14px]"
+              >
                 <FiArrowLeft className="w-4 h-4 cursor-pointer" />
                 <p>RETURN TO SHOP</p>
               </Link>
@@ -274,7 +287,10 @@ const Page = () => {
           </div>
 
           <div className="flex justify-center items-center my-6">
-            <Link href={'/checkout'} className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary rounded-[3px] font-[700]">
+            <Link
+              href={"/checkout"}
+              className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary rounded-[3px] font-[700]"
+            >
               <p>PROCEED TO CHECKOUT</p>
               <FiArrowRight className="w-4 h-4 cursor-pointer" />
             </Link>

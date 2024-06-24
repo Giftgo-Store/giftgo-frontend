@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import Cookies from "js-cookie";
@@ -6,39 +6,44 @@ import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-
+import { useAppToast } from "@/app/providers/useAppToast";
 
 const Account = () => {
-      const [user, setUser] = useState<any>([]);
-        useEffect(() => {
-          const fetchUser = async () => {
-            try {
-              const response = await axios.get(
-                `${BASE_URL}/api/v1/user/profile`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${Cookies.get("token")}`,
-                  },
-                }
-              );
-              console.log(response.data.data);
-              // Handle successful response, e.g., save token, redirect, etc.
-              setUser(response.data.data);
-              console.log("Successful", response.data.data);
-            } catch (error) {
-              console.error(
-                //@ts-ignore
-                "Error fetching resource", error?.response?.data || error?.message);
-            } finally {
-              // Any cleanup or final actions
-            }
-          };
-          fetchUser();
-        }, []);
+  const toast = useAppToast();
+  const [user, setUser] = useState<any>([]);
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/v1/user/profile`, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        });
+        console.log(response.data.data);
+        // Handle successful response, e.g., save token, redirect, etc.
+        setUser(response.data.data);
+      } catch (error) {
+        toast({
+          status: "error",
+          description:
+            //@ts-expect-error
+            error?.response?.data || error?.message || "an error occurred ",
+        });
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+    fetchUser();
+  }, [toast]);
 
-
-        const pendingOrders = user && user.orders && user.orders.filter((item:any) => item.orderStatus === 'pending')
-         const completedOrders = user && user.orders && user.orders.filter((item: any) => item.orderStatus === "complete");
+  const pendingOrders =
+    user &&
+    user.orders &&
+    user.orders.filter((item: any) => item.orderStatus === "pending");
+  const completedOrders =
+    user &&
+    user.orders &&
+    user.orders.filter((item: any) => item.orderStatus === "complete");
 
   return (
     <>

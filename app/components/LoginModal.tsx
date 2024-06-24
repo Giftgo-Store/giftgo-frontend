@@ -5,7 +5,8 @@ import Image from "next/image";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import axios from "axios";
 import BASE_URL from "../config/baseurl";
-import Cookie from 'js-cookie';
+import Cookie from "js-cookie";
+import { useAppToast } from "@/app/providers/useAppToast";
 
 interface ModalProps {
   showModal: boolean;
@@ -13,6 +14,7 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
+  const toast = useAppToast();
   const [activeNav, setActiveNav] = useState("1");
   const [showPassword, setShowPassword] = useState(false);
   const [signInData, setSignInData] = useState({ email: "", password: "" });
@@ -41,14 +43,24 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
 
   const handleSignInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!signInData) {
+      toast({
+        status: "error",
+        description: "please enter your credentials",
+      });
+      return;
+    }
     try {
       const response = await axios.post(
         `${BASE_URL}/api/v1/auth/log-in`,
         signInData
       );
       // Handle successful response, e.g., save token, redirect, etc.
-      console.log("Sign In Successful", response.data.data.token);
-      Cookie.set('token', response.data.data.token);
+      toast({
+        status: "success",
+        description: response.data.message || "Success",
+      });
+      Cookie.set("token", response.data.data.token);
       closeModal();
     } catch (error) {
       // console.error("Sign In Error", error.response?.data || error.message);
@@ -59,8 +71,18 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
 
   const handleSignUpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!signInData) {
+      toast({
+        status: "error",
+        description: "please enter your credentials",
+      });
+      return;
+    }
     if (signUpData.password !== signUpData.confirmPassword) {
-      alert("Passwords do not match");
+      toast({
+        status: "error",
+        description: "passwords do not match",
+      });
       return;
     }
     try {
@@ -69,7 +91,10 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
         signUpData
       );
       // Handle successful response, e.g., show success message, redirect, etc.
-      console.log("Sign Up Successful", response.data);
+      toast({
+        status: "success",
+        description: response.data.message || "Success",
+      });
       closeModal();
     } catch (error) {
       // console.error("Sign Up Error", error.response?.data || error.message);

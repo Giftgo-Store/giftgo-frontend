@@ -11,13 +11,14 @@ type ChildProps = {
 };
 
 const Account = ({ children }: ChildProps) => {
-  const router = useRouter()
+  const router = useRouter();
   const pathname = usePathname();
 
   const handleLogout = () => {
-Cookies.remove("token")
-router.push("/")
-  }
+    Cookies.remove("token");
+    router.push("/");
+  };
+
   return (
     <>
       <div className="py-[20px] px-[4%] lg:px-[8%] bg-secondary text-center mb-[56px]">

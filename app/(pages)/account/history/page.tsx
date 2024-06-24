@@ -7,8 +7,10 @@ import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useAppToast } from "@/app/providers/useAppToast";
 
 const History = () => {
+  const toast = useAppToast();
   const [showDetails, setShowDetails] = useState(true);
   const [show, setShow] = useState(false);
   const [single, setSingle] = useState<any>([]);
@@ -22,26 +24,29 @@ const History = () => {
   };
 
   const handleShowDetails = async (id: any) => {
-     try {
-       const response = await axios.get(`${BASE_URL}/api/v1/orders/${id}`, {
-         headers: {
-           Authorization: `Bearer ${Cookies.get("token")}`,
-         },
-       });
-       console.log(response.data.data);
-       // Handle successful response, e.g., save token, redirect, etc.
-       setSingle(response.data.data);
-       console.log("Successful", response.data.data);
-     } catch (error) {
-       console.error(
-         //@ts-ignore
-         "Error fetching resource",error?.response?.data || error?.message);
-     } finally {
-       // Any cleanup or final actions
-     }
+    try {
+      const response = await axios.get(`${BASE_URL}/api/v1/orders/${id}`, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
+      setSingle(response.data.data);
+      toast({
+        status: "success",
+        description: response.data.message || "Success",
+      });
+    } catch (error) {
+      toast({
+        status: "error",
+        description:
+          //@ts-expect-error
+          error?.response?.data || error?.message || "an error occurred ",
+      });
+    } finally {
+      // Any cleanup or final actions
+    }
     setShowDetails(false);
   };
-  console.log(single);
 
   const handleHideDetails = () => {
     setShowDetails(true);
@@ -58,20 +63,21 @@ const History = () => {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
         });
-        console.log(response.data.data);
-        // Handle successful response, e.g., save token, redirect, etc.
         setUser(response.data.data);
-        console.log("Successful", response.data.data);
+       
       } catch (error) {
-        console.error(
-          //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message);
+        toast({
+          status: "error",
+          description:
+            //@ts-expect-error
+            error?.response?.data || error?.message || "an error occurred ",
+        });
       } finally {
         // Any cleanup or final actions
       }
     };
     fetchUser();
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -87,17 +93,20 @@ const History = () => {
         console.log(response.data.data);
         // Handle successful response, e.g., save token, redirect, etc.
         setOrder(response.data.data);
-        console.log("Successful", response.data.data);
+       
       } catch (error) {
-        console.error(
-          //@ts-ignore
-          "Error fetching resource",error?.response?.data || error?.message);
+        toast({
+          status: "error",
+          description:
+            //@ts-expect-error
+            error?.response?.data || error?.message || "an error occurred ",
+        });
       } finally {
         // Any cleanup or final actions
       }
     };
     fetchUser();
-  }, []);
+  }, [toast]);
 
   function formatDateString(dateString: string): string {
     const date = new Date(dateString);
@@ -130,15 +139,12 @@ const History = () => {
     single &&
     single.orderedItems &&
     single.orderedItems.map(
-      (item: any) =>
-        Number(item.quantity) * Number(item && item.salePrice)
+      (item: any) => Number(item.quantity) * Number(item && item.salePrice)
     );
 
   function formatNumberWithCommas(amount: number): string {
     return new Intl.NumberFormat("en-US").format(amount);
   }
-
-  console.log(user && user.orders);
 
   return (
     <>
@@ -232,214 +238,6 @@ const History = () => {
                               </tr>
                             );
                           })}
-                        <tr className="border-b transition duration-300 ease-in-out hover:bg-[#F2F4F5] text-[14px]">
-                          <td className="whitespace-nowrap px-6 py-4 font-[500] text-[#191C1F] text-[14px]">
-                            #96459761
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-[600] text-[#2DB224] text-[14px]">
-                            COMPLETED
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-medium leading-[20px] text-[14px] text-[#5F6C72]">
-                            April 30, 2024 07:52
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-medium text-[#475156] leading-[20px] text-[14px]">
-                            ₦160 (5 Products)
-                          </td>
-                          <td
-                            className="whitespace-nowrap px-6 py-4 text-[14px] font-[600] cursor-pointer text-primary flex justify-center items-start gap-2"
-                            onClick={handleShowDetails}
-                          >
-                            View Details
-                            <Image
-                              src="/ArrowRight.svg"
-                              alt=""
-                              width={16}
-                              height={16}
-                            />
-                          </td>
-                        </tr>
-                        <tr className="border-b transition duration-300 ease-in-out hover:bg-[#F2F4F5] text-[14px]">
-                          <td className="whitespace-nowrap px-6 py-4 font-[500] text-[#191C1F] text-[14px]">
-                            #96459761
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-[600] text-[#2DB224] text-[14px]">
-                            COMPLETED
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-medium leading-[20px] text-[14px] text-[#5F6C72]">
-                            April 30, 2024 07:52
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-medium text-[#475156] leading-[20px] text-[14px]">
-                            ₦160 (5 Products)
-                          </td>
-                          <td
-                            className="whitespace-nowrap px-6 py-4 text-[14px] font-[600] cursor-pointer text-primary flex justify-center items-start gap-2"
-                            onClick={handleShowDetails}
-                          >
-                            View Details
-                            <Image
-                              src="/ArrowRight.svg"
-                              alt=""
-                              width={16}
-                              height={16}
-                            />
-                          </td>
-                        </tr>
-                        <tr className="border-b transition duration-300 ease-in-out hover:bg-[#F2F4F5] text-[14px]">
-                          <td className="whitespace-nowrap px-6 py-4 font-[500] text-[#191C1F] text-[14px]">
-                            #96459761
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-[600] text-[#FA8232] text-[14px]">
-                            IN PROGRESS
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-medium leading-[20px] text-[14px] text-[#5F6C72]">
-                            April 30, 2024 07:52
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-medium text-[#475156] leading-[20px] text-[14px]">
-                            ₦160 (5 Products)
-                          </td>
-                          <td
-                            className="whitespace-nowrap px-6 py-4 text-[14px] font-[600] cursor-pointer text-primary flex justify-center items-start gap-2"
-                            onClick={handleShowDetails}
-                          >
-                            View Details
-                            <Image
-                              src="/ArrowRight.svg"
-                              alt=""
-                              width={16}
-                              height={16}
-                            />
-                          </td>
-                        </tr>
-                        <tr className="border-b transition duration-300 ease-in-out hover:bg-[#F2F4F5] text-[14px]">
-                          <td className="whitespace-nowrap px-6 py-4 font-[500] text-[#191C1F] text-[14px]">
-                            #96459761
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-[600] text-[#FA8232] text-[14px]">
-                            IN PROGRESS
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-medium leading-[20px] text-[14px] text-[#5F6C72]">
-                            April 30, 2024 07:52
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-medium text-[#475156] leading-[20px] text-[14px]">
-                            ₦160 (5 Products)
-                          </td>
-                          <td
-                            className="whitespace-nowrap px-6 py-4 text-[14px] font-[600] cursor-pointer text-primary flex justify-center items-start gap-2"
-                            onClick={handleShowDetails}
-                          >
-                            View Details
-                            <Image
-                              src="/ArrowRight.svg"
-                              alt=""
-                              width={16}
-                              height={16}
-                            />
-                          </td>
-                        </tr>
-                        <tr className="border-b transition duration-300 ease-in-out hover:bg-[#F2F4F5] text-[14px]">
-                          <td className="whitespace-nowrap px-6 py-4 font-[500] text-[#191C1F] text-[14px]">
-                            #96459761
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-[600] text-primary text-[14px]">
-                            CANCELLED
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-medium leading-[20px] text-[14px] text-[#5F6C72]">
-                            April 30, 2024 07:52
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-medium text-[#475156] leading-[20px] text-[14px]">
-                            ₦160 (5 Products)
-                          </td>
-                          <td
-                            className="whitespace-nowrap px-6 py-4 text-[14px] font-[600] cursor-pointer text-primary flex justify-center items-start gap-2"
-                            onClick={handleShowDetails}
-                          >
-                            View Details
-                            <Image
-                              src="/ArrowRight.svg"
-                              alt=""
-                              width={16}
-                              height={16}
-                            />
-                          </td>
-                        </tr>
-                        <tr className="border-b transition duration-300 ease-in-out hover:bg-[#F2F4F5] text-[14px]">
-                          <td className="whitespace-nowrap px-6 py-4 font-[500] text-[#191C1F] text-[14px]">
-                            #96459761
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-[600] text-primary text-[14px]">
-                            CANCELLED
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-medium leading-[20px] text-[14px] text-[#5F6C72]">
-                            April 30, 2024 07:52
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-medium text-[#475156] leading-[20px] text-[14px]">
-                            ₦160 (5 Products)
-                          </td>
-                          <td
-                            className="whitespace-nowrap px-6 py-4 text-[14px] font-[600] cursor-pointer text-primary flex justify-center items-start gap-2"
-                            onClick={handleShowDetails}
-                          >
-                            View Details
-                            <Image
-                              src="/ArrowRight.svg"
-                              alt=""
-                              width={16}
-                              height={16}
-                            />
-                          </td>
-                        </tr>
-                        <tr className="border-b transition duration-300 ease-in-out hover:bg-[#F2F4F5] text-[14px]">
-                          <td className="whitespace-nowrap px-6 py-4 font-[500] text-[#191C1F] text-[14px]">
-                            #96459761
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-[600] text-[#FA8232] text-[14px]">
-                            IN PROGRESS
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-medium leading-[20px] text-[14px] text-[#5F6C72]">
-                            April 30, 2024 07:52
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-medium text-[#475156] leading-[20px] text-[14px]">
-                            ₦160 (5 Products)
-                          </td>
-                          <td
-                            className="whitespace-nowrap px-6 py-4 text-[14px] font-[600] cursor-pointer text-primary flex justify-center items-start gap-2"
-                            onClick={handleShowDetails}
-                          >
-                            View Details
-                            <Image
-                              src="/ArrowRight.svg"
-                              alt=""
-                              width={16}
-                              height={16}
-                            />
-                          </td>
-                        </tr>
-                        <tr className="border-b transition duration-300 ease-in-out hover:bg-[#F2F4F5] text-[14px]">
-                          <td className="whitespace-nowrap px-6 py-4 font-[500] text-[#191C1F] text-[14px]">
-                            #96459761
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-[600] text-[#2DB224] text-[14px]">
-                            COMPLETED
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-medium leading-[20px] text-[14px] text-[#5F6C72]">
-                            April 30, 2024 07:52
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-medium text-[#475156] leading-[20px] text-[14px]">
-                            ₦160 (5 Products)
-                          </td>
-                          <td
-                            className="whitespace-nowrap px-6 py-4 text-[14px] font-[600] cursor-pointer text-primary flex justify-center items-start gap-2"
-                            onClick={handleShowDetails}
-                          >
-                            View Details
-                            <Image
-                              src="/ArrowRight.svg"
-                              alt=""
-                              width={16}
-                              height={16}
-                            />
-                          </td>
-                        </tr>
                       </tbody>
                     </table>
                     <div className="flex justify-center items-center px-10 py-6">
@@ -543,8 +341,8 @@ const History = () => {
               <h2 className="text-[18px] font-[400] text-[#191C1F] mb-[20px]">
                 Product{" "}
                 <span className="text-[#475156]">
-                  (
-                  {single && single.orderedItems && single.orderedItems.length})
+                  ({single && single.orderedItems && single.orderedItems.length}
+                  )
                 </span>
               </h2>
             </div>
@@ -604,7 +402,11 @@ const History = () => {
                                         {item.productName}
                                       </h1>
                                       <p className="text-[#191C1F] lg:text-[14px] font-[400]">
-                                        {item.description.split(0, 20)}...
+                                        {item.description && item.description.split(
+                                          0,
+                                          20
+                                        )}
+                                        ...
                                       </p>
                                     </div>
                                   </div>

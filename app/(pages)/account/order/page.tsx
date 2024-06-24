@@ -6,14 +6,23 @@ import Cookies from "js-cookie";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useAppToast } from "@/app/providers/useAppToast";
 
 const Order = () => {
+  const toast = useAppToast();
   const [showDetails, setShowDetails] = useState(true);
   const [single, setSingle] = useState<any>([]);
   const [id, setId] = useState<any>("");
 
   const location = Cookies.get("location");
   const handleFetchOrder = async () => {
+    if (!id) {
+      toast({
+        status: "error",
+        description: "please enter your tracking ID",
+      });
+      return;
+    }
     try {
       const response = await axios.get(
         `${BASE_URL}/api/v1/orders/track/track?orderId=${id}`,
@@ -23,20 +32,23 @@ const Order = () => {
           },
         }
       );
-      console.log(response.data.data);
-      // Handle successful response, e.g., save token, redirect, etc.
       setSingle(response.data.data);
       setShowDetails(false);
-      console.log("Successful", response.data.data);
+      toast({
+        status: "success",
+        description: response.data.message || "Success",
+      });
     } catch (error) {
-      console.error(
-        //@ts-ignore
-        "Error fetching resource", error?.response?.data || error?.message);
+      toast({
+        status: "error",
+        description:
+          //@ts-expect-error
+          error?.response?.data || error?.message || "an error occurred ",
+      });
     } finally {
       // Any cleanup or final actions
     }
   };
-  
 
   const handleShowDetails = () => {
     setShowDetails(!showDetails);

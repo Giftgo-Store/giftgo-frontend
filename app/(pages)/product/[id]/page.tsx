@@ -27,11 +27,13 @@ import Cookies from "js-cookie";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
 import Modal from "@/app/components/LoginModal";
-import {useRefetch} from "@/app/context/refetchContext"
+import { useRefetch } from "@/app/context/refetchContext";
 import Link from "next/link";
+import { useAppToast } from "@/app/providers/useAppToast";
 
 const Page = () => {
-    const { triggerRefetch } = useRefetch();
+  const toast = useAppToast();
+  const { triggerRefetch } = useRefetch();
   const params = useParams();
   const router = useRouter();
   const [activeNav, setActiveNav] = useState("1");
@@ -39,10 +41,10 @@ const Page = () => {
   const [quantity, setQuantity] = useState(1);
   const [showLogin, setShowLogin] = useState(false);
 
-   const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
-   const openModal = () => setShowModal(true);
-   const closeModal = () => setShowModal(false);
+  const openModal = () => setShowModal(true);
+  const closeModal = () => setShowModal(false);
 
   const [product, setProduct] = useState<any>([]);
   const location = Cookies.get("location");
@@ -55,14 +57,11 @@ const Page = () => {
         const response = await axios.get(
           `${BASE_URL}/api/v1/products/${params && params.id}`
         );
-        console.log(response.data.data.data);
         setProduct(response.data.data);
-        // Handle successful response, e.g., save token, redirect, etc.
-        console.log("Successful", response.data);
       } catch (error) {
-        //@ts-ignore
-        //@ts-expect-error
-        console.error("Error fetching resource",error?.response?.data || error?.message
+        console.error(
+          //@ts-ignore
+          "Error fetching resource", error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
@@ -70,7 +69,7 @@ const Page = () => {
     };
 
     fetchData();
-  }, [location, params && params.id]);
+  }, [location, params]);
 
   console.log(product);
 
@@ -85,10 +84,10 @@ const Page = () => {
   };
 
   const handleAddToCart = async () => {
-      const token = Cookies.get("token");
+    const token = Cookies.get("token");
     if (!token) {
-      console.log("No token")
-      openModal()
+      console.log("No token");
+      openModal();
       setShowLogin(true);
       return;
     }
@@ -105,22 +104,23 @@ const Page = () => {
           },
         }
       );
-          triggerRefetch();
-      console.log(response.data.data);
-      // Handle successful response, e.g., save token, redirect, etc.
-      alert("Item added to cart")
-      console.log("Successful", response.data.data);
+      triggerRefetch();
+      toast({
+        status: "success",
+        description: response.data.message || "Success",
+      });
     } catch (error) {
       //@ts-ignore
-      //@ts-expect-error
-      console.error("Error fetching resource", error?.response?.data || error?.message
-      );
+      toast({
+        status: "error",
+        description:
+          //@ts-expect-error
+          error?.response?.data || error?.message || "an error occurred ",
+      });
     } finally {
       // Any cleanup or final actions
     }
   };
-
-  console.log(showLogin)
 
   return (
     <div className="">
@@ -220,7 +220,10 @@ const Page = () => {
               <p>ADD TO CART</p>
               <PiShoppingCart className="w-6 h-6 cursor-pointer" />
             </button>
-            <Link href={'/checkout'} className="flex w-full lg:w-fit justify-center items-center gap-[35px] text-[#191C1F] px-7 py-4 border-primary border-[2px] rounded-[3px] font-[700] text-[16px]">
+            <Link
+              href={"/checkout"}
+              className="flex w-full lg:w-fit justify-center items-center gap-[35px] text-[#191C1F] px-7 py-4 border-primary border-[2px] rounded-[3px] font-[700] text-[16px]"
+            >
               <p>BUY NOW</p>
             </Link>
           </div>

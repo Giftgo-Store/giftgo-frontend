@@ -8,50 +8,50 @@ import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import { useAppToast } from "@/app/providers/useAppToast";
 
 const Page = () => {
+  const toast = useAppToast();
   const router = useRouter();
-    const params = useParams();
-    const [category, setCategory] = useState([]);
+  const params = useParams();
+  const [category, setCategory] = useState([]);
 
-      const handleBack = () => {
-        router.back();
-      };
+  const handleBack = () => {
+    router.back();
+  };
 
   console.log(params);
-    const location = Cookies.get("location");
+  const location = Cookies.get("location");
 
-     useEffect(() => {
-       const fetchData = async () => {
-         try {
-           const response = await axios.get(
-             `${BASE_URL}/api/v1/products/location/${location}`
-           );
-           console.log(response.data.data.data);
-           setCategory(response.data.data);
-           // Handle successful response, e.g., save token, redirect, etc.
-           console.log("Successful", response.data.data[0].products);
-         } catch (error) {
-           //@ts-ignore
-           console.error(
-             //@ts-expect-error
-             "Error fetching resource",error?.response?.data || error?.message
-           );
-         } finally {
-           // Any cleanup or final actions
-         }
-       };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/api/v1/products/location/${location}`
+        );
+        setCategory(response.data.data);
+        // Handle successful response, e.g., save token, redirect, etc.
+      } catch (error) {
+        //@ts-ignore
+        toast({
+          status: "error",
+          description:
+            //@ts-expect-error
+            error?.response?.data || error?.message || "an error occurred ",
+        });
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
 
-       fetchData();
-     }, [location, params && params.category]);
+    fetchData();
+  }, [location, toast]);
 
-       console.log(category)
 
-       const cat: any =
-         category &&
-         category.filter((cat: any) => cat._id === (params && params.detail));
+  const cat: any =
+    category &&
+    category.filter((cat: any) => cat._id === (params && params.detail));
 
-       console.log(cat[0])
   return (
     <>
       <div className="py-[20px] px-[4%] lg:px-[8%] bg-secondary mb-[56px]">
@@ -92,10 +92,13 @@ const Page = () => {
             </div>
           </div>
           <div className="flex justify-center items-center flex-wrap gap-6">
-            {cat && cat[0]?.products.length > 0 ?
+            {cat && cat[0]?.products.length > 0 ? (
               cat[0]?.products.map((product: any, i: any) => {
                 return <Card key={i} lists={product} />;
-              }) : <>No product available</>}
+              })
+            ) : (
+              <>No product available</>
+            )}
             {/* <Card />
             <Card express={true} />
             <Card />
