@@ -9,31 +9,22 @@ import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
 import { useRefetch } from "@/app/context/refetchContext";
 import { useRouter } from "next/navigation";
+import { useAppToast } from "@/app/providers/useAppToast";
+import { PaystackButton } from "react-paystack";
 
 const Page = () => {
+  const toast = useAppToast();
   const router = useRouter();
   const { triggerRefetch } = useRefetch();
-  const [image, setImage] = useState<string[]>([]);
-  const [customizable, setCustomizable] = useState(true);
-  const photoInput: React.MutableRefObject<HTMLInputElement | null> =
-    useRef(null);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [address, setAddress] = useState("");
-  const [country, setCountry] = useState("");
-  const [region, setRegion] = useState("");
-  const [city, setCity] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [additionalInfo, setAdditionalInfo] = useState("");
+  
 
   const [showModal, setShowModal] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
+
+  const publicKey = "pk_test_3cf1ae93942019f48265e9d451b0a3b3f89537ef";
 
   const handleValidChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -69,14 +60,65 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message
-        );
+          "Error fetching resource", error?.response?.data || error?.message );
       } finally {
         // Any cleanup or final actions
       }
     };
     fetchCartItems();
   }, []);
+
+    useEffect(() => {
+      const fetchUser = async () => {
+        try {
+          const response = await axios.get(`${BASE_URL}/api/v1/user/profile`, {
+            headers: {
+              Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+          });
+          // Handle successful response, e.g., save token, redirect, etc.
+          setUser(response.data.data);
+        } catch (error) {
+          console.error(
+            //@ts-ignore
+            "Error fetching resource",error?.response?.data || error?.message
+          );
+        } finally {
+          // Any cleanup or final actions
+        }
+      };
+      fetchUser();
+    }, []);
+
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  const [image, setImage] = useState<string[]>([]);
+  const [customizable, setCustomizable] = useState(true);
+  const photoInput: React.MutableRefObject<HTMLInputElement | null> =
+    useRef(null);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [address, setAddress] = useState("");
+  const [country, setCountry] = useState("");
+  const [region, setRegion] = useState("");
+  const [city, setCity] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
+
+    useEffect(() => {
+      if (user && user.address) {
+        setAddress(user.address.address);
+        setCountry(user.address.country);
+        setCity(user.address.city);
+        setRegion(user.address.state);
+        setZipCode(user.address.postal_code);
+      }
+    }, [user]);
+
+  console.log(user && user.address && user.address.address)
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -94,8 +136,7 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message
-        );
+          "Error fetching resource", error?.response?.data || error?.message);
       } finally {
         // Any cleanup or final actions
       }
@@ -122,8 +163,7 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message
-        );
+          "Error fetching resource", error?.response?.data || error?.message);
       } finally {
         // Any cleanup or final actions
       }
@@ -133,30 +173,6 @@ const Page = () => {
 
   const selectedCity =
     countCity && countCity.filter((count: any) => count.country === country);
-
-  console.log(selectedCity);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/api/v1/user/profile`, {
-          headers: {
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-        });
-        // Handle successful response, e.g., save token, redirect, etc.
-        setUser(response.data.data);
-      } catch (error) {
-        console.error(
-          //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message
-        );
-      } finally {
-        // Any cleanup or final actions
-      }
-    };
-    fetchUser();
-  }, []);
 
   const orderedItems =
     cartItems &&
@@ -172,13 +188,7 @@ const Page = () => {
     }));
 
   const handlePlaceOrder = async () => {
-    const token = Cookies.get("token");
-    if (!token) {
-      console.log("No token");
-      openModal();
-      setShowLogin(true);
-      return;
-    }
+   
     try {
       const response = await axios.post(
         `${BASE_URL}/api/v1/orders/make-order`,
@@ -199,35 +209,41 @@ const Page = () => {
           },
         }
       );
-      console.log(response.data.data);
-      alert("successfulll");
-      router.push('/confirmation')
+      toast({
+        status: "success",
+        description: response.data.message || "Success",
+      });
+      router.push("/confirmation");
       // Handle successful response, e.g., save token, redirect, etc.
       try {
-        const response = await axios.delete(
-          `${BASE_URL}/api/v1/cart`,
-          {
-            headers: {
-              Authorization: `Bearer ${Cookies.get("token")}`,
-            },
-          }
-        );
+        const response = await axios.delete(`${BASE_URL}/api/v1/cart`, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        });
         triggerRefetch();
-        alert("successfulll");
-        // Handle successful response, e.g., save token, redirect, etc.
+        toast({
+          status: "success",
+          description: response.data.message || "Success",
+        }); // Handle successful response, e.g., save token, redirect, etc.
       } catch (error) {
-        console.error(
-          //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message);
+        toast({
+          status: "error",
+          description:
+            //@ts-expect-error
+            error?.response?.data || "an error occurred ",
+        });
         alert("error");
       } finally {
         // Any cleanup or final actions
       }
-
     } catch (error) {
-      console.error(
-        //@ts-ignore
-        "Error fetching resource", error?.response?.data || error?.message);
+      toast({
+        status: "error",
+        description:
+          //@ts-expect-error
+          error?.response?.data || error?.message || "an error occurred ",
+      });
       alert("error");
     } finally {
       // Any cleanup or final actions
@@ -241,6 +257,62 @@ const Page = () => {
   function formatNumberWithCommas(amount: number): string {
     return new Intl.NumberFormat("en-US").format(amount);
   }
+
+  const componentProps = {
+    reference: new Date().getTime().toString(),
+    email: user && user.email,
+    amount:
+      total.reduce(
+        (accumulator: any, currentValue: any) => accumulator + currentValue,
+        0
+      ) * 100,
+    metadata: {
+      name: user && user?.name,
+      custom_fields: [
+        {
+          display_name: user && user?.name,
+          variable_name: user && user?.name,
+          value: user && user.phone,
+        },
+      ],
+    },
+    publicKey,
+    text: "PLACE ORDER",
+    onClose: () => {
+      alert("Payment not successful!");
+    },
+  };
+
+  const validateForm = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+     const token = Cookies.get("token");
+     if (!token) {
+       console.log("No token");
+       openModal();
+       setShowLogin(true);
+       return;
+     }
+    if (
+      address === "" ||
+      city === "" ||
+      lastName === "" ||
+      region === "" ||
+      country === "" ||
+      zipCode === ""
+    )
+      setIsFormValid(true);
+  };
+
+  useEffect(() => {
+    const isValid =
+      address !== "" ||
+      city !== "" ||
+      lastName !== "" ||
+      region !== "" ||
+      country !== "" ||
+      zipCode !== "";
+    setIsFormValid(isValid);
+  }, [address, country, zipCode, city, region, lastName]);
 
   return (
     <>
@@ -606,10 +678,20 @@ const Page = () => {
 
           <div className="flex justify-center items-center my-6">
             <button
-              onClick={handlePlaceOrder}
-              className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary rounded-[3px] font-[700]"
+              // onClick={handlePlaceOrder}
+              onClick={(e) => validateForm(e)}
+              className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary rounded-[3px] font-[700] disabled:bg-primary/50 disabled:cursor-not-allowed"
+              disabled={!isFormValid}
             >
-              <p>PLACE ORDER</p>
+              {isFormValid && (
+                <PaystackButton
+                  {...componentProps}
+                  onSuccess={() => {
+                    handlePlaceOrder();
+                  }}
+                />
+              )}
+              {!isFormValid && "Place Order"}
               <FiArrowRight className="w-4 h-4 cursor-pointer" />
             </button>
           </div>

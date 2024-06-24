@@ -1,16 +1,17 @@
 //@ts-ignore
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 import { FaArrowRight } from "react-icons/fa6";
 import Image from "next/image";
-import { FiEye, FiEyeOff } from "react-icons/fi";
-import { FiMinus, FiPlus, FiArrowLeft, FiArrowRight } from "react-icons/fi";
+import { FiArrowRight } from "react-icons/fi";
 import Link from "next/link";
 import Cookies from "js-cookie";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
 import { useRefetch } from "../context/refetchContext";
+import { useAppToast } from "@/app/providers/useAppToast";
+
 interface ModalProps {
   showCheckoutModal: boolean;
   closeCheckoutModal: () => void;
@@ -20,10 +21,10 @@ const CheckoutModal: React.FC<ModalProps> = ({
   showCheckoutModal,
   closeCheckoutModal,
 }) => {
-    const { refetch, triggerRefetch } = useRefetch();
+  const toast = useAppToast();
+  const { refetch, triggerRefetch } = useRefetch();
 
   const [cartItems, setCartItems] = useState([]);
-
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -33,14 +34,13 @@ const CheckoutModal: React.FC<ModalProps> = ({
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
         });
-        console.log(response.data.data);
         // Handle successful response, e.g., save token, redirect, etc.
         setCartItems(response.data.data);
-        console.log("Successful", response.data.data);
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource",error?.response?.data || error?.message);
+          "Error fetching resource", error?.response?.data || error?.message
+        );
       } finally {
         // Any cleanup or final actions
       }
@@ -48,57 +48,64 @@ const CheckoutModal: React.FC<ModalProps> = ({
     fetchCartItems();
   }, [refetch]);
 
-  console.log(cartItems)
 
-  const handleDeleteCartItem = async (id:string) => {
+  const handleDeleteCartItem = async (id: string) => {
     try {
-      const response = await axios.delete(
-        `${BASE_URL}/api/v1/cart/${id}`,
-        {
+      const response = await axios.delete(`${BASE_URL}/api/v1/cart/${id}`, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
+      console.log(response.data.data);
+      // Handle successful response, e.g., save token, redirect, etc.
+      try {
+        const response = await axios.get(`${BASE_URL}/api/v1/cart`, {
           headers: {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
-        }
-      );
-      console.log(response.data.data);
-      // Handle successful response, e.g., save token, redirect, etc.
-       try {
-         const response = await axios.get(`${BASE_URL}/api/v1/cart`, {
-           headers: {
-             Authorization: `Bearer ${Cookies.get("token")}`,
-           },
-         });
-         console.log(response.data.data);
-         // Handle successful response, e.g., save token, redirect, etc.
-         setCartItems(response.data.data);
-         console.log("Successful", response.data.data);
-       } catch (error) {
-         console.error(
-          //@ts-ignore
-           "Error fetching resource",error?.response?.data || error?.message);
-       } finally {
-         // Any cleanup or final actions
-       }
-       triggerRefetch();
+        });
+        console.log(response.data.data);
+        // Handle successful response, e.g., save token, redirect, etc.
+        setCartItems(response.data.data);
+        toast({
+          status: "success",
+          description: response.data.message || "Success",
+        });
+      } catch (error) {
+        toast({
+          status: "error",
+          description:
+            //@ts-expect-error
+            error?.response?.data || error?.message || "an error occurred ",
+        });
+      } finally {
+        // Any cleanup or final actions
+      }
+      triggerRefetch();
       alert("Item deleted from cart");
       console.log("Successful", response.data.data);
     } catch (error) {
-      console.error(
-        //@ts-ignore
-        "Error fetching resource",error?.response?.data || error?.message
-      );
+      toast({
+        status: "error",
+        description:
+          //@ts-expect-error
+          error?.response?.data || error?.message || "an error occurred ",
+      });
     } finally {
       // Any cleanup or final actions
     }
   };
 
-  const total = cartItems.map((item:any) => (Number(item.quantity) * Number(item.product.salePrice))) 
+  const total: any = cartItems.map(
+    (item: any) => Number(item.quantity) * Number(item.product.salePrice)
+  );
 
-  console.log(total)
+  function formatNumberWithCommas(amount: number): string {
+    return new Intl.NumberFormat("en-US").format(amount);
+  }
 
-      function formatNumberWithCommas(amount: number): string {
-        return new Intl.NumberFormat("en-US").format(amount);
-      }
+  
+
 
   return (
     <div

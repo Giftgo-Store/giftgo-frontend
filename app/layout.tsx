@@ -4,6 +4,8 @@ import "./globals.css";
 import { Providers } from "./providers/providers";
 import AppWrapper from "./components/AppWrapper";
 import { RefetchProvider } from "./context/refetchContext";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,6 +29,7 @@ export default function RootLayout({
         <RefetchProvider>
           <Providers>
             <AppWrapper>{children}</AppWrapper>
+            <ToastContainer />
           </Providers>
         </RefetchProvider>
       </body>
