@@ -14,6 +14,11 @@ import {
   User,
   Selection,
   Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  useDisclosure,
 } from "@nextui-org/react";
 import { CiSearch } from "react-icons/ci";
 import { TbTrash } from "react-icons/tb";
@@ -33,9 +38,10 @@ export default function Customers() {
   const [filterValue, setFilterValue] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState<any | string[]>("10");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
-  const [users, setUser] = useState<users[]>([]);
+  const [users, setUsers] = useState<users[]>([]);
+  const [userIdToDelete, setUserIdToDelete]=useState("");
   const [page, setPage] = useState(1);
-
+const { isOpen, onOpen, onClose } = useDisclosure();
   const appSession = useSession({
     required: true,
     onUnauthenticated() {
@@ -148,10 +154,10 @@ export default function Customers() {
             setFilterValue(e.target.value);
           }}
         ></Input>
-        <Button className="bg-white shadow-sm" radius="sm">
+        {/* <Button className="bg-white shadow-sm" radius="sm">
           <TbTrash color="#8B909A" size={20} />
           <span className="text-[#8B909A]">Delete</span>
-        </Button>
+        </Button> */}
       </div>
     );
   }, [filterValue]);
@@ -182,10 +188,13 @@ export default function Customers() {
       case "actions":
         return (
           <div className="flex justify-normal items-center gap-3 min-w-[100px]">
-            <Button isIconOnly className="bg-transparent">
+            {/* <Button isIconOnly className="bg-transparent">
               <TbEdit color="#8B909A" size={20} />
-            </Button>
-            <Button isIconOnly className="bg-transparent">
+            </Button> */}
+            <Button isIconOnly className="bg-transparent relative z-[100] " onClick={() => {
+              setUserIdToDelete(user._id)
+              onOpen()
+            }}>
               <TbTrash color="#8B909A" size={20} />
             </Button>
           </div>
@@ -198,7 +207,7 @@ export default function Customers() {
   const getUsers = async () => {
     try {
       const res = await fetch(
-        `${API}/user/665f3e55980c99fbedc79b64`,
+        `${API}/user`,
         {
           headers: {
             AUTHORIZATION: "Bearer " + token,
@@ -207,8 +216,8 @@ export default function Customers() {
       );
 
       const resData = await res.json();
-      // setUsers()
-      console.log(resData);
+      setUsers(resData.data)
+      // console.log(resData);
     } catch (error) {
       console.log(error);
     }
@@ -216,20 +225,62 @@ export default function Customers() {
   useEffect(() => {
     getUsers();
   }, []);
+
+  async function DeleteUser(_id:string) {
+        try {
+          const res = await fetch(`${API}/user/${_id}`, {
+            headers: {
+              AUTHORIZATION: "Bearer " + token,
+            },
+            method:"DELETE"
+          });
+
+          const resData = await res.json();
+          setUsers(resData.data);
+          // console.log(resData);
+        } catch (error) {
+          console.log(error);
+        }
+  }
   return (
     <div className="pb-16">
+      <Modal backdrop={"blur"} isOpen={isOpen} onClose={onClose} className="pt-4">
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody className="text-center py-2">
+                <p>Are you sure you want to delete the user</p>
+              </ModalBody>
+              <ModalFooter className="w-full">
+                <div className="flex pb-3 justify-center gap-4 w-full">
+                  <Button color="danger" variant="bordered" onPress={onClose}>
+                    Cancel
+                  </Button>
+                  <Button
+                    color="primary"
+                    onPress={() => {
+                      () => {
+                        DeleteUser(userIdToDelete);
+                        onClose();
+                      };
+                    }}
+                  >
+                    Delete User
+                  </Button>
+                </div>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       <Table
         className="min-h-[400px]"
         aria-label="customer table"
         isHeaderSticky
         bottomContent={bottomContent}
         bottomContentPlacement="inside"
-        selectedKeys={selectedKeys}
-        selectionMode="multiple"
         topContent={topContent}
         topContentPlacement="outside"
-        onSelectionChange={setSelectedKeys}
-        
         classNames={{
           wrapper: "min-h-[400px]",
           th: [
