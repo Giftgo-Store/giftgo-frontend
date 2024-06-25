@@ -1,6 +1,5 @@
 "use client";
-import { useCallback, useMemo, useState } from "react";
-import { OrderList } from "@/app/assets/data";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Input,
   Pagination,
@@ -20,17 +19,34 @@ import { CiSearch } from "react-icons/ci";
 import { TbTrash } from "react-icons/tb";
 import { TbEdit } from "react-icons/tb";
 import React from "react";
-interface user {
-  orderId: string;
-  timestamp: string;
-  customerName: string;
-  phone_number: string;
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
+
+interface users {
+  _id: string;
+  email: string;
+  name: string;
+  phone: string;
+  createdAt: string;
 }
 export default function Customers() {
   const [filterValue, setFilterValue] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState<any | string[]>("10");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
+  const [users, setUser] = useState<users[]>([]);
   const [page, setPage] = useState(1);
+
+  const appSession = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/admin/auth/login");
+    },
+  });
+
+  const session: any = useSession();
+  const token = session?.data?.token;
+  const API = process.env.NEXT_PUBLIC_API_ROUTE;
+  console.log(selectedKeys);
   const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
   const columns = [
     { name: "NAME", uid: "name", sortable: true },
@@ -39,16 +55,17 @@ export default function Customers() {
     { name: "ACTIONS", uid: "actions" },
   ];
 
-
   //filter orders based on search query
   const filteredItems = useMemo(() => {
     if (filterValue.length > 0) {
-      return OrderList.slice().filter((item) => {
-        return item.customerName.toLocaleLowerCase().includes(filterValue.toLocaleLowerCase());
+      return users?.slice().filter((item: users) => {
+        return item.name
+          .toLocaleLowerCase()
+          .includes(filterValue.toLocaleLowerCase());
       });
     }
-    return OrderList;
-  }, [filterValue, OrderList]);
+    return users;
+  }, [filterValue, users]);
 
   const Items = useMemo(() => {
     const start = (page - 1) * Number(rowsPerPage);
@@ -61,7 +78,7 @@ export default function Customers() {
     return Math.ceil(filteredItems.length / Number(rowsPerPage));
   }, [Items]);
 
-//bottom conten of table
+  //bottom conten of table
   const bottomContent = useMemo(() => {
     return (
       <div className="flex w-full justify-between sm:items-center gap-3">
@@ -105,7 +122,7 @@ export default function Customers() {
     );
   }, [Items.length, page, pages]);
 
-// top content of table
+  // top content of table
   const topContent = useMemo(() => {
     return (
       <div className="flex gap-4 justify-between items-center">
@@ -114,7 +131,6 @@ export default function Customers() {
           endContent={<CiSearch size={28} color="#8B909A" />}
           size="md"
           radius="sm"
-          
           aria-label="search"
           className="max-w-[300px] w-full shadow-sm"
           classNames={{
@@ -139,8 +155,8 @@ export default function Customers() {
       </div>
     );
   }, [filterValue]);
-//render column cells for tables
-  const renderCell = useCallback((user: user, columnKey: React.Key) => {
+  //render column cells for tables
+  const renderCell = useCallback((user: users, columnKey: React.Key) => {
     switch (columnKey) {
       case "name":
         return (
@@ -149,18 +165,18 @@ export default function Customers() {
             classNames={{
               description: "text-default-500",
             }}
-            name={user.customerName}
+            name={user.name}
             description={"robert@gmail.com"}
           >
             robert@gmail.com
           </User>
         );
       case "phone number":
-        return <p>{user.phone_number}</p>;
+        return <p>{user.phone}</p>;
       case "created":
         return (
           <p className="min-w-[150px]">
-            {new Date(user.timestamp).toDateString()}
+            {new Date(user.createdAt).toDateString()}
           </p>
         );
       case "actions":
@@ -178,6 +194,28 @@ export default function Customers() {
         return "unavailable";
     }
   }, []);
+
+  const getUsers = async () => {
+    try {
+      const res = await fetch(
+        `${API}/user/665f3e55980c99fbedc79b64`,
+        {
+          headers: {
+            AUTHORIZATION: "Bearer " + token,
+          },
+        }
+      );
+
+      const resData = await res.json();
+      // setUsers()
+      console.log(resData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getUsers();
+  }, []);
   return (
     <div className="pb-16">
       <Table
@@ -191,6 +229,7 @@ export default function Customers() {
         topContent={topContent}
         topContentPlacement="outside"
         onSelectionChange={setSelectedKeys}
+        
         classNames={{
           wrapper: "min-h-[400px]",
           th: [
@@ -216,7 +255,7 @@ export default function Customers() {
               key={column.uid}
               align={"start"}
               allowsSorting={column.sortable}
-              className={column.uid==="actions"?"px-6":"px-4"}
+              className={column.uid === "actions" ? "px-6" : "px-4"}
             >
               {column.name}
             </TableColumn>
@@ -244,3 +283,4 @@ export default function Customers() {
     </div>
   );
 }
+Customers.requireAuth = true;

@@ -49,7 +49,8 @@ export default function OrderManagement() {
   const [page, setPage] = useState(1);
   const [statusFilterValue, setStatusFilterValue] = useState("All");
   const [rowsPerPage, setRowsPerPage] = useState<any | string[]>("10");
-
+  const [selected, setSelected] = useState<any>()
+  console.log(selected);
   const filters = ["Recent", "Older", "Most products", "Less products"];
   const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
   const tabs = [
@@ -257,6 +258,9 @@ export default function OrderManagement() {
             ],
           }}
           selectedKeys={[orderStatus]}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+            setSelected(e.target.value);
+          }}
         >
           {status.map((item) => (
             <SelectItem key={item} value={item} className="">

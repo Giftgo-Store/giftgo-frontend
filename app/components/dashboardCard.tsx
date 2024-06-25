@@ -1,8 +1,8 @@
 import { IoArrowDownOutline, IoArrowUpOutline } from "react-icons/io5";
-import { Image } from "@nextui-org/react";
+import { Image, Skeleton } from "@nextui-org/react";
 interface dashboardCard {
   title: string;
-  amount: number|string|null;
+  amount:string|null;
   profit: boolean;
   percentage: number;
   customstyle?: string;
@@ -23,10 +23,14 @@ export function DashboardCard({
       <div className="flex flex-col gap-5">
         <div className="flex gap-5 flex-wrap sm:flex-nowrap flex-row justify-between ">
           <div className="flex gap-6 items-end justify-normal">
-            <span className="font-bold text-3xl text-[2rem]">{amount}</span>
+            {amount ? (
+              <span className="font-bold text-3xl text-[2rem]">{amount}</span>
+            ) : (
+              <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+            )}
           </div>
           <Image
-            src={profit ? "/green-rise.png" : "/red-dip.png"}
+            src={amount&& parseInt(amount)>5 ? "/green-rise.png" : "/red-dip.png"}
             alt="arrow rise or fall"
             className="md:max-w-[500px] md:w-full w-[90%] h-full object-contain"
           />

@@ -1,11 +1,7 @@
 "use client";
 import {
-  Avatar,
-  Badge,
   Button,
-  Link,
   Image,
-  Slider,
   Progress,
   Table,
   TableBody,
@@ -18,21 +14,12 @@ import {
   User,
   Skeleton,
 } from "@nextui-org/react";
-import { redirect, usePathname } from "next/navigation";
-import { TbBell } from "react-icons/tb";
-import { IoArrowDownOutline, IoArrowUpOutline } from "react-icons/io5";
+import { redirect } from "next/navigation";
+import { IoArrowUpOutline } from "react-icons/io5";
 import { DashboardCard } from "@/app/components/dashboardCard";
 import { DashboardCardHeader } from "@/app/components/dashboardCardHeader";
 import { ApexOptions } from "apexcharts";
-import {
-  LegacyRef,
-  MouseEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import dynamic from "next/dynamic";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -51,27 +38,30 @@ interface BestSellingProduct {
   name: string;
 }
 
-interface productStats {
-  topSellingCategories: TopSellingCategory[];
-  bestSellingProducts: BestSellingProduct[];
-}
 interface weeklystats {
   week: string;
   totalOrders: number;
-  totalRevenue: number;
+  totalRevenue: number | null;
 }
-interface salesAnalytics {
+interface dailyOrders {
+  date: string;
+  totalOrders: number | null;
+}
+interface revenueStats {
   totalCustomers: number;
   totalOrders: number;
   totalRevenue: number;
   totalSales: number;
   weeklyStats: weeklystats[];
+  dailyOrders: dailyOrders[];
+  topSellingCategories: TopSellingCategory[];
+  bestSellingProducts: BestSellingProduct[];
 }
 export default function Dashboard() {
-  const [productStats, setProductStats] = useState<productStats | null>(null);
-  const [orderStats, setOrderStats] = useState<salesAnalytics | null>(null);
-  const topSellingCategories = productStats?.topSellingCategories;
-  const bestSellingProducts = productStats?.bestSellingProducts;
+  const [revenueStats, setRevenueStats] = useState<revenueStats | null>(null);
+  const [recentOrderNo, setRecentOrderNo]=useState(null);
+  const topSellingCategories = revenueStats?.topSellingCategories;
+  const bestSellingProducts = revenueStats?.bestSellingProducts;
 
   const sesssion = useSession({
     required: true,
@@ -84,11 +74,24 @@ export default function Dashboard() {
   const token = session?.data?.token;
   const API = process.env.NEXT_PUBLIC_API_ROUTE;
 
-  const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
-  const series = [
+
+  const weeklyorders = revenueStats?.weeklyStats.map((totalOrders) => {
+    return totalOrders.totalOrders;
+  });
+  const weeks = revenueStats?.weeklyStats.map((totalOrders) => {
+    return totalOrders.week;
+  });
+  const days = revenueStats?.dailyOrders.map((totalOrders) => {
+    return totalOrders.date;
+  });
+  const dailyOrders = revenueStats?.dailyOrders.map((totalOrders) => {
+    return totalOrders.totalOrders;
+  });
+
+  const series: any = [
     {
       name: "Revenue",
-      data: [0, 320, 200, 500, 120, 300, 100, 400],
+      data: dailyOrders,
     },
   ];
   const options: ApexOptions = {
@@ -109,6 +112,7 @@ export default function Dashboard() {
     },
     colors: ["#1EB564"],
     xaxis: {
+      type: "datetime",
       categories: days,
     },
     tooltip: {
@@ -117,7 +121,7 @@ export default function Dashboard() {
           value,
           { series, seriesName, seriesIndex, dataPointIndex, w }
         ) {
-          return series[seriesIndex][dataPointIndex] + "k";
+          return formatNumber(series[seriesIndex][dataPointIndex]);
         },
       },
     },
@@ -125,10 +129,10 @@ export default function Dashboard() {
       borderColor: "transparent",
     },
   };
-  const areaseries = [
+  const areaseries:any = [
     {
       name: "Total Orders",
-      data: [0, 320, 0, 0, 200, 500, 120, 300, 100],
+      data: weeklyorders,
     },
   ];
   const areaOption: ApexOptions = {
@@ -150,18 +154,8 @@ export default function Dashboard() {
       size: 0,
     },
     xaxis: {
-      type: "datetime",
-      categories: [
-        "2024-04-11T01:30:00.000Z",
-        "2024-04-11T01:40:00.000Z",
-        "2024-04-11T01:50:00.000Z",
-        "2024-04-11T02:00:00.000Z",
-        "2024-04-11T03:30:00.000Z",
-        "2024-04-11T04:00:00.000Z",
-        "2024-04-11T05:30:00.000Z",
-        "2024-04-11T06:00:00.000Z",
-        "2024-04-11T07:30:00.000Z",
-      ],
+      // type: "datetime",
+      categories: weeks,
     },
     grid: {
       borderColor: "transparent",
@@ -517,32 +511,17 @@ export default function Dashboard() {
   function option() {
     alert("yes");
   }
-  const getProductStats = async () => {
+
+  const getRevenueStats = async () => {
     try {
-      const res = await fetch(`${API}/products/product/stats`, {
+      const res = await fetch(`${API}/products/general/stats`, {
         headers: {
           AUTHORIZATION: "Bearer " + token,
         },
       });
 
       const resData = await res.json();
-      console.log(resData);
-      setProductStats(resData);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const getOrderStats = async () => {
-    try {
-      const res = await fetch(`${API}/orders/order`, {
-        headers: {
-          AUTHORIZATION: "Bearer " + token,
-        },
-        method: "POST",
-      });
-
-      const resData = await res.json();
-      setOrderStats(resData);
+      setRevenueStats(resData);
       console.log(resData);
     } catch (error) {
       console.log(error);
@@ -554,15 +533,29 @@ export default function Dashboard() {
     } else if (x >= 1_000) {
       return (x / 1_000).toFixed(1) + "K";
     } else if (x === 0) {
-      return x
+      return "0";
     } else {
       return x.toString();
     }
   }
+  const getPreviousOrders = async () => {
+    try {
+      const res = await fetch(`${API}/orders/week/last-week`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
 
+      const resData = await res.json();
+      setRecentOrderNo(resData.data.totalOrders)
+      console.log(resData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
-    getProductStats();
-    getOrderStats();
+    getRevenueStats();
+    getPreviousOrders();
   }, []);
   return (
     <div>
@@ -577,9 +570,9 @@ export default function Dashboard() {
               </div>
               <div className="flex flex-col gap-5 pt-3">
                 <div className="flex gap-6 items-end justify-normal">
-                  {orderStats ? (
+                  {revenueStats ? (
                     <span className="font-bold text-3xl text-[2rem]">
-                      ₦{formatNumber(orderStats?.totalRevenue)}
+                      ₦{formatNumber(revenueStats?.totalRevenue)}
                     </span>
                   ) : (
                     <Skeleton className="w-[60px] h-[30px]"></Skeleton>
@@ -619,14 +612,14 @@ export default function Dashboard() {
                 ></Image>
               </div>
               <div className="flex justify-between w-full">
-                {days.map((day: string) => (
+                {/* {days.map((day: string) => (
                   <span
                     key={day}
                     className="text-[#8B909A] font-medium text-[0.625rem] leading-[20px]"
                   >
                     {day}
                   </span>
-                ))}
+                ))} */}
               </div>
             </div>
           </div>
@@ -634,7 +627,7 @@ export default function Dashboard() {
         <div className="lg:max-w-[40%] w-full">
           <DashboardCard
             title={"Sessions"}
-            amount={1.6}
+            amount={"1.6"}
             profit={false}
             percentage={3}
             customstyle="min-w-[350px] "
@@ -646,21 +639,21 @@ export default function Dashboard() {
         <DashboardCard
           customstyle="min-w-[270px] lg:max-w-[unset]"
           title={"Total Orders"}
-          amount={orderStats&&formatNumber(orderStats?.totalRevenue)}
+          amount={recentOrderNo && formatNumber(recentOrderNo)}
           profit={true}
           percentage={6}
         ></DashboardCard>
         <DashboardCard
           customstyle="min-w-[270px] lg:max-w-[unset]"
           title={"Total Profit"}
-          amount={150}
+          amount={"150"}
           profit={true}
           percentage={12}
         ></DashboardCard>
         <DashboardCard
           customstyle="min-w-[270px] lg:max-w-[unset]"
           title={"Discounted Amount"}
-          amount={12}
+          amount={"12"}
           profit={false}
           percentage={2}
         ></DashboardCard>
@@ -676,11 +669,23 @@ export default function Dashboard() {
           />
           <div className="flex justify-between gap-3">
             <div className="flex flex-col gap-3">
-              <p className="font-bold text-[#23272E] text-2xl">5k</p>
+              {revenueStats ? (
+                <p className="font-bold text-[#23272E] text-2xl">
+                  {formatNumber(revenueStats?.totalCustomers)}
+                </p>
+              ) : (
+                <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+              )}
               <p className="font-medium text-sm text-[#8B909A]">Customers</p>
             </div>
             <div className="flex flex-col gap-3">
-              <p className="font-bold text-[#23272E] text-2xl">300</p>
+              {revenueStats ? (
+                <p className="font-bold text-[#23272E] text-2xl">
+                  {formatNumber(revenueStats?.totalRevenue)}
+                </p>
+              ) : (
+                <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+              )}
               <p className="font-medium text-sm text-[#8B909A]">
                 Total Products
               </p>
@@ -696,7 +701,13 @@ export default function Dashboard() {
               <p className="font-medium text-sm text-[#8B909A]">Out of stock</p>
             </div>
             <div className="flex flex-col gap-3">
-              <p className="font-bold text-[#23272E] text-2xl">₦250k</p>
+              {revenueStats ? (
+                <p className="font-bold text-[#23272E] text-2xl">
+                  {formatNumber(revenueStats?.totalRevenue)}
+                </p>
+              ) : (
+                <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+              )}
               <p className="font-medium text-sm text-[#8B909A]">Revenue</p>
             </div>
           </div>
@@ -1025,14 +1036,14 @@ export default function Dashboard() {
                 <p className="font-semibold text-lg text-[#23272E]">
                   Total Orders
                 </p>
-                {orderStats ? (
+                {revenueStats ? (
                   <span className="font-bold text-[2.0rem] leading-[2.0rem]">
-                    {formatNumber(orderStats?.totalOrders)}
+                    {formatNumber(revenueStats?.totalOrders)}
                   </span>
                 ) : (
                   <Skeleton className="w-[60px] h-[30px]"></Skeleton>
                 )}
-                <p className="text-[#8B909A] text-base">Users per minute</p>
+                <p className="text-[#8B909A] text-base">Orders per week</p>
               </div>
             </div>
             <div className="flex justify-normal items-center gap-1">
