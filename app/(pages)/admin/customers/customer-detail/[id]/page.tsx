@@ -8,6 +8,7 @@ import {
   Select,
   SelectItem,
   Selection,
+  Skeleton,
   Spacer,
   Tab,
   Tabs,
@@ -16,21 +17,57 @@ import {
 import { useState, useMemo, useCallback, Suspense, useEffect } from "react";
 import { SlArrowDown } from "react-icons/sl";
 import { CiSearch } from "react-icons/ci";
-import { OrderList } from "@/app/assets/data";
 import { PiPrinterFill } from "react-icons/pi";
 import {
   IoCaretDownCircleOutline,
   IoCaretForwardCircleOutline,
 } from "react-icons/io5";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
-export default function Workspace() {
+import {
+  useSearchParams,
+  usePathname,
+  useRouter,
+  redirect,
+} from "next/navigation";
+import { useSession } from "next-auth/react";
+
+interface users {
+  _id: string;
+  email: string;
+  name: string;
+  phone: string;
+  orders: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+interface order {
+  orderId: string;
+  timestamp: string;
+  customerName: string;
+  totalAmount: number;
+  status: string;
+  profit: number;
+  products: [
+    {
+      productId: string;
+      productName: string;
+      price: number;
+      originalPrice: number;
+      sellingPrice: number;
+      quantity: number;
+      discount: number;
+      total: number;
+    }
+  ];
+}
+export default function Workspace({ params }: { params: { id: string } }) {
   const [sortOption, setSortOption] = useState<string>("Recent");
   const [filterValue, setFilterValue] = useState("");
   const [page, setPage] = useState(1);
   const [statusFilterValue, setStatusFilterValue] = useState("All");
   const [rowsPerPage, setRowsPerPage] = useState<any | string[]>("10");
-
+  const [userDetails, setUserDeatails] = useState<users>();
+  const [userOrders, setUserOrders] = useState<order[]>([]);
   const filters = ["Recent", "Older", "Most products", "Less products"];
   const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
   const tabs = [
@@ -55,6 +92,17 @@ export default function Workspace() {
   const pathname = usePathname();
   const { replace } = useRouter();
   const searchParams = useSearchParams();
+  const id = params.id;
+  const sesssion = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/admin/auth/login");
+    },
+  });
+
+  const session: any = useSession();
+  const token = session?.data?.token;
+  const API = process.env.NEXT_PUBLIC_API_ROUTE;
 
   // Update status filter value when search params change
   useEffect(() => {
@@ -63,7 +111,7 @@ export default function Workspace() {
 
   // Filter and sort items based on sort option
   const filteredItems = useMemo(() => {
-    let sortedList = OrderList.slice(); // Create a copy of the original list
+    let sortedList = userOrders.slice(); // Create a copy of the original list
 
     // Sort the list based on the sortOption
 
@@ -127,7 +175,7 @@ export default function Workspace() {
     });
 
     return filteredList;
-  }, [OrderList, statusFilterValue, filterValue, sortOption]);
+  }, [userOrders, statusFilterValue, filterValue, sortOption]);
 
   //pagination for orders
 
@@ -139,7 +187,7 @@ export default function Workspace() {
   }, [
     page,
     filteredItems,
-    OrderList,
+    userOrders,
     statusFilterValue,
     filterValue,
     sortOption,
@@ -219,22 +267,48 @@ export default function Workspace() {
       </Tabs>
     );
   }
+
+  const getUserDetails = async () => {
+    try {
+      const res = await fetch(`${API}/user/${id}`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
+
+      const resData = await res.json();
+
+      console.log(resData);
+      setUserDeatails(resData.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getUserDetails();
+  }, []);
+
   return (
     <div>
       <div>
         <div className="flex flex-wrap md:flex-row flex-col gap-5 bg-white p-4 rounded-t-2xl">
           <div className="md:min-w-[250px] max-w-[350px] w-full flex justify-start items-center pl-5">
             <div className="flex gap-3">
-              <Avatar
-                src="https://i.pravatar.cc/150?u=a04258114e29026702d"
-                color="secondary"
-                size="lg"
-              ></Avatar>
-              <div className="">
-                <p className="font-semibold text-lg">Jane Doe</p>
-                <p className="font-normal text-[15px]  text-[#8B909A]">
-                  Product Designer
-                </p>
+              <Avatar src="" color="secondary" size="lg"></Avatar>
+              <div className="flex flex-col gap-2">
+                {userDetails ? (
+                  <p className="font-semibold text-lg">{userDetails.name}</p>
+                ) : (
+                  <Skeleton className="w-[60px] h-[25px]"></Skeleton>
+                )}
+
+                {userDetails ? (
+                  <p className="font-normal text-[15px]  text-[#8B909A]">
+                    {userDetails.email}
+                  </p>
+                ) : (
+                  <Skeleton className="w-[100px] h-[25px]"></Skeleton>
+                )}
               </div>
             </div>
           </div>
@@ -244,29 +318,46 @@ export default function Workspace() {
             </p>
             <div className="flex justify-start gap-5">
               <p className="flex-1">Contact Number</p>
-              <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
-                08032030303{" "}
-              </p>
+              {userDetails ? (
+                <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
+                  {userDetails.phone}
+                </p>
+              ) : (
+                <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+              )}
             </div>
-            <div className="flex justify-start gap-5">
+            {/* <div className="flex justify-start gap-5">
               <p className="flex-1">Gender</p>
               <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
                 {" "}
-                Male
+                {userDetails ? (
+                  <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
+                    {userDetails.phone}
+                  </p>
+                ) : (
+                  <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+                )}
               </p>
-            </div>
+            </div> */}
             <div className="flex justify-start gap-5">
               <p className="flex-1">Date of Birth</p>
-              <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
-                1 Jan, 1985
-              </p>
+              {userDetails ? (
+                <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
+                  {userDetails.phone}
+                </p>
+              ) : (
+                <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+              )}
             </div>
             <div className="flex justify-start gap-5">
               <p className="flex-1">Member Since</p>
-              <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
-                {" "}
-                26 January, 2024
-              </p>
+              {userDetails ? (
+                <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
+                  {new Date(userDetails.createdAt).toDateString()}
+                </p>
+              ) : (
+                <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+              )}
             </div>
           </div>
           <div className="flex flex-col gap-3  w-full px-5 lg:max-w-[300px]">

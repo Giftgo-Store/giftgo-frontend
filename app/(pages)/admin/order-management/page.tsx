@@ -21,8 +21,11 @@ import {
 } from "react-icons/io5";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
-interface order {
+
+export interface order {
   orderId: string;
   timestamp: string;
   customerName: string;
@@ -49,8 +52,8 @@ export default function OrderManagement() {
   const [page, setPage] = useState(1);
   const [statusFilterValue, setStatusFilterValue] = useState("All");
   const [rowsPerPage, setRowsPerPage] = useState<any | string[]>("10");
-  const [selected, setSelected] = useState<any>()
-  console.log(selected);
+  const [selected, setSelected] = useState<any>();
+
   const filters = ["Recent", "Older", "Most products", "Less products"];
   const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
   const tabs = [
@@ -75,6 +78,17 @@ export default function OrderManagement() {
   const pathname = usePathname();
   const { replace } = useRouter();
   const searchParams = useSearchParams();
+
+  const sesssion = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/admin/auth/login");
+    },
+  });
+
+  const session: any = useSession();
+  const token = session?.data?.token;
+  const API = process.env.NEXT_PUBLIC_API_ROUTE;
 
   // Update status filter value when search params change
   useEffect(() => {
@@ -140,7 +154,9 @@ export default function OrderManagement() {
                 .includes(item.status.toLocaleLowerCase())
             );
           }
-          return statusFilterValue.toLocaleLowerCase().includes(item.status.toLocaleLowerCase());
+          return statusFilterValue
+            .toLocaleLowerCase()
+            .includes(item.status.toLocaleLowerCase());
         }
         return false;
       }
@@ -226,7 +242,7 @@ export default function OrderManagement() {
         onSelectionChange={(tab: any) => {
           replace(tab);
           setStatusFilterValue(tab);
-          setPage(1)
+          setPage(1);
         }}
       >
         {tabs.map((tab) => (
@@ -272,6 +288,22 @@ export default function OrderManagement() {
     },
     [statusFilterValue, filteredItems]
   );
+  const getOrders = async () => {
+    try {
+      const res = await fetch(`${API}/orders/order/all`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
+
+      const resData = await res.json();
+
+      console.log(resData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="pb-12" suppressHydrationWarning={true}>
       <div className="w-full overflow-x-auto py-2">

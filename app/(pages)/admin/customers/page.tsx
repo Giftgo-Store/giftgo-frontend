@@ -19,6 +19,7 @@ import {
   ModalContent,
   ModalFooter,
   useDisclosure,
+  Link,
 } from "@nextui-org/react";
 import { CiSearch } from "react-icons/ci";
 import { TbTrash } from "react-icons/tb";
@@ -166,16 +167,18 @@ const { isOpen, onOpen, onClose } = useDisclosure();
     switch (columnKey) {
       case "name":
         return (
+          <Link href={`/admin/customers/customer-detail/${user._id}`} className="text-black">
           <User
             avatarProps={{ radius: "full", size: "sm" }}
             classNames={{
               description: "text-default-500",
+              name:"text-black"
             }}
             name={user.name}
-            description={"robert@gmail.com"}
+            description={user.email}
           >
-            robert@gmail.com
-          </User>
+            {user.email}
+          </User></Link>
         );
       case "phone number":
         return <p>{user.phone}</p>;
