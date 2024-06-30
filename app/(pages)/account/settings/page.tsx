@@ -24,6 +24,9 @@ const Settings = () => {
   const [zipCode, setZipCode] = useState("");
   const [user, setUser] = useState<any>([]);
 
+    const [countries, setCountries] = useState<any>([]);
+    const [countCity, setCountCity] = useState<any>([]);
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -49,6 +52,61 @@ const Settings = () => {
     fetchUser();
   }, [toast]);
 
+   useEffect(() => {
+     const fetchCountries = async () => {
+       try {
+         const response = await axios.get(
+           `https://countriesnow.space/api/v0.1/countries/states`,
+           {
+             headers: {
+               "Content-Type": "application/json",
+             },
+           }
+         );
+         // Handle successful response, e.g., save token, redirect, etc.
+         setCountries(response.data.data);
+       } catch (error) {
+         console.error(
+           //@ts-ignore
+           "Error fetching resource", error?.response?.data || error?.message );
+       } finally {
+         // Any cleanup or final actions
+       }
+     };
+     fetchCountries();
+   }, []);
+
+   const selectedState =
+     countries && countries.filter((count: any) => count.name === country);
+
+   useEffect(() => {
+     const fetchCountCity = async () => {
+       try {
+         const response = await axios.get(
+           `https://countriesnow.space/api/v0.1/countries`,
+           {
+             headers: {
+               "Content-Type": "application/json",
+             },
+           }
+         );
+         // Handle successful response, e.g., save token, redirect, etc.
+         setCountCity(response.data.data);
+       } catch (error) {
+         console.error(
+           //@ts-ignore
+           "Error fetching resource", error?.response?.data || error?.message);
+       } finally {
+         // Any cleanup or final actions
+       }
+     };
+     fetchCountCity();
+   }, []);
+
+   const selectedCity =
+     countCity && countCity.filter((count: any) => count.country === country);
+
+
   useEffect(() => {
     if (user && user.address) {
       setFirstName(user && user?.name && user?.name.split(" ")[0]);
@@ -56,9 +114,9 @@ const Settings = () => {
       setEmail(user.email);
       setPhone(user.phone);
       setAddress(user.address.address);
-      setCountry(user.address.country);
-      setCity(user.address.city);
-      setRegion(user.address.state);
+      // setCountry(user.address.country);
+      // setCity(user.address.city);
+      // setRegion(user.address.state);
       setZipCode(user.address.postal_code);
     }
   }, [user]);
@@ -189,7 +247,7 @@ const Settings = () => {
             <input
               type="text"
               className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-full"
-              value={firstName + " " + lastName }
+              value={firstName + " " + lastName}
               onChange={(e) => setLastName(e.target.value)}
             />
           </fieldset>
@@ -288,9 +346,17 @@ const Settings = () => {
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
               >
-                <option value="" disabled>
-                  Select...
+                <option value={user && user?.address && user?.address?.country}>
+                  {user && user?.address && user?.address?.country}
                 </option>
+                {countries.length > 0 &&
+                  countries.map((count: any, i: any) => {
+                    return (
+                      <option key={i} value={count.name}>
+                        {count.name}
+                      </option>
+                    );
+                  })}
               </select>
             </fieldset>
             <fieldset className="flex flex-col items-start gap-2 w-[47%] lg:w-[25%]">
@@ -303,9 +369,19 @@ const Settings = () => {
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
               >
-                <option value="" disabled>
-                  Select...
+                <option value="">
+                  {user && user?.address && user?.address?.state}
                 </option>
+                {selectedState.length > 0 &&
+                  selectedState[0] &&
+                  selectedState[0].states &&
+                  selectedState[0].states.map((state: any, i: any) => {
+                    return (
+                      <option key={i} value={state.name}>
+                        {state.name}
+                      </option>
+                    );
+                  })}
               </select>
             </fieldset>
             <fieldset className="flex flex-col items-start gap-2 w-[47%] lg:w-[25%]">
@@ -318,9 +394,19 @@ const Settings = () => {
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
               >
-                <option value="" disabled>
-                  Select...
+                <option value="">
+                  {user && user?.address && user?.address?.city}
                 </option>
+                {selectedCity.length > 0 &&
+                  selectedCity[0] &&
+                  selectedCity[0].cities &&
+                  selectedCity[0].cities.map((city: any, i: any) => {
+                    return (
+                      <option key={i} value={city}>
+                        {city}
+                      </option>
+                    );
+                  })}
               </select>
             </fieldset>
             <fieldset className="flex flex-col items-start gap-2 w-[47%] lg:w-[25%]">

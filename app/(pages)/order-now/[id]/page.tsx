@@ -8,7 +8,7 @@ import Cookies from "js-cookie";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
 import { useRefetch } from "@/app/context/refetchContext";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useAppToast } from "@/app/providers/useAppToast";
 import { PaystackButton } from "react-paystack";
 
@@ -16,7 +16,10 @@ const Page = () => {
   const toast = useAppToast();
   const router = useRouter();
   const { triggerRefetch } = useRefetch();
-  
+  const params = useParams();
+  const searchParams = useSearchParams();
+
+  const quantity = searchParams?.get('quantity')
 
   const [showModal, setShowModal] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
@@ -49,14 +52,14 @@ const Page = () => {
 
   useEffect(() => {
     const fetchCartItems = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/api/v1/cart`, {
-          headers: {
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-        });
+        try {
+        const response = await axios.get(
+          `${BASE_URL}/api/v1/products/${params && params.id}`
+        );
         // Handle successful response, e.g., save token, redirect, etc.
         setCartItems(response.data.data);
+        console.log('product')
+        console.log(response.data.data);
       } catch (error) {
         console.error(
           //@ts-ignore
@@ -66,29 +69,28 @@ const Page = () => {
       }
     };
     fetchCartItems();
-  }, []);
+  }, [params]);
 
-    useEffect(() => {
-      const fetchUser = async () => {
-        try {
-          const response = await axios.get(`${BASE_URL}/api/v1/user/profile`, {
-            headers: {
-              Authorization: `Bearer ${Cookies.get("token")}`,
-            },
-          });
-          // Handle successful response, e.g., save token, redirect, etc.
-          setUser(response.data.data);
-        } catch (error) {
-          console.error(
-            //@ts-ignore
-            "Error fetching resource",error?.response?.data || error?.message
-          );
-        } finally {
-          // Any cleanup or final actions
-        }
-      };
-      fetchUser();
-    }, []);
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/v1/user/profile`, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        });
+        // Handle successful response, e.g., save token, redirect, etc.
+        setUser(response.data.data);
+      } catch (error) {
+        console.error(
+          //@ts-ignore
+          "Error fetching resource", error?.response?.data || error?.message);
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+    fetchUser();
+  }, []);
 
   const [isFormValid, setIsFormValid] = useState(false);
 
@@ -108,17 +110,17 @@ const Page = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
 
-    useEffect(() => {
-      if (user && user.address) {
-        setAddress(user.address.address);
-             setCountry(user.address && user.address.country);
-             setCity(user.address && user.address.city);
-             setRegion(user.address && user.address.state);
-        setZipCode(user.address.postal_code);
-      }
-    }, [user]);
+  useEffect(() => {
+    if (user && user.address) {
+      setAddress(user.address.address);
+      setCountry(user.address && user.address.country);
+      setCity(user.address && user.address.city);
+      setRegion(user.address && user.address.state);
+      setZipCode(user.address.postal_code);
+    }
+  }, [user]);
 
-  console.log(user && user.address && user.address.address)
+  console.log(user && user.address && user.address.address);
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -174,21 +176,7 @@ const Page = () => {
   const selectedCity =
     countCity && countCity.filter((count: any) => count.country === country);
 
-  const orderedItems =
-    cartItems &&
-    cartItems &&
-    cartItems.map((item: any) => ({
-      productId: item.product._id,
-      quantity: item.quantity,
-      price: item.product.salePrice,
-      lifetime: false,
-      validity: 30,
-      productName: item.product.productName,
-      licenses: [],
-    }));
-
   const handlePlaceOrder = async () => {
-   
     try {
       const response = await axios.post(
         `${BASE_URL}/api/v1/orders/make-order`,
@@ -201,7 +189,15 @@ const Page = () => {
             postal_code: zipCode,
           },
           customerPhoneNumber: user.phone,
-          orderedItems,
+          orderedItems: [{
+            productId: cartItems._id,
+            quantity: Number(quantity),
+            price: cartItems.salePrice,
+            lifetime: false,
+            validity: 30,
+            productName: cartItems.productName,
+            licenses: [],
+          }],
         },
         {
           headers: {
@@ -214,29 +210,6 @@ const Page = () => {
         description: response.data.message || "Success",
       });
       router.push("/confirmation");
-      // Handle successful response, e.g., save token, redirect, etc.
-      try {
-        const response = await axios.delete(`${BASE_URL}/api/v1/cart`, {
-          headers: {
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-        });
-        triggerRefetch();
-        toast({
-          status: "success",
-          description: response.data.message || "Success",
-        }); // Handle successful response, e.g., save token, redirect, etc.
-      } catch (error) {
-        toast({
-          status: "error",
-          description:
-            //@ts-expect-error
-            error?.response?.data || "an error occurred ",
-        });
-        alert("error");
-      } finally {
-        // Any cleanup or final actions
-      }
     } catch (error) {
       toast({
         status: "error",
@@ -250,9 +223,8 @@ const Page = () => {
     }
   };
 
-  const total = cartItems.map(
-    (item: any) => Number(item.quantity) * Number(item.product.salePrice)
-  );
+  const total =  Number(quantity) * Number(cartItems.salePrice)
+;
 
   function formatNumberWithCommas(amount: number): string {
     return new Intl.NumberFormat("en-US").format(amount);
@@ -261,11 +233,7 @@ const Page = () => {
   const componentProps = {
     reference: new Date().getTime().toString(),
     email: user && user.email,
-    amount:
-      total.reduce(
-        (accumulator: any, currentValue: any) => accumulator + currentValue,
-        0
-      ) * 100,
+    amount: total * 100,
     metadata: {
       name: user && user?.name,
       custom_fields: [
@@ -285,13 +253,13 @@ const Page = () => {
 
   const validateForm = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-     const token = Cookies.get("token");
-     if (!token) {
-       console.log("No token");
-       openModal();
-       setShowLogin(true);
-       return;
-     }
+    const token = Cookies.get("token");
+    if (!token) {
+      console.log("No token");
+      openModal();
+      setShowLogin(true);
+      return;
+    }
     if (
       address === "" ||
       city === "" ||
@@ -322,7 +290,7 @@ const Page = () => {
           Checkout
         </h2>
         <p className="text-[#475156] text-[18px] font-[500]">
-          Home / <span className="cursor-pointer"> Shopping card</span> /
+          <span className="cursor-pointer" onClick={() => router.push('/')}>Home</span> / <span className="cursor-pointer"> Shopping card</span> /
           Checkout
         </p>
       </div>
@@ -409,10 +377,7 @@ const Page = () => {
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
                 >
-                  <option
-                    selected
-                    value={user && user?.address && user?.address?.country}
-                  >
+                  <option selected value={user && user?.address && user?.address?.country}>
                     {user && user.address ? user.address.country : "Select"}
                   </option>
                   {countries.length > 0 &&
@@ -423,7 +388,6 @@ const Page = () => {
                         </option>
                       );
                     })}
-                  <option value="">select</option>
                 </select>
               </div>
               <div className="flex flex-col gap-2 w-[45%] lg:w-[23%]">
@@ -438,10 +402,7 @@ const Page = () => {
                   value={region}
                   onChange={(e) => setRegion(e.target.value)}
                 >
-                  <option
-                    selected
-                    value={user && user?.address && user?.address?.state}
-                  >
+                  <option selected value={user && user?.address && user?.address?.state}>
                     {user && user.address ? user.address.state : "Select"}
                   </option>
                   {selectedState.length > 0 &&
@@ -454,7 +415,6 @@ const Page = () => {
                         </option>
                       );
                     })}
-                  <option value="">select</option>
                 </select>
               </div>
               <div className="flex flex-col gap-2 w-[45%] lg:w-[23%]">
@@ -469,10 +429,7 @@ const Page = () => {
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                 >
-                  <option
-                    selected
-                    value={user && user?.address && user?.address?.city}
-                  >
+                  <option value={user && user?.address && user?.address?.city}>
                     {user && user.address ? user.address.city : "Select"}
                   </option>
                   {selectedCity.length > 0 &&
@@ -485,7 +442,6 @@ const Page = () => {
                         </option>
                       );
                     })}
-                  <option value="">select</option>
                 </select>
               </div>
               <div className="flex flex-col gap-2 w-[45%] lg:w-[23%]">
@@ -623,15 +579,12 @@ const Page = () => {
           </div>
 
           <div className="flex flex-col items-start gap-4 px-5 w-full">
-            {cartItems.length > 0 &&
-              cartItems.map((item: any, i: any) => {
-                return (
+
                   <div
-                    key={i}
                     className="flex justify-between w-full items-center gap-4"
                   >
                     <Image
-                      src={item && item?.product?.images[0]}
+                      src={cartItems && cartItems?.images && cartItems?.images[0]}
                       alt=""
                       width={72}
                       height={72}
@@ -639,23 +592,22 @@ const Page = () => {
                     />
                     <div className="">
                       <p className="text-[14px] font-[400]">
-                        {item && item?.product?.brandName}{" "}
-                        {item && item?.product?.productName}{" "}
-                        {item && item?.product?.description.split(0, 20)}...
+                        {cartItems && cartItems?.brandName}{" "}
+                        {cartItems && cartItems?.productName}{" "}
+                        {cartItems && cartItems?.description && cartItems?.description.split(0, 20)}...
                       </p>
                       <p className="text-[14px] font-[400]">
-                        {item.quantity} x{" "}
+                        {quantity} x{" "}
                         <span className="font-[700] text-[14px]">
                           ₦
                           {formatNumberWithCommas(
-                            item && item?.product.salePrice
+                            cartItems && cartItems?.salePrice
                           )}
                         </span>
                       </p>
                     </div>
                   </div>
-                );
-              })}
+  
           </div>
 
           <div className="flex flex-col items-start gap-3 px-5 pt-4">
@@ -663,13 +615,7 @@ const Page = () => {
               <p className="text-[#5F6C72] text-[14px]">Sub-total</p>
               <p className="text-[#191C1F] text-[14px] font-[700]">
                 ₦{" "}
-                {formatNumberWithCommas(
-                  total.reduce(
-                    (accumulator: any, currentValue: any) =>
-                      accumulator + currentValue,
-                    0
-                  )
-                )}
+                {formatNumberWithCommas(total)}
               </p>
             </div>
             <div className="flex justify-between items-center w-full">
@@ -684,13 +630,7 @@ const Page = () => {
             <p className="text-[#191C1F] text-[16px]">Sub-total</p>
             <p className="text-[#191C1F] text-[16px] font-[700]">
               ₦{" "}
-              {formatNumberWithCommas(
-                total.reduce(
-                  (accumulator: any, currentValue: any) =>
-                    accumulator + currentValue,
-                  0
-                )
-              )}
+              {formatNumberWithCommas(total)}
             </p>
           </div>
 

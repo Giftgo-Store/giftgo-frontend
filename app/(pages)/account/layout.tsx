@@ -27,7 +27,7 @@ const Account = ({ children }: ChildProps) => {
           My Account
         </h2>
         <p className="text-[#475156] text-[18px] font-[500]">
-          Home / <span className="cursor-pointer">My account</span>
+          <span onClick={() => router.push('/')} className="cursor-pointer">Home</span> / <span className="cursor-pointer">My account</span>
         </p>
       </div>
 
