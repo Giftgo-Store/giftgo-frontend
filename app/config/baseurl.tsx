@@ -1,3 +1,3 @@
-const BASE_URL = "https://giftgo.onrender.com";
+const BASE_URL = "https://giftgo-1muz.onrender.com";
 
 export default BASE_URL;

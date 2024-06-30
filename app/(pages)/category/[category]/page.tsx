@@ -14,6 +14,21 @@ import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useAppToast } from "@/app/providers/useAppToast";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+import {
+  Navigation,
+  Pagination,
+  Scrollbar,
+  A11y,
+  Autoplay,
+} from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/scrollbar";
+import "swiper/css/autoplay";
+
+
 const page = () => {
   const toast = useAppToast();
   const params = useParams();
@@ -72,6 +87,8 @@ const page = () => {
     fetchData();
   }, [params && params.category]);
 
+  
+
 
   return (
     <>
@@ -89,23 +106,50 @@ const page = () => {
           Shop By Categories
         </h2>
 
-        <div className="mt-[24px] flex justify-between items-center relative">
-          <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center absolute cursor-pointer -left-6">
-            <FaArrowLeft className="h-6 w-6 text-white" />
+        <div className="mt-[24px] w-full flex justify-between items-center relative overflow-x-hidden gap-4">
+          <div>
+            <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center cursor-pointer custom-nextt z-40">
+              <FaArrowLeft className="h-6 w-6 text-white" />
+            </div>
           </div>
-          <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center absolute cursor-pointer -right-6">
-            <FaArrowRight className="h-6 w-6 text-white " />
+
+          {/* <div className="flex justify-center items-center w-[100%] overflow-x-hidden "> */}
+          <Swiper
+            modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
+            spaceBetween={80}
+            slidesPerView={4}
+            // scrollbar={{ draggable: true }}
+            autoplay={{
+              delay: 5000,
+              disableOnInteraction: false,
+            }}
+            //   scrollbar={{ draggable: true }}
+            navigation={{
+              nextEl: ".custom-nextt",
+              prevEl: ".custom-prevv",
+            }}
+            // className="w-full flex justify-between items-center"
+          >
+            {/* <SwiperSlide></SwiperSlide> */}
+            {category &&
+              category.map((cat: any, i: any) => {
+                return (
+                  <SwiperSlide key={i}>
+                    <Category
+                      key={i}
+                      catId={cat}
+                      paramId={params && params.category}
+                    />
+                  </SwiperSlide>
+                );
+              })}
+          </Swiper>
+          {/* </div> */}
+          <div>
+            <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center cursor-pointer custom-prevv z-40">
+              <FaArrowRight className="h-6 w-6 text-white" />
+            </div>
           </div>
-          {category &&
-            category.map((cat: any, i: any) => {
-              return (
-                <Category
-                  key={i}
-                  catId={cat}
-                  paramId={params && params.category}
-                />
-              );
-            })}
         </div>
       </div>
 
@@ -116,9 +160,7 @@ const page = () => {
               Products you may like
             </h2>
             <Link
-              href={`/category/${params && params.category}/category-detail/${
-                params && params.category
-              }`}
+              href={`/category/${params && params.category}/all`}
               className="hidden lg:flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2"
             >
               Browse All Products
@@ -133,9 +175,7 @@ const page = () => {
               })}
 
             <Link
-              href={`/category/${params && params.category}/category-detail/${
-                params && params.category
-              }`}
+              href={`/category/${params && params.category}/all`}
               className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]"
             >
               <p> Browse All Products</p>

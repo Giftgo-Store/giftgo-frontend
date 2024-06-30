@@ -31,6 +31,20 @@ import { useRefetch } from "@/app/context/refetchContext";
 import Link from "next/link";
 import { useAppToast } from "@/app/providers/useAppToast";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+import {
+  Navigation,
+  Pagination,
+  Scrollbar,
+  A11y,
+  Autoplay,
+} from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/scrollbar";
+import "swiper/css/autoplay";
+
 const Page = () => {
   const toast = useAppToast();
   const { triggerRefetch } = useRefetch();
@@ -61,8 +75,7 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message
-        );
+          "Error fetching resource", error?.response?.data || error?.message);
       } finally {
         // Any cleanup or final actions
       }
@@ -70,8 +83,10 @@ const Page = () => {
 
     fetchData();
   }, [location, params]);
-
-  console.log(product);
+  
+  const query = new URLSearchParams({
+    quantity: quantity.toString()
+  }).toString();
 
   const handleIncrease = () => {
     setQuantity(quantity + 1);
@@ -152,33 +167,68 @@ const Page = () => {
             className="w-full lg:w-[80%] h-[315px] object-cover rounded-[8px]"
           />
           <div className="flex gap-2 lg:w-[80%] justify-between mt-2 items-center relative">
-            <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center absolute cursor-pointer -left-6">
-              <FaArrowLeft className="h-6 w-6 text-white" />
+            <div>
+              <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center absolute cursor-pointer -left-6 custom-nextt z-40">
+                <FaArrowLeft className="h-6 w-6 text-white" />
+              </div>
             </div>
-            <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center absolute cursor-pointer -right-6">
-              <FaArrowRight className="h-6 w-6 text-white " />
+            <div>
+              <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center absolute cursor-pointer -right-6 custom-prevv z-40">
+                <FaArrowRight className="h-6 w-6 text-white " />
+              </div>
             </div>
-            <Image
-              src="/big.png"
-              alt=""
-              width={174}
-              height={148}
-              className="w-[33%] h-[100px] lg:h-[136px] object-cover rounded-[8px] hover:shadow-lg hover:shadow-[#EB6363]"
-            />
-            <Image
-              src="/big.png"
-              alt=""
-              width={174}
-              height={148}
-              className="w-[33%] h-[100px] lg:h-[136px] object-cover rounded-[8px] hover:shadow-lg hover:shadow-[#EB6363]"
-            />
-            <Image
-              src="/big.png"
-              alt=""
-              width={174}
-              height={148}
-              className="w-[33%] h-[100px] lg:h-[136px] object-cover rounded-[8px] hover:shadow-lg hover:shadow-[#EB6363]"
-            />
+            <Swiper
+              modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
+              spaceBetween={10}
+              slidesPerView={3}
+              // scrollbar={{ draggable: true }}
+              autoplay={{
+                delay: 5000,
+                disableOnInteraction: false,
+              }}
+              //   scrollbar={{ draggable: true }}
+              navigation={{
+                nextEl: ".custom-nextt",
+                prevEl: ".custom-prevv",
+              }}
+              // className="w-full flex justify-between items-center"
+            >
+              {product && product?.images && product?.images[2] && (
+                <SwiperSlide>
+                  {" "}
+                  <Image
+                    src={product && product?.images && product?.images[1]}
+                    alt=""
+                    width={174}
+                    height={148}
+                    className="w-full h-[100px] lg:h-[136px] object-cover rounded-[8px] hover:shadow-lg hover:shadow-[#EB6363]"
+                  />
+                </SwiperSlide>
+              )}
+              {product && product?.images && product?.images[2] && (
+                <SwiperSlide>
+                  <Image
+                    src={product && product?.images && product?.images[2]}
+                    alt=""
+                    width={174}
+                    height={148}
+                    className="w-full h-[100px] lg:h-[136px] object-cover rounded-[8px] hover:shadow-lg hover:shadow-[#EB6363]"
+                  />
+                </SwiperSlide>
+              )}
+              {product && product?.images && product?.images[2] && (
+                <SwiperSlide>
+                  {" "}
+                  <Image
+                    src={product && product?.images && product?.images[3]}
+                    alt=""
+                    width={174}
+                    height={148}
+                    className="w-full h-[100px] lg:h-[136px] object-cover rounded-[8px] hover:shadow-lg hover:shadow-[#EB6363]"
+                  />
+                </SwiperSlide>
+              )}
+            </Swiper>
           </div>
         </div>
 
@@ -221,7 +271,7 @@ const Page = () => {
               <PiShoppingCart className="w-6 h-6 cursor-pointer" />
             </button>
             <Link
-              href={"/checkout"}
+              href={`/order-now/${product && product._id}?${query}`}
               className="flex w-full lg:w-fit justify-center items-center gap-[35px] text-[#191C1F] px-7 py-4 border-primary border-[2px] rounded-[3px] font-[700] text-[16px]"
             >
               <p>BUY NOW</p>

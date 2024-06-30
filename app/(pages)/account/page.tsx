@@ -7,6 +7,7 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useAppToast } from "@/app/providers/useAppToast";
+import { RxAvatar } from "react-icons/rx";
 
 const Account = () => {
   const toast = useAppToast();
@@ -73,7 +74,9 @@ const Account = () => {
           </div>
           <div className="pt-[36px] px-[24px]">
             <div className="flex justify-start items-center gap-4 mb-[20px]">
-              <Image src="/avatarr.svg" alt="" width={48} height={48} />
+              {/* <Image src="/avatarr.svg" alt="" width={48} height={48} /> */}
+              <RxAvatar className="w-[48px] h-[48px]"/>
+
               <div className="flex justify-start items-start flex-col gap-1">
                 <p className="font-[500] text-[14px] leading-[20px] text-[#191C1F]">
                   {user && user?.name && user?.name}
@@ -99,7 +102,7 @@ const Account = () => {
             <div className="mb-[24px]">
               <Link
                 href={"/account/settings"}
-                className="border-[#D5EDFD] border-[3px] px-[24px] text-[14px] font-[700] leading-[48px] text-primary rounded-[2px]"
+                className="border-[#D5EDFD] border-[3px] px-[24px] py-2 text-[14px] font-[700] leading-[48px] text-primary rounded-[2px]"
               >
                 EDIT ACCOUNT
               </Link>
@@ -138,7 +141,7 @@ const Account = () => {
             <div className="mb-[24px]">
               <Link
                 href={"/account/settings"}
-                className="border-[#D5EDFD] border-[3px] px-[24px] text-[14px] font-[700] leading-[48px] text-primary rounded-[2px]"
+                className="border-[#D5EDFD] border-[3px] px-[24px] py-2 text-[14px] font-[700] leading-[48px] text-primary rounded-[2px]"
               >
                 EDIT ADDRESS
               </Link>
