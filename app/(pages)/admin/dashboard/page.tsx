@@ -1,11 +1,7 @@
 "use client";
 import {
-  Avatar,
-  Badge,
   Button,
-  Link,
   Image,
-  Slider,
   Progress,
   Table,
   TableBody,
@@ -13,24 +9,18 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  getKeyValue,
   Chip,
   User,
+  Skeleton,
+  Spinner,
+  Link
 } from "@nextui-org/react";
-import { redirect, usePathname } from "next/navigation";
-import { TbBell } from "react-icons/tb";
-import { IoArrowDownOutline, IoArrowUpOutline } from "react-icons/io5";
+import { redirect } from "next/navigation";
+import { IoArrowUpOutline } from "react-icons/io5";
 import { DashboardCard } from "@/app/components/dashboardCard";
 import { DashboardCardHeader } from "@/app/components/dashboardCardHeader";
 import { ApexOptions } from "apexcharts";
-import {
-  LegacyRef,
-  MouseEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import dynamic from "next/dynamic";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -38,8 +28,77 @@ import { HiDotsVertical } from "react-icons/hi";
 import { SlArrowDown } from "react-icons/sl";
 import { SlArrowUp } from "react-icons/sl";
 import { useSession } from "next-auth/react";
+import { TrendingProductLoader } from "@/app/components/trendingProductLoader";
+import { SalesByAreaLoader } from "@/app/components/salesByAreaLoader";
+
+interface TopSellingCategory {
+  totalSales: number;
+  categoryName: string;
+}
+
+interface BestSellingProduct {
+  productId: string;
+  productName: string;
+  sku: string;
+  revenue: string;
+  inStock: boolean;
+  image: string;
+  totalOrders: number;
+  price: number;
+}
+
+interface weeklystats {
+  week: string;
+  totalOrders: number;
+  totalRevenue: number | null;
+}
+interface dailyOrders {
+  date: string;
+  totalOrders: number | null;
+}
+interface revenueStats {
+  totalCustomers: number;
+  totalOrders: number;
+  totalRevenue: number;
+  totalSales: number;
+  weeklyStats: weeklystats[];
+  dailyOrders: dailyOrders[];
+  topSellingCategories: TopSellingCategory[];
+  bestSellingProducts: BestSellingProduct[];
+}
+interface recentOrders {
+  orderId: string;
+  created: string;
+  customer: string;
+  total: number;
+  profit: number;
+  status: string;
+  items: [
+    {
+      sku: string;
+      name: string;
+      quantity: number;
+      discount: number;
+      total: number;
+    }
+  ];
+}
 
 export default function Dashboard() {
+  const [revenueStats, setRevenueStats] = useState<revenueStats | null>(null);
+  const [recentOrderNo, setRecentOrderNo] = useState(null);
+  const [productStats, setProductStats] = useState<revenueStats | null>(null);
+  const [recentOrders, setRecentOrders] = useState<recentOrders[]>([]);
+  const [reportData, setReportData] = useState<any>([]);
+  const [loading, setLoading] = useState(true);
+  const topSellingCategories = revenueStats?.topSellingCategories;
+  const bestSellingProducts =
+    productStats?.bestSellingProducts.slice(0.6).sort((a, b) => {
+      const mostSold = a.totalOrders;
+      const leastSold = b.totalOrders;
+      return leastSold - mostSold;
+    }) || [];
+
   const sesssion = useSession({
     required: true,
     onUnauthenticated() {
@@ -47,13 +106,45 @@ export default function Dashboard() {
     },
   });
 
-  const session = useSession();
-  //  console.log(session);
-  const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
-  const series = [
+  const session: any = useSession();
+  const token = session?.data?.token;
+  const API = process.env.NEXT_PUBLIC_API_ROUTE;
+
+  const weeklyorders = revenueStats?.weeklyStats?.map((totalOrders) => {
+    return totalOrders.totalOrders;
+  });
+  const weeks = revenueStats?.weeklyStats?.map((totalOrders) => {
+    return totalOrders.week;
+  });
+  const days = revenueStats?.dailyOrders?.map((totalOrders) => {
+    return totalOrders.date;
+  });
+  const dailyOrders = revenueStats?.dailyOrders?.map((totalOrders) => {
+    return totalOrders.totalOrders;
+  });
+  const shuffle = (array: BestSellingProduct[]) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * i);
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array.slice(0,6);
+  };
+  const sorted_recent_orders = recentOrders?.slice(0, 6).sort((a:any, b:any) => {
+    const latestorder = a.created
+    const olderorder = b.created
+    return olderorder-latestorder
+  })
+
+  const trending_products = shuffle([...bestSellingProducts]);
+  const salesByLocation = reportData[5] || [];
+  const maxOrders = Math.max(
+    ...salesByLocation.map((loc: any) => loc.totalOrders)
+  );
+
+  const series: any = [
     {
       name: "Revenue",
-      data: [0, 320, 200, 500, 120, 300, 100, 400],
+      data: dailyOrders,
     },
   ];
   const options: ApexOptions = {
@@ -74,6 +165,7 @@ export default function Dashboard() {
     },
     colors: ["#1EB564"],
     xaxis: {
+      type: "datetime",
       categories: days,
     },
     tooltip: {
@@ -82,7 +174,7 @@ export default function Dashboard() {
           value,
           { series, seriesName, seriesIndex, dataPointIndex, w }
         ) {
-          return series[seriesIndex][dataPointIndex] + "k";
+          return formatNumber(series[seriesIndex][dataPointIndex]);
         },
       },
     },
@@ -90,10 +182,10 @@ export default function Dashboard() {
       borderColor: "transparent",
     },
   };
-  const areaseries = [
+  const areaseries: any = [
     {
       name: "Total Orders",
-      data: [0, 320, 0, 0, 200, 500, 120, 300, 100],
+      data: weeklyorders,
     },
   ];
   const areaOption: ApexOptions = {
@@ -115,18 +207,8 @@ export default function Dashboard() {
       size: 0,
     },
     xaxis: {
-      type: "datetime",
-      categories: [
-        "2024-04-11T01:30:00.000Z",
-        "2024-04-11T01:40:00.000Z",
-        "2024-04-11T01:50:00.000Z",
-        "2024-04-11T02:00:00.000Z",
-        "2024-04-11T03:30:00.000Z",
-        "2024-04-11T04:00:00.000Z",
-        "2024-04-11T05:30:00.000Z",
-        "2024-04-11T06:00:00.000Z",
-        "2024-04-11T07:30:00.000Z",
-      ],
+      // type: "datetime",
+      categories: weeks,
     },
     grid: {
       borderColor: "transparent",
@@ -204,44 +286,7 @@ export default function Dashboard() {
       label: "ACTION",
     },
   ];
-  const bestSellingrows = [
-    {
-      product: "Nikes AF1's",
-      total_orders: 506,
-      status: "instock",
-      price: 13000,
-    },
-    {
-      product: "Nikes AF1's",
-      total_orders: 506,
-      status: "instock",
-      price: 13000,
-    },
-    {
-      product: "Nikes AF1's",
-      total_orders: 506,
-      status: "outstock",
-      price: 13000,
-    },
-    {
-      product: "Nikes AF1's",
-      total_orders: 506,
-      status: "instock",
-      price: 13000,
-    },
-    {
-      product: "Nikes AF1's",
-      total_orders: 506,
-      status: "outstock",
-      price: 13000,
-    },
-    {
-      product: "Nikes AF1's",
-      total_orders: 506,
-      status: "instock",
-      price: 13000,
-    },
-  ];
+
   const bestSellingcolumns = [
     {
       key: "product",
@@ -260,95 +305,7 @@ export default function Dashboard() {
       label: "PRICE",
     },
   ];
-  const products = [
-    {
-      name: "Gucci teddy",
-      id: "FXZ-3455",
-      price: 12000,
-      image:
-        "https://websta.me/wp-content/uploads/2020/10/Promotional-Items-to-Your-Marketing-Campaigns.jpg",
-    },
-    {
-      name: "Gucci teddy",
-      id: "FXZ-3455",
-      price: 12000,
-      image:
-        "https://websta.me/wp-content/uploads/2020/10/Promotional-Items-to-Your-Marketing-Campaigns.jpg",
-    },
-    {
-      name: "Dior body spray",
-      id: "FXZ-3455",
-      price: 12000,
-      image:
-        "https://websta.me/wp-content/uploads/2020/10/Promotional-Items-to-Your-Marketing-Campaigns.jpg",
-    },
-    {
-      name: "Apex wristwatch",
-      id: "FXZ-3455",
-      price: 12000,
-      image:
-        "https://websta.me/wp-content/uploads/2020/10/Promotional-Items-to-Your-Marketing-Campaigns.jpg",
-    },
-    {
-      name: "Monster",
-      id: "FXZ-3455",
-      price: 12000,
-      image:
-        "https://websta.me/wp-content/uploads/2020/10/Promotional-Items-to-Your-Marketing-Campaigns.jpg",
-    },
-    {
-      name: "Slick Perfume",
-      id: "FXZ-3455",
-      price: 12000,
-      image:
-        "https://websta.me/wp-content/uploads/2020/10/Promotional-Items-to-Your-Marketing-Campaigns.jpg",
-    },
-    {
-      name: "Nike AF1's",
-      id: "FXZ-3455",
-      price: 12000,
-      image:
-        "https://websta.me/wp-content/uploads/2020/10/Promotional-Items-to-Your-Marketing-Campaigns.jpg",
-    },
-  ];
-  const recentOrders = [
-    {
-      id: "#5089",
-      customer: "Tony Reichert",
-      total: "12000",
-      status: "completed",
-    },
-    {
-      id: "#5089",
-      customer: "Tony Reichert",
-      total: "12000",
-      status: "pending",
-    },
-    {
-      id: "#5089",
-      customer: "Tony Reichert",
-      total: "12000",
-      status: "completed",
-    },
-    {
-      id: "#5089",
-      customer: "Tony Reichert",
-      total: "12000",
-      status: "pending",
-    },
-    {
-      id: "#5089",
-      customer: "Tony Reichert",
-      total: "12000",
-      status: "pending",
-    },
-    {
-      id: "#5089",
-      customer: "Tony Reichert",
-      total: "12000",
-      status: "completed",
-    },
-  ];
+
   const recentOrdersColumns = [
     {
       key: "id",
@@ -410,19 +367,20 @@ export default function Dashboard() {
           <p className="font-semibold text-lg text-[#23272E]">Recent Orders</p>
         </div>
         <Button
-          isIconOnly
           className="bg-transparent text-[#1EB564]"
-          onClick={option}
+          as={Link}
+          href="/admin/order-management"
         >
-          <HiDotsVertical size={24} color="#8B909A" />
+          View Orders
         </Button>
       </div>
     );
   }, []);
+
   const renderCell = useCallback((item: any, columnKey: React.Key) => {
     switch (columnKey) {
       case "id":
-        return <p className="text-[#1EB564] font-normal">{item.id}</p>;
+        return <p className="text-[#1EB564] font-normal">{item.orderId}</p>;
       case "issued date":
         return <p className="font-normal">{item.issued_date}</p>;
       case "total":
@@ -434,11 +392,15 @@ export default function Dashboard() {
           </Button>
         );
       case "product":
-        return <p className="text-[#23272E] font-bold">{item.product}</p>;
+        return (
+          <p className="text-[#23272E] font-bold w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
+            {item.productName}
+          </p>
+        );
       case "total orders":
-        return <p className="font-normal">{item.total_orders}</p>;
+        return <p className="font-normal">{item.totalOrders}</p>;
       case "status":
-        if (item.status === "instock") {
+        if (item.inStock === true) {
           return (
             <Chip
               variant="dot"
@@ -451,7 +413,7 @@ export default function Dashboard() {
               stock
             </Chip>
           );
-        } else if (item.status === "outstock") {
+        } else if (item.inStock === false) {
           return (
             <Chip
               color="danger"
@@ -475,40 +437,151 @@ export default function Dashboard() {
         return <p>{item.customer}</p>;
 
       default:
-        return item.id;
+        return item.productId;
     }
   }, []);
 
   function option() {
     alert("yes");
   }
+  function formatNumber(x: number) {
+    if (x >= 1_000_000) {
+      return (x / 1_000_000).toFixed(1) + "M";
+    } else if (x >= 1_000) {
+      return (x / 1_000).toFixed(1) + "K";
+    } else if (x === 0) {
+      return "0";
+    } else {
+      return x.toString();
+    }
+  }
 
+  const getRevenueStats = async () => {
+    try {
+      const res = await fetch(`${API}/products/general/stats`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
+
+      const resData = await res.json();
+      setRevenueStats(resData);
+      // console.log(resData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getRecentOrders = async () => {
+    try {
+      const res = await fetch(`${API}/orders/transaction/details`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
+
+      const resData = await res.json();
+      setRecentOrders(resData.orders);
+      console.log(resData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getPreviousOrders = async () => {
+    try {
+      const res = await fetch(`${API}/orders/week/last-week`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
+
+      const resData = await res.json();
+      setRecentOrderNo(resData.data.totalOrders);
+      // console.log(resData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getProductStats = async () => {
+    try {
+      const res = await fetch(`${API}/statistics/product-stats`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
+
+      const resData = await res.json();
+      setProductStats(resData);
+      setLoading(false);
+      // console.log(resData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const fetchReports = async (urls: string[]) => {
+    try {
+      const responses = await Promise.all(
+        urls.map((url: string) =>
+          fetch(`${API}${url}`, {
+            headers: {
+              AUTHORIZATION: "Bearer " + token,
+            },
+          })
+        )
+      );
+
+      const data = await Promise.all(
+        responses.map((response) => {
+          if (!response.ok) {
+            throw new Error(`Failed to fetch: ${response.statusText}`);
+          }
+          return response.json();
+        })
+      );
+      setReportData(data);
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    getRevenueStats();
+    getPreviousOrders();
+    getProductStats();
+    getRecentOrders();
+    const urls = [
+      "/statistics/total-customers",
+      "/statistics/total-products",
+      "/statistics/in-stock-products",
+      "/statistics/out-of-stock-products",
+      "/statistics/users-in-last-30-minutes",
+      "/statistics/sales-by-area",
+    ];
+
+    fetchReports(urls)
+  }, []);
   return (
     <div>
       {/* total sales and cost section */}
-      <div className="flex lg:flex-row flex-col justify-between items-center gap-4 ">
+      <div className="flex lg:flex-row flex-col justify-between items-center gap-4 pb-4">
         <div className="p-5 w-full bg-white rounded-2xl ">
           <div className="flex md:flex-row flex-col justify-between gap-5">
-            <div className="flex flex-col justify-between">
+            <div className="flex flex-col justify-normal gap-5">
               <div className="flex flex-col pb-3">
                 <p className="font-semibold text-lg">Total Sales & Costs</p>
                 <span className="text-[#8B909A] text-base">Last 7 days</span>
               </div>
               <div className="flex flex-col gap-5 pt-3">
                 <div className="flex gap-6 items-end justify-normal">
-                  <span className="font-bold text-3xl text-[2rem]">₦1.7M</span>
-                  <span className="font-bold text-[#1EB564]">₦1.5M</span>
-                </div>
-                <div className="flex gap-2">
-                  <div className="flex justify-normal items-center gap-1">
-                    <IoArrowUpOutline
-                      color="#1EB564"
-                      style={{ strokeWidth: "35" }}
-                      size={16}
-                    />
-                    <span className="text-[#1EB564] font-medium">₦8.56k</span>
-                  </div>
-                  <p className="text-[#8B909A] text-base">vs Last 7 days</p>
+                  {revenueStats ? (
+                    <span className="font-bold text-3xl text-[2rem]">
+                      ₦{formatNumber(revenueStats?.totalRevenue)}
+                    </span>
+                  ) : (
+                    <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+                  )}
                 </div>
               </div>
             </div>
@@ -532,52 +605,29 @@ export default function Dashboard() {
                 ></Image>
               </div>
               <div className="flex justify-between w-full">
-                {days.map((day: string) => (
+                {/* {days.map((day: string) => (
                   <span
                     key={day}
                     className="text-[#8B909A] font-medium text-[0.625rem] leading-[20px]"
                   >
                     {day}
                   </span>
-                ))}
+                ))} */}
               </div>
             </div>
           </div>
         </div>
         <div className="lg:max-w-[40%] w-full">
           <DashboardCard
-            title={"Sessions"}
-            amount={1.6}
-            profit={false}
-            percentage={3}
-            customstyle="min-w-[350px] "
-          />
+            customstyle="min-w-[270px] lg:max-w-[unset]"
+            title={"Total Orders"}
+            amount={recentOrderNo && formatNumber(recentOrderNo)}
+            profit={true}
+            percentage={6}
+          ></DashboardCard>
         </div>
       </div>
-      {/* dashboard section containing cards */}
-      <div className="flex gap-4 py-4 flex-wrap lg:flex-nowrap">
-        <DashboardCard
-          customstyle="min-w-[270px] lg:max-w-[unset]"
-          title={"Total Orders"}
-          amount={700}
-          profit={true}
-          percentage={6}
-        ></DashboardCard>
-        <DashboardCard
-          customstyle="min-w-[270px] lg:max-w-[unset]"
-          title={"Total Profit"}
-          amount={150}
-          profit={true}
-          percentage={12}
-        ></DashboardCard>
-        <DashboardCard
-          customstyle="min-w-[270px] lg:max-w-[unset]"
-          title={"Discounted Amount"}
-          amount={12}
-          profit={false}
-          percentage={2}
-        ></DashboardCard>
-      </div>
+
       {/* report section */}
       <div className="flex lg:flex-row flex-col gap-4 pb-4">
         {/* report chart */}
@@ -589,27 +639,57 @@ export default function Dashboard() {
           />
           <div className="flex justify-between gap-3">
             <div className="flex flex-col gap-3">
-              <p className="font-bold text-[#23272E] text-2xl">5k</p>
+              {revenueStats ? (
+                <p className="font-bold text-[#23272E] text-2xl">
+                  {formatNumber(revenueStats?.totalCustomers)}
+                </p>
+              ) : (
+                <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+              )}
               <p className="font-medium text-sm text-[#8B909A]">Customers</p>
             </div>
             <div className="flex flex-col gap-3">
-              <p className="font-bold text-[#23272E] text-2xl">300</p>
+              {revenueStats ? (
+                <p className="font-bold text-[#23272E] text-2xl">
+                  {reportData[1]&&formatNumber(reportData[1])}
+                </p>
+              ) : (
+                <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+              )}
               <p className="font-medium text-sm text-[#8B909A]">
                 Total Products
               </p>
             </div>
             <div className="flex flex-col gap-3">
-              <p className="font-bold text-[#23272E] text-2xl">250</p>
+              {revenueStats ? (
+                <p className="font-bold text-[#23272E] text-2xl">
+                  {reportData[2]&&formatNumber(reportData[2])}
+                </p>
+              ) : (
+                <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+              )}
               <p className="font-medium text-sm text-[#8B909A]">
                 Stock Products
               </p>
             </div>
             <div className="flex flex-col gap-3">
-              <p className="font-bold text-[#23272E] text-2xl">50</p>
+              {revenueStats ? (
+                <p className="font-bold text-[#23272E] text-2xl">
+                  {reportData[3]&& formatNumber(reportData[3])}
+                </p>
+              ) : (
+                <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+              )}
               <p className="font-medium text-sm text-[#8B909A]">Out of stock</p>
             </div>
             <div className="flex flex-col gap-3">
-              <p className="font-bold text-[#23272E] text-2xl">₦250k</p>
+              {revenueStats ? (
+                <p className="font-bold text-[#23272E] text-2xl">
+                  {formatNumber(revenueStats?.totalRevenue)}
+                </p>
+              ) : (
+                <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+              )}
               <p className="font-medium text-sm text-[#8B909A]">Revenue</p>
             </div>
           </div>
@@ -629,9 +709,13 @@ export default function Dashboard() {
             <p className="font-semibold text-lg text-[#23272E]">
               Users in last 30 minutes
             </p>
-            <span className="font-bold text-[2.0rem] leading-[2.0rem]">
-              150
-            </span>
+            {revenueStats ? (
+              <span className="font-bold text-[2.0rem] leading-[2.0rem]">
+                {reportData[4]&&formatNumber(reportData[4])}
+              </span>
+            ) : (
+              <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+            )}
             <p className="text-[#8B909A] text-base">Users per minute</p>
             <div className="w-full">
               <Image
@@ -646,107 +730,66 @@ export default function Dashboard() {
           <div className="flex flex-col gap-3">
             <p className="py-2 font-bold text-lg">Sales by Area</p>
             <div className="flex flex-col gap-3">
-              <div className="flex gap-3 justify-between items-center">
-                <div className="flex flex-col gap-1 w-[150px]">
-                  <span className="font-medium text-base">230</span>
-                  <span className="text-sm font-normal text-[#8B909A]">
-                    Australia
-                  </span>
+              {!loading ? (
+                salesByLocation.map((location: any) => {
+                  const percentage = Number(
+                    ((location.totalOrders / maxOrders) * 100).toFixed(1)
+                  );
+                  const isDecrease = Number(percentage) < 100;
+
+                  return (
+                    <div
+                      className="flex gap-3 justify-between items-center"
+                      key={location.locationName}
+                    >
+                      <div className="flex flex-col gap-1 w-[150px]">
+                        <span className="font-medium text-base">
+                          {location.totalOrders}
+                        </span>
+                        <span className="text-sm font-normal text-[#8B909A]">
+                          {location.locationName}
+                        </span>
+                      </div>
+                      <Progress
+                        aria-label="sales"
+                        value={percentage}
+                        className="max-w-sm bg-none"
+                        classNames={{
+                          indicator: "!bg-[#1EB564]",
+                        }}
+                        size="md"
+                      />
+                      <div className="flex justify-center items-center gap-2">
+                        {isDecrease ? (
+                          <SlArrowDown
+                            color="#D02626"
+                            style={{ strokeWidth: "35" }}
+                          />
+                        ) : (
+                          <SlArrowUp
+                            color="#1EB564"
+                            style={{ strokeWidth: "35" }}
+                          />
+                        )}
+                        <span
+                          className={`text-${
+                            isDecrease ? "#D02626" : "#1EB564"
+                          }`}
+                        >
+                          {percentage}%
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="flex flex-col gap-4">
+                  <SalesByAreaLoader />
+                  <SalesByAreaLoader />
+                  <SalesByAreaLoader />
+                  <SalesByAreaLoader />
                 </div>
-                <Progress
-                  aria-label="sales"
-                  value={70}
-                  className="max-w-sm bg-none"
-                  classNames={{
-                    indicator: "!bg-[#1EB564]",
-                  }}
-                  size="md"
-                />
-                <div className="flex justify-center items-center gap-2">
-                  <SlArrowDown color="#D02626" style={{ strokeWidth: "35" }} />
-                  <span className="text-[#D02626]">16.2%</span>
-                </div>
-              </div>
-              <div className="flex gap-3 justify-between items-center">
-                <div className="flex flex-col gap-1 w-[150px]">
-                  <span className="font-medium text-base">130</span>
-                  <span className="text-sm font-normal text-[#8B909A]">
-                    Canada
-                  </span>
-                </div>
-                <Progress
-                  aria-label="sales"
-                  value={60}
-                  className="max-w-sm"
-                  classNames={{
-                    indicator: "!bg-[#1EB564]",
-                  }}
-                  size="md"
-                />
-                <div className="flex justify-center items-center gap-2">
-                  <SlArrowUp color="#1EB564" style={{ strokeWidth: "35" }} />
-                  <span className="text-[#1EB564]">16.2%</span>
-                </div>
-              </div>{" "}
-              <div className="flex gap-3 justify-between items-center">
-                <div className="flex flex-col gap-1 w-[150px]">
-                  <span className="font-medium text-base">50</span>
-                  <span className="text-sm font-normal text-[#8B909A]">US</span>
-                </div>
-                <Progress
-                  aria-label="sales"
-                  value={50}
-                  className="max-w-sm"
-                  classNames={{
-                    indicator: "!bg-[#1EB564]",
-                  }}
-                  size="md"
-                />
-                <div className="flex justify-center items-center gap-2">
-                  <SlArrowUp color="#1EB564" style={{ strokeWidth: "35" }} />
-                  <span className="text-[#1EB564]">12.3%</span>
-                </div>
-              </div>{" "}
-              <div className="flex gap-3 justify-between items-center">
-                <div className="flex flex-col gap-1 w-[150px]">
-                  <span className="font-medium text-base">300</span>
-                  <span className="text-sm font-normal text-[#8B909A]">UK</span>
-                </div>
-                <Progress
-                  aria-label="sales"
-                  value={40}
-                  className="max-w-sm"
-                  classNames={{
-                    indicator: "!bg-[#1EB564]",
-                  }}
-                  size="md"
-                />
-                <div className="flex justify-center items-center gap-2">
-                  <SlArrowDown color="#D02626" style={{ strokeWidth: "35" }} />
-                  <span className="text-[#D02626]">11.2%</span>
-                </div>
-              </div>{" "}
-              <div className="flex gap-3 justify-between items-center">
-                <div className="flex flex-col gap-1 w-[150px]">
-                  <span className="font-medium text-base">100</span>
-                  <span className="text-sm font-normal text-[#8B909A]">
-                    Germany
-                  </span>
-                </div>
-                <Progress
-                  aria-label="sales"
-                  value={30}
-                  className="max-w-sm"
-                  classNames={{
-                    indicator: "!bg-[#1EB564]",
-                  }}
-                  size="md"
-                />
-                <div className="flex justify-center items-center gap-2">
-                  <SlArrowDown color="#D02626" style={{ strokeWidth: "35" }} />
-                  <span className="text-[#D02626]">16.2%</span>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
@@ -763,19 +806,63 @@ export default function Dashboard() {
           </div>
           <div className="relative max-h-[350px] w-fit mx-auto">
             <div className="w-[220px] h-[220px] rounded-full flex flex-col gap-2 items-center justify-center bg-[#EB6363] text-white">
-              <span className="opacity-[80%]">Gifts</span>
-              <span className="font-bold text-2xl">500</span>
-              <span className="opacity-[80%]">Per Day</span>
+              <span className="opacity-[80%]">
+                {topSellingCategories ? (
+                  <span className="opacity-[80%]">
+                    {topSellingCategories[0].categoryName}
+                  </span>
+                ) : (
+                  <Skeleton className="w-[70px] h-[40px]" />
+                )}
+              </span>
+              {topSellingCategories ? (
+                <span className="font-bold text-2xl">
+                  {topSellingCategories[0].totalSales}
+                </span>
+              ) : (
+                <Skeleton className="w-[100px] h-[30px]" />
+              )}
+              <span className="opacity-[80%]">Sold</span>
             </div>
             <div className="w-[200px] h-[200px] rounded-full flex flex-col gap-2 items-center justify-center bg-[#FEEFD3] text-black -top-20 relative left-28">
-              <span className="opacity-[80%]">Perfumes</span>
-              <span className="font-bold text-2xl">500</span>
-              <span className="opacity-[80%]">Per Day</span>
+              {topSellingCategories ? (
+                <span className="opacity-[80%]">
+                  {topSellingCategories[1].categoryName}
+                </span>
+              ) : (
+                <Skeleton className="w-[70px] h-[40px]" />
+              )}
+
+              <span className="font-bold text-2xl">
+                {topSellingCategories ? (
+                  <span className="font-bold text-2xl">
+                    {topSellingCategories[1].totalSales}
+                  </span>
+                ) : (
+                  <Skeleton className="w-[100px] h-[30px]" />
+                )}
+              </span>
+              <span className="opacity-[80%]">Sold</span>
             </div>
             <div className="w-[160px] h-[160px] rounded-full flex flex-col gap-2 items-center justify-center bg-[#1EB564] text-white relative z-10 -top-64 -left-8">
-              <span className="opacity-[80%]">Teddy bears</span>
-              <span className="font-bold text-2xl">500</span>
-              <span className="opacity-[80%]">Per Day</span>
+              {topSellingCategories ? (
+                <span className="opacity-[80%]">
+                  {topSellingCategories[2].categoryName}
+                </span>
+              ) : (
+                <Skeleton className="w-[70px] h-[40px]" />
+              )}
+
+              <span className="font-bold text-2xl">
+                {topSellingCategories ? (
+                  <span className="font-bold text-2xl">
+                    {topSellingCategories[2].totalSales}
+                  </span>
+                ) : (
+                  <Skeleton className="w-[100px] h-[30px]" />
+                )}
+              </span>
+              <span className="opacity-[80%]">Sold</span>
             </div>
           </div>
         </div>
@@ -797,6 +884,7 @@ export default function Dashboard() {
                 "mx-auto",
               ],
               thead: ["text-default-500"],
+              table: "min-h-[270px]",
             }}
           >
             <TableHeader columns={columns}>
@@ -804,7 +892,13 @@ export default function Dashboard() {
                 <TableColumn key={column.key}>{column.label}</TableColumn>
               )}
             </TableHeader>
-            <TableBody items={rows}>
+            <TableBody
+              items={rows}
+              isLoading={loading}
+              loadingContent={<Spinner label="Loading..." color="default" />}
+              className="min-h-[450px]"
+              emptyContent={!loading&&"There is no data"}
+            >
               {(item) => (
                 <TableRow key={item.total}>
                   {(columnKey) => (
@@ -836,6 +930,7 @@ export default function Dashboard() {
                 "mx-auto",
               ],
               thead: ["text-default-500"],
+              table: "min-h-[270px]",
             }}
           >
             <TableHeader columns={bestSellingcolumns}>
@@ -843,9 +938,14 @@ export default function Dashboard() {
                 <TableColumn key={column.key}>{column.label}</TableColumn>
               )}
             </TableHeader>
-            <TableBody items={bestSellingrows}>
-              {(item) => (
-                <TableRow key={item.product}>
+            <TableBody
+              items={bestSellingProducts || []}
+              isLoading={loading}
+              loadingContent={<Spinner label="Loading..." color="default" />}
+              emptyContent={!loading&&"There is no data"}
+            >
+              {(item: BestSellingProduct) => (
+                <TableRow key={item.productId + item.productName}>
                   {(columnKey) => (
                     <TableCell>{renderCell(item, columnKey)}</TableCell>
                   )}
@@ -861,27 +961,40 @@ export default function Dashboard() {
             option={option}
           />
           <div className="flex flex-col gap-2">
-            {products.map((product, index) => (
-              <div
-                className="flex justify-between items-center w-full "
-                key={index}
-              >
-                <User
+            {!loading ? (
+              trending_products.map((product, index) => (
+                <div
+                  className="flex justify-between items-center w-full "
                   key={index}
-                  name={<p className="font-bold text-base">{product.name}</p>}
-                  description={
-                    <p className="text-[#8B909A] text-base">
-                      item:{product.id}
-                    </p>
-                  }
-                  avatarProps={{
-                    src: product.image,
-                    radius: "none",
-                  }}
-                />
-                <p>₦{product.price}</p>
+                >
+                  <User
+                    key={index}
+                    name={
+                      <p className="font-bold text-base w-[200px] whitespace-nowrap overflow-hidden text-ellipsis">
+                        {product.productName}
+                      </p>
+                    }
+                    description={
+                      <p className="text-[#8B909A] text-base">
+                        item:{product.sku}
+                      </p>
+                    }
+                    avatarProps={{
+                      src: product.image,
+                      radius: "none",
+                    }}
+                  />
+                  <p>₦{product.price}</p>
+                </div>
+              ))
+            ) : (
+              <div className="flex flex-col gap-2">
+                <TrendingProductLoader />
+                <TrendingProductLoader />
+                <TrendingProductLoader />
+                <TrendingProductLoader />
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>
@@ -894,10 +1007,14 @@ export default function Dashboard() {
                 <p className="font-semibold text-lg text-[#23272E]">
                   Total Orders
                 </p>
-                <span className="font-bold text-[2.0rem] leading-[2.0rem]">
-                  2k
-                </span>
-                <p className="text-[#8B909A] text-base">Users per minute</p>
+                {revenueStats ? (
+                  <span className="font-bold text-[2.0rem] leading-[2.0rem]">
+                    {formatNumber(revenueStats?.totalOrders)}
+                  </span>
+                ) : (
+                  <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+                )}
+                <p className="text-[#8B909A] text-base">Orders per week</p>
               </div>
             </div>
             <div className="flex justify-normal items-center gap-1">
@@ -939,6 +1056,7 @@ export default function Dashboard() {
               ],
               thead: ["text-default-500"],
               td: ["py-3"],
+              table: "min-h-[270px]",
             }}
           >
             <TableHeader columns={recentOrdersColumns}>
@@ -946,9 +1064,14 @@ export default function Dashboard() {
                 <TableColumn key={column.key}>{column.label}</TableColumn>
               )}
             </TableHeader>
-            <TableBody items={recentOrders}>
+            <TableBody
+              items={sorted_recent_orders||[]}
+              isLoading={loading}
+              loadingContent={<Spinner label="Loading..." color="default" />}
+              emptyContent={!loading&&"There is no data"}
+            >
               {(item) => (
-                <TableRow key={item.id}>
+                <TableRow key={item.orderId}>
                   {(columnKey) => (
                     <TableCell>{renderCell(item, columnKey)}</TableCell>
                   )}

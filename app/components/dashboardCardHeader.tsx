@@ -4,7 +4,7 @@ import { HiDotsVertical } from "react-icons/hi";
 type headerprops = {
   title: string;
   supportText?: string;
-  option: MouseEventHandler<HTMLButtonElement>;
+  option?: MouseEventHandler<HTMLButtonElement>;
 };
 export function DashboardCardHeader({
   title,
@@ -17,9 +17,6 @@ export function DashboardCardHeader({
         <p className="font-semibold text-lg text-[#23272E]">{title}</p>
         <span className="text-[#8B909A] text-base">{supportText}</span>
       </div>
-      <Button isIconOnly className="bg-transparent" onClick={option}>
-        <HiDotsVertical size={24} color="#8B909A" />
-      </Button>
     </div>
   );
 }

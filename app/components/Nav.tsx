@@ -125,7 +125,7 @@ export default function Nav() {
           </ListboxItem>
           <ListboxItem
             className={`${
-              pathname === "/admin/customers" ? "bg-[#F3F4F8]" : "opacity-60"
+              pathname?.includes("/admin/customers") ? "bg-[#F3F4F8]" : "opacity-60"
             } ${
               showOnlyIcon ? "pr-0" : "px-2"
             } transition-[width] transform ease-in-out duration-300`}

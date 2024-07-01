@@ -1,6 +1,5 @@
 "use client";
-import { useCallback, useMemo, useState } from "react";
-import { OrderList } from "@/app/assets/data";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Input,
   Pagination,
@@ -15,22 +14,48 @@ import {
   User,
   Selection,
   Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  useDisclosure,
+  Link,
+  Spinner,
 } from "@nextui-org/react";
 import { CiSearch } from "react-icons/ci";
 import { TbTrash } from "react-icons/tb";
 import { TbEdit } from "react-icons/tb";
 import React from "react";
-interface user {
-  orderId: string;
-  timestamp: string;
-  customerName: string;
-  phone_number: string;
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
+
+interface users {
+  _id: string;
+  email: string;
+  name: string;
+  phone: string;
+  createdAt: string;
 }
 export default function Customers() {
   const [filterValue, setFilterValue] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState<any | string[]>("10");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
+  const [users, setUsers] = useState<users[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userIdToDelete, setUserIdToDelete] = useState("");
   const [page, setPage] = useState(1);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const appSession = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/admin/auth/login");
+    },
+  });
+
+  const session: any = useSession();
+  const token = session?.data?.token;
+  const API = process.env.NEXT_PUBLIC_API_ROUTE;
+  
   const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
   const columns = [
     { name: "NAME", uid: "name", sortable: true },
@@ -39,16 +64,17 @@ export default function Customers() {
     { name: "ACTIONS", uid: "actions" },
   ];
 
-
   //filter orders based on search query
   const filteredItems = useMemo(() => {
     if (filterValue.length > 0) {
-      return OrderList.slice().filter((item) => {
-        return item.customerName.toLocaleLowerCase().includes(filterValue.toLocaleLowerCase());
+      return users?.slice().filter((item: users) => {
+        return item.name
+          .toLocaleLowerCase()
+          .includes(filterValue.toLocaleLowerCase());
       });
     }
-    return OrderList;
-  }, [filterValue, OrderList]);
+    return users;
+  }, [filterValue, users]);
 
   const Items = useMemo(() => {
     const start = (page - 1) * Number(rowsPerPage);
@@ -61,7 +87,7 @@ export default function Customers() {
     return Math.ceil(filteredItems.length / Number(rowsPerPage));
   }, [Items]);
 
-//bottom conten of table
+  //bottom conten of table
   const bottomContent = useMemo(() => {
     return (
       <div className="flex w-full justify-between sm:items-center gap-3">
@@ -105,7 +131,7 @@ export default function Customers() {
     );
   }, [Items.length, page, pages]);
 
-// top content of table
+  // top content of table
   const topContent = useMemo(() => {
     return (
       <div className="flex gap-4 justify-between items-center">
@@ -114,7 +140,6 @@ export default function Customers() {
           endContent={<CiSearch size={28} color="#8B909A" />}
           size="md"
           radius="sm"
-          
           aria-label="search"
           className="max-w-[300px] w-full shadow-sm"
           classNames={{
@@ -132,44 +157,57 @@ export default function Customers() {
             setFilterValue(e.target.value);
           }}
         ></Input>
-        <Button className="bg-white shadow-sm" radius="sm">
+        {/* <Button className="bg-white shadow-sm" radius="sm">
           <TbTrash color="#8B909A" size={20} />
           <span className="text-[#8B909A]">Delete</span>
-        </Button>
+        </Button> */}
       </div>
     );
   }, [filterValue]);
-//render column cells for tables
-  const renderCell = useCallback((user: user, columnKey: React.Key) => {
+  //render column cells for tables
+  const renderCell = useCallback((user: users, columnKey: React.Key) => {
     switch (columnKey) {
       case "name":
         return (
-          <User
-            avatarProps={{ radius: "full", size: "sm" }}
-            classNames={{
-              description: "text-default-500",
-            }}
-            name={user.customerName}
-            description={"robert@gmail.com"}
+          <Link
+            href={`/admin/customers/customer-detail/${user._id}`}
+            className="text-black"
           >
-            robert@gmail.com
-          </User>
+            <User
+              avatarProps={{ radius: "full", size: "sm" }}
+              classNames={{
+                description: "text-default-500",
+                name: "text-black",
+              }}
+              name={user.name}
+              description={user.email}
+            >
+              {user.email}
+            </User>
+          </Link>
         );
       case "phone number":
-        return <p>{user.phone_number}</p>;
+        return <p>{user.phone}</p>;
       case "created":
         return (
           <p className="min-w-[150px]">
-            {new Date(user.timestamp).toDateString()}
+            {new Date(user.createdAt).toDateString()}
           </p>
         );
       case "actions":
         return (
           <div className="flex justify-normal items-center gap-3 min-w-[100px]">
-            <Button isIconOnly className="bg-transparent">
+            {/* <Button isIconOnly className="bg-transparent">
               <TbEdit color="#8B909A" size={20} />
-            </Button>
-            <Button isIconOnly className="bg-transparent">
+            </Button> */}
+            <Button
+              isIconOnly
+              className="bg-transparent relative z-[100] "
+              onClick={() => {
+                setUserIdToDelete(user._id);
+                onOpen();
+              }}
+            >
               <TbTrash color="#8B909A" size={20} />
             </Button>
           </div>
@@ -178,19 +216,104 @@ export default function Customers() {
         return "unavailable";
     }
   }, []);
+
+  const getUsers = async () => {
+    try {
+      const res = await fetch(`${API}/user`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
+
+      const resData = await res.json();
+      setUsers(resData.data);
+      setIsLoading(false);
+      // console.log(resData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+    // const getorders = async () => {
+    //   try {
+    //     const res = await fetch(`${API}/orders/order/all`, {
+    //       headers: {
+    //         AUTHORIZATION: "Bearer " + token,
+    //       },
+    //     });
+
+    //     const resData = await res.json();
+    //     // setUsers(resData.data);
+    //     // setIsLoading(false);
+    //     console.log(resData);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
+  
+  useEffect(() => {
+    getUsers();
+    // getorders()
+  }, []);
+
+  async function DeleteUser(_id: string) {
+    try {
+      const res = await fetch(`${API}/user/${_id}`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+        method: "DELETE",
+      });
+
+      const resData = await res.json();
+      console.log(resData);
+      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== _id));
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <div className="pb-16">
+      <Modal
+        backdrop={"blur"}
+        isOpen={isOpen}
+        onClose={onClose}
+        className="pt-4"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody className="text-center py-2">
+                <p>Are you sure you want to delete the user</p>
+              </ModalBody>
+              <ModalFooter className="w-full">
+                <div className="flex pb-3 justify-center gap-4 w-full">
+                  <Button color="danger" variant="bordered" onPress={onClose}>
+                    Cancel
+                  </Button>
+                  <Button
+                    color="primary"
+                    onPress={() => {
+                        DeleteUser(userIdToDelete);
+                        onClose();
+                      
+                    }}
+                  >
+                    Delete User
+                  </Button>
+                </div>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       <Table
         className="min-h-[400px]"
         aria-label="customer table"
         isHeaderSticky
         bottomContent={bottomContent}
         bottomContentPlacement="inside"
-        selectedKeys={selectedKeys}
-        selectionMode="multiple"
         topContent={topContent}
         topContentPlacement="outside"
-        onSelectionChange={setSelectedKeys}
         classNames={{
           wrapper: "min-h-[400px]",
           th: [
@@ -216,16 +339,18 @@ export default function Customers() {
               key={column.uid}
               align={"start"}
               allowsSorting={column.sortable}
-              className={column.uid==="actions"?"px-6":"px-4"}
+              className={column.uid === "actions" ? "px-6" : "px-4"}
             >
               {column.name}
             </TableColumn>
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No users found"}
+          emptyContent={!isLoading&&"No users found"}
           className="min-h-[400px]"
           items={Items}
+          isLoading={isLoading}
+          loadingContent={<Spinner label="Loading..." color="default" />}
         >
           {(item) => (
             <TableRow
@@ -244,3 +369,4 @@ export default function Customers() {
     </div>
   );
 }
+Customers.requireAuth = true;

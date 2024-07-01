@@ -6,14 +6,13 @@ import {
   Pagination,
   Select,
   SelectItem,
-  Selection,
+  Spinner,
   Tab,
   Tabs,
 } from "@nextui-org/react";
 import { useState, useMemo, useCallback, Suspense, useEffect } from "react";
 import { SlArrowDown } from "react-icons/sl";
 import { CiSearch } from "react-icons/ci";
-import { OrderList } from "@/app/assets/data";
 import { PiPrinterFill } from "react-icons/pi";
 import {
   IoCaretDownCircleOutline,
@@ -21,18 +20,21 @@ import {
 } from "react-icons/io5";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
+import { json } from "stream/consumers";
 
-interface order {
+export interface order {
   orderId: string;
-  timestamp: string;
-  customerName: string;
-  totalAmount: number;
+  created: string;
+  customer: string;
+  total: number;
   status: string;
   profit: number;
-  products: [
+  items: [
     {
-      productId: string;
-      productName: string;
+      sku: string;
+      name: string;
       price: number;
       originalPrice: number;
       sellingPrice: number;
@@ -49,7 +51,9 @@ export default function OrderManagement() {
   const [page, setPage] = useState(1);
   const [statusFilterValue, setStatusFilterValue] = useState("All");
   const [rowsPerPage, setRowsPerPage] = useState<any | string[]>("10");
-
+  const [selected, setSelected] = useState<any>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [orders, setOrders] = useState<order[]>([]);
   const filters = ["Recent", "Older", "Most products", "Less products"];
   const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
   const tabs = [
@@ -63,18 +67,79 @@ export default function OrderManagement() {
     "Cancelled",
   ];
   const status = [
-    "Pending",
-    "Confirmed",
-    "Processing",
-    "Picked",
-    "Shipped",
-    "Delivered",
-    "Cancelled",
+    "pending",
+    "confirmed",
+    "processing",
+    "picked",
+    "shipped",
+    "delivered",
+    "cancelled",
   ];
   const pathname = usePathname();
   const { replace } = useRouter();
   const searchParams = useSearchParams();
 
+  const sesssion = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/admin/auth/login");
+    },
+  });
+
+  const session: any = useSession();
+  const token = session?.data?.token;
+  const API = process.env.NEXT_PUBLIC_API_ROUTE;
+
+  // fetchdata
+  const getOrders = async () => {
+    try {
+      const res = await fetch(`${API}/orders/transaction/details`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
+
+      const resData = await res.json();
+      setOrders(resData.orders);
+      setIsLoading(false);
+      // console.log(resData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //update orderStatus
+  const updateOrderStatus = async (orderId: string) => {
+    const data = {
+      status: selected,
+    };
+    try {
+      const res = await fetch(`${API}/orders/${orderId}/status`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+        method: "PATCH",
+        body: JSON.stringify(data),
+      });
+
+      const resData = await res.json();
+      // setOrders(resData.orders);
+      // setIsLoading(false);
+      console.log(resData);
+      setOrders((prevOrders) =>
+        Array.isArray(prevOrders)
+          ? prevOrders.map((order) =>
+              order.orderId === orderId ? { ...order, status: selected } : order
+            )
+          : []
+      );
+      // console.log(resData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getOrders();
+  });
   // Update status filter value when search params change
   useEffect(() => {
     setStatusFilterValue(`${pathname}?${searchParams}`);
@@ -82,39 +147,39 @@ export default function OrderManagement() {
 
   // Filter and sort items based on sort option
   const filteredItems = useMemo(() => {
-    let sortedList = OrderList.slice(); // Create a copy of the original list
+    let sortedList = orders.slice(); // Create a copy of the original list
 
     // Sort the list based on the sortOption
 
     //filter recent orders
     if (sortOption === "Recent") {
       sortedList.sort((a, b) => {
-        const earlyOrder = new Date(a.timestamp) as unknown as number;
-        const laterOrder = new Date(b.timestamp) as unknown as number;
+        const earlyOrder = new Date(a.created) as unknown as number;
+        const laterOrder = new Date(b.created) as unknown as number;
         return laterOrder - earlyOrder;
       });
     }
     //filter by older orders
     else if (sortOption === "Older") {
       sortedList.sort((a, b) => {
-        const earlyOrder = new Date(a.timestamp) as unknown as number;
-        const laterOrder = new Date(b.timestamp) as unknown as number;
+        const earlyOrder = new Date(a.created) as unknown as number;
+        const laterOrder = new Date(b.created) as unknown as number;
         return earlyOrder - laterOrder;
       });
     }
     //filter by most products
     else if (sortOption === "Most products") {
       sortedList.sort((a, b) => {
-        const largeOrder = a.products.length;
-        const smallOrder = b.products.length;
+        const largeOrder = a.items.length;
+        const smallOrder = b.items.length;
         return smallOrder - largeOrder;
       });
     }
     //filter by less products
     else if (sortOption === "Less products") {
       sortedList.sort((a, b) => {
-        const largeOrder = a.products.length;
-        const smallOrder = b.products.length;
+        const largeOrder = a.items.length;
+        const smallOrder = b.items.length;
         return largeOrder - smallOrder;
       });
     }
@@ -124,7 +189,9 @@ export default function OrderManagement() {
       // Apply status and orderId filters
       if (statusFilterValue.includes("All")) {
         if (filterValue.length > 0) {
-          return item.orderId.includes(filterValue);
+          return item.orderId
+            .toLocaleLowerCase()
+            .includes(filterValue.toLocaleLowerCase());
         }
         return true;
       } else {
@@ -139,14 +206,16 @@ export default function OrderManagement() {
                 .includes(item.status.toLocaleLowerCase())
             );
           }
-          return statusFilterValue.toLocaleLowerCase().includes(item.status.toLocaleLowerCase());
+          return statusFilterValue
+            .toLocaleLowerCase()
+            .includes(item.status.toLocaleLowerCase());
         }
         return false;
       }
     });
 
     return filteredList;
-  }, [OrderList, statusFilterValue, filterValue, sortOption]);
+  }, [orders, statusFilterValue, filterValue, sortOption]);
 
   //pagination for orders
 
@@ -158,7 +227,7 @@ export default function OrderManagement() {
   }, [
     page,
     filteredItems,
-    OrderList,
+    orders,
     statusFilterValue,
     filterValue,
     sortOption,
@@ -225,7 +294,7 @@ export default function OrderManagement() {
         onSelectionChange={(tab: any) => {
           replace(tab);
           setStatusFilterValue(tab);
-          setPage(1)
+          setPage(1);
         }}
       >
         {tabs.map((tab) => (
@@ -241,22 +310,27 @@ export default function OrderManagement() {
 
   //select for orders
   const MySelect = useCallback(
-    (orderStatus: string) => {
+    (order: { orderId: string; status: string }) => {
       return (
         <Select
-          aria-label={orderStatus}
+          aria-label={order.status}
           suppressHydrationWarning={true}
           radius="none"
           size="sm"
           classNames={{
-            trigger: [statusColor(orderStatus)],
+            trigger: [statusColor(order.status)],
             value: [
-              `group-data-[has-value=true]:${statusColor(orderStatus)}`,
-              statusColor(orderStatus),
+              `group-data-[has-value=true]:${statusColor(order.status)}`,
+              statusColor(order.status),
               "bg-[color:unset]",
             ],
           }}
-          selectedKeys={[orderStatus]}
+          // selectedKeys={[selected]}
+          defaultSelectedKeys={[order.status]}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+            setSelected(e.target.value);
+            updateOrderStatus(order.orderId);
+          }}
         >
           {status.map((item) => (
             <SelectItem key={item} value={item} className="">
@@ -266,8 +340,24 @@ export default function OrderManagement() {
         </Select>
       );
     },
-    [statusFilterValue, filteredItems]
+    [statusFilterValue, filteredItems, selected]
   );
+  // const getOrders = async () => {
+  //   try {
+  //     const res = await fetch(`${API}/orders/order/all`, {
+  //       headers: {
+  //         AUTHORIZATION: "Bearer " + token,
+  //       },
+  //     });
+
+  //     const resData = await res.json();
+
+  //     console.log(resData);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
   return (
     <div className="pb-12" suppressHydrationWarning={true}>
       <div className="w-full overflow-x-auto py-2">
@@ -323,7 +413,7 @@ export default function OrderManagement() {
           ))}
         </Select>
       </div>
-      <div className="w-full bg-white rounded-2xl overflow-x-auto overflow-y-hidden">
+      <div className="w-full bg-white rounded-t-2xl overflow-x-auto overflow-y-hidden min-h-[40vh]">
         <div className="flex justify-between py-2 border-b w-full min-w-max">
           <div className=" flex-1 min-w-[150px] w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
             <span>ORDER ID</span>
@@ -385,19 +475,23 @@ export default function OrderManagement() {
                         </span>
                       </div>
                       <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 pr-4 pl-0">
-                        <span>{order.timestamp}</span>
+                        <span>{new Date(order.created).toDateString()}</span>
                       </div>
                       <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 lg:px-4">
-                        <span className="mx-auto">{order.customerName}</span>
+                        <span className="mx-auto">{order.customer}</span>
                       </div>
                       <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 lg:px-4 ">
-                        <span className="mx-auto">₦{order.totalAmount}</span>
+                        <span className="mx-auto">
+                          ₦{order.total && order.total.toLocaleString()}
+                        </span>
                       </div>
                       <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 lg:px-4 ">
-                        <span className="mx-auto">₦{order.profit}</span>
+                        <span className="mx-auto">
+                          ₦{order.profit && order.profit.toLocaleString()}
+                        </span>
                       </div>
                       <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 lg:px-4 ">
-                        {MySelect(order.status)}
+                        {MySelect(order)}
                       </div>
                       <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-4">
                         <span className="hidden">dropdown</span>
@@ -438,39 +532,47 @@ export default function OrderManagement() {
                         </p>
                       </div>
                     </div>
-                    {order.products.map((product, index) => (
+                    {order.items.map((product, index) => (
                       <div key={index}>
                         <div
                           key={index}
-                          className="flex justify-between border-b"
+                          className="flex justify-between border-b pl-2"
                           suppressHydrationWarning={true}
                         >
                           <div className=" flex-1  w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
                             <span className="hidden">#</span>
                           </div>
                           <div className=" flex-1  w-full  flex-grow text-sm font-medium py-4 px-4">
-                            <span>{product.productId}</span>
+                            <span>{product.sku}</span>
                           </div>
                           <div className=" flex-1  w-full  flex-grow  text-sm  py-4 px-4 font-semibold">
-                            <span>{product.productName}</span>
+                            <span>{product.name}</span>
                           </div>
                           <div className=" flex-1  w-full  flex-grow  text-sm font-medium py-4 px-4">
-                            <span>₦{product.price}</span>
+                            <span>
+                              ₦{product.price && product.price.toLocaleString()}
+                            </span>
                           </div>
                           <div className=" flex-1  w-full  flex-grow  text-sm font-medium py-4 px-4">
                             <span>x{product.quantity}</span>
                           </div>
                           <div className=" flex-1  w-full  flex-grow text-[#EA5455] text-sm font-medium py-4 px-4">
-                            <span>{product.discount}%</span>
+                            <span>
+                              {product.discount &&
+                                product.discount.toLocaleString()}
+                            </span>
                           </div>
                           <div className=" flex-1  w-full  flex-grow  text-sm font-medium py-4 px-4">
-                            <span>₦{product.total}</span>
+                            <span>
+                              ₦{product.total && product.total.toLocaleString()}
+                            </span>
                           </div>
                           <div className=" flex-1 max-w-[100px]  w-full  flex-grow  text-sm font-medium py-4 px-4">
                             <p className="flex gap-2">
                               <HiOutlineDotsHorizontal
                                 color="black"
                                 size={20}
+                                className="cursor-pointer"
                               />
                             </p>
                           </div>
@@ -488,17 +590,15 @@ export default function OrderManagement() {
                       <div className=" flex-1  w-full flex-grow  text-sm  py-4 px-4 font-semibold"></div>
                       <div className=" flex-1  w-full flex-grow  text-sm font-medium py-4 px-4"></div>
                       <div className=" flex-1  w-full flex-grow  text-sm font-medium py-4 px-4">
-                        <p className="py-4">Subtotal</p>
                         <p className="py-4">Shipping</p>
                         <p className="py-4">Discount</p>
                         <p className="py-4">Total</p>
                       </div>
                       <div className=" flex-1  w-full flex-grow text-[#EA5455] text-sm font-medium py-4 px-4"></div>
                       <div className=" flex-1  w-full flex-grow  text-sm font-medium py-4 px-4">
-                        <p className="py-4">₦11,000</p>
-                        <p className="py-4">₦900</p>
+                        <p className="py-4">₦1000</p>
                         <p className="text-[#EA5455] py-4">₦0</p>
-                        <p className="py-4">₦{order.totalAmount}</p>
+                        <p className="py-4">₦{order.total}</p>
                       </div>
                       <div className=" flex-1 max-w-[100px] w-full flex-grow  text-sm font-medium py-4 px-4"></div>
                     </div>
@@ -506,47 +606,52 @@ export default function OrderManagement() {
                 </AccordionItem>
               </Accordion>
             ))}
-          {Items && Items.length < 0 && (
-            <div className="min-w-[40vh] flex justify-center items-center">
+          {Items.length < 1 && !isLoading && (
+            <div className="min-h-[40vh] flex justify-center items-center">
               <p className="text-lg font-semibold">No orders found !</p>
             </div>
           )}
+          {Items.length < 1 && isLoading && (
+            <div className="min-h-[40vh] flex justify-center items-center">
+              <Spinner color="default"></Spinner>
+            </div>
+          )}
         </div>
-        <div className="flex justify-between items-center py-2 px-3">
-          <div className="flex justify-normal gap-2 items-center text-[#8B909A] text-sm font-medium">
-            <p>Showing</p>
-            <Select
-              size="sm"
-              className=" w-[100px]"
-              selectedKeys={[rowsPerPage]}
-              onChange={(e) => {
-                setRowsPerPage(e.target.value);
-              }}
-              aria-label="rows"
-            >
-              {rowsPerPageOptions.map((option) => (
-                <SelectItem
-                  isDisabled={filteredItems.length < Number(option)}
-                  key={option}
-                  value={option}
-                >
-                  {option}
-                </SelectItem>
-              ))}
-            </Select>
-            <p>of {filteredItems.length}</p>
-          </div>
-          <Pagination
-            showControls
-            color="success"
-            total={pages}
-            initialPage={1}
-            page={page}
-            onChange={(page) => {
-              setPage(page);
+      </div>
+      <div className="flex justify-between items-center py-2 pb-3 px-3 bg-white  rounded-b-2xl">
+        <div className="flex justify-normal gap-2 items-center text-[#8B909A] text-sm font-medium">
+          <p>Showing</p>
+          <Select
+            size="sm"
+            className=" w-[100px]"
+            selectedKeys={[rowsPerPage]}
+            onChange={(e) => {
+              setRowsPerPage(e.target.value);
             }}
-          />
+            aria-label="rows"
+          >
+            {rowsPerPageOptions.map((option) => (
+              <SelectItem
+                isDisabled={filteredItems.length < Number(option)}
+                key={option}
+                value={option}
+              >
+                {option}
+              </SelectItem>
+            ))}
+          </Select>
+          <p>of {filteredItems.length}</p>
         </div>
+        <Pagination
+          showControls
+          color="success"
+          initialPage={1}
+          total={pages}
+          page={page}
+          onChange={(page) => {
+            setPage(page);
+          }}
+        />
       </div>
     </div>
   );
