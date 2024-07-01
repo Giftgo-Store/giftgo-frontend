@@ -20,6 +20,7 @@ import {
   ModalFooter,
   useDisclosure,
   Link,
+  Spinner,
 } from "@nextui-org/react";
 import { CiSearch } from "react-icons/ci";
 import { TbTrash } from "react-icons/tb";
@@ -40,9 +41,10 @@ export default function Customers() {
   const [rowsPerPage, setRowsPerPage] = useState<any | string[]>("10");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [users, setUsers] = useState<users[]>([]);
-  const [userIdToDelete, setUserIdToDelete]=useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [userIdToDelete, setUserIdToDelete] = useState("");
   const [page, setPage] = useState(1);
-const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const appSession = useSession({
     required: true,
     onUnauthenticated() {
@@ -53,7 +55,7 @@ const { isOpen, onOpen, onClose } = useDisclosure();
   const session: any = useSession();
   const token = session?.data?.token;
   const API = process.env.NEXT_PUBLIC_API_ROUTE;
-  console.log(selectedKeys);
+  
   const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
   const columns = [
     { name: "NAME", uid: "name", sortable: true },
@@ -167,18 +169,22 @@ const { isOpen, onOpen, onClose } = useDisclosure();
     switch (columnKey) {
       case "name":
         return (
-          <Link href={`/admin/customers/customer-detail/${user._id}`} className="text-black">
-          <User
-            avatarProps={{ radius: "full", size: "sm" }}
-            classNames={{
-              description: "text-default-500",
-              name:"text-black"
-            }}
-            name={user.name}
-            description={user.email}
+          <Link
+            href={`/admin/customers/customer-detail/${user._id}`}
+            className="text-black"
           >
-            {user.email}
-          </User></Link>
+            <User
+              avatarProps={{ radius: "full", size: "sm" }}
+              classNames={{
+                description: "text-default-500",
+                name: "text-black",
+              }}
+              name={user.name}
+              description={user.email}
+            >
+              {user.email}
+            </User>
+          </Link>
         );
       case "phone number":
         return <p>{user.phone}</p>;
@@ -194,10 +200,14 @@ const { isOpen, onOpen, onClose } = useDisclosure();
             {/* <Button isIconOnly className="bg-transparent">
               <TbEdit color="#8B909A" size={20} />
             </Button> */}
-            <Button isIconOnly className="bg-transparent relative z-[100] " onClick={() => {
-              setUserIdToDelete(user._id)
-              onOpen()
-            }}>
+            <Button
+              isIconOnly
+              className="bg-transparent relative z-[100] "
+              onClick={() => {
+                setUserIdToDelete(user._id);
+                onOpen();
+              }}
+            >
               <TbTrash color="#8B909A" size={20} />
             </Button>
           </div>
@@ -209,45 +219,66 @@ const { isOpen, onOpen, onClose } = useDisclosure();
 
   const getUsers = async () => {
     try {
-      const res = await fetch(
-        `${API}/user`,
-        {
-          headers: {
-            AUTHORIZATION: "Bearer " + token,
-          },
-        }
-      );
+      const res = await fetch(`${API}/user`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
 
       const resData = await res.json();
-      setUsers(resData.data)
+      setUsers(resData.data);
+      setIsLoading(false);
       // console.log(resData);
     } catch (error) {
       console.log(error);
     }
   };
+    // const getorders = async () => {
+    //   try {
+    //     const res = await fetch(`${API}/orders/order/all`, {
+    //       headers: {
+    //         AUTHORIZATION: "Bearer " + token,
+    //       },
+    //     });
+
+    //     const resData = await res.json();
+    //     // setUsers(resData.data);
+    //     // setIsLoading(false);
+    //     console.log(resData);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
+  
   useEffect(() => {
     getUsers();
+    // getorders()
   }, []);
 
-  async function DeleteUser(_id:string) {
-        try {
-          const res = await fetch(`${API}/user/${_id}`, {
-            headers: {
-              AUTHORIZATION: "Bearer " + token,
-            },
-            method:"DELETE"
-          });
+  async function DeleteUser(_id: string) {
+    try {
+      const res = await fetch(`${API}/user/${_id}`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+        method: "DELETE",
+      });
 
-          const resData = await res.json();
-          setUsers(resData.data);
-          // console.log(resData);
-        } catch (error) {
-          console.log(error);
-        }
+      const resData = await res.json();
+      console.log(resData);
+      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== _id));
+    } catch (error) {
+      console.log(error);
+    }
   }
   return (
     <div className="pb-16">
-      <Modal backdrop={"blur"} isOpen={isOpen} onClose={onClose} className="pt-4">
+      <Modal
+        backdrop={"blur"}
+        isOpen={isOpen}
+        onClose={onClose}
+        className="pt-4"
+      >
         <ModalContent>
           {(onClose) => (
             <>
@@ -262,10 +293,9 @@ const { isOpen, onOpen, onClose } = useDisclosure();
                   <Button
                     color="primary"
                     onPress={() => {
-                      () => {
                         DeleteUser(userIdToDelete);
                         onClose();
-                      };
+                      
                     }}
                   >
                     Delete User
@@ -316,9 +346,11 @@ const { isOpen, onOpen, onClose } = useDisclosure();
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No users found"}
+          emptyContent={!isLoading&&"No users found"}
           className="min-h-[400px]"
           items={Items}
+          isLoading={isLoading}
+          loadingContent={<Spinner label="Loading..." color="default" />}
         >
           {(item) => (
             <TableRow

@@ -15,7 +15,7 @@ export function DashboardCard({
   customstyle,
 }: dashboardCard) {
   return (
-    <div className={`${customstyle} w-full p-5 bg-white rounded-2xl`}>
+    <div className={`${customstyle} w-full p-5 bg-white rounded-2xl min-h-[191px]`}>
       <div className="flex flex-col">
         <p className="font-semibold text-lg text-[#23272E]">{title}</p>
         <span className="text-[#8B909A] text-base">Last 7 days</span>
@@ -34,23 +34,6 @@ export function DashboardCard({
             alt="arrow rise or fall"
             className="md:max-w-[500px] md:w-full w-[90%] h-full object-contain"
           />
-        </div>
-        <div className="flex gap-2">
-          <div className="flex justify-normal items-center gap-1">
-            {profit ? (
-              <IoArrowUpOutline color="#1EB564" size={16} />
-            ) : (
-              <IoArrowDownOutline color="#D02626" size={16} />
-            )}
-            <span
-              className={`${
-                profit ? "text-[#1EB564]" : "text-[#D02626]"
-              } font-medium`}
-            >
-              {percentage}%
-            </span>
-          </div>
-          <p className="text-[#8B909A] text-base">vs Last 7 days</p>
         </div>
       </div>
     </div>
