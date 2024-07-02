@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import Credentials from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
- const API = process.env.NEXT_PUBLIC_API_ROUTE;
+
 export const authOptions = {
   
   // Configure one or more authentication providers
@@ -23,7 +23,7 @@ export const authOptions = {
           };
           if (data) {
             const res = await fetch(
-              `${API}/auth/sign-in`,
+              `https://giftgo-1muz.onrender.com/api/v1/auth/sign-in`,
               {
                 headers: {
                   Accept: "application/json",
