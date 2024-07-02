@@ -23,8 +23,10 @@ import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { json } from "stream/consumers";
+import { log } from "console";
 
 export interface order {
+  _id: string;
   orderId: string;
   created: string;
   customer: string;
@@ -78,6 +80,7 @@ export default function OrderManagement() {
   const pathname = usePathname();
   const { replace } = useRouter();
   const searchParams = useSearchParams();
+  
 
   const sesssion = useSession({
     required: true,
@@ -102,29 +105,28 @@ export default function OrderManagement() {
       const resData = await res.json();
       setOrders(resData.orders);
       setIsLoading(false);
-      // console.log(resData);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
+
   //update orderStatus
-  const updateOrderStatus = async (orderId: string) => {
+  const updateOrderStatus = async (orderId: string, status: string) => {
     const data = {
-      status: selected,
+      status,
     };
     try {
       const res = await fetch(`${API}/orders/${orderId}/status`, {
         headers: {
           AUTHORIZATION: "Bearer " + token,
+          "Content-Type": "application/json",
         },
+
         method: "PATCH",
         body: JSON.stringify(data),
       });
 
       const resData = await res.json();
-      // setOrders(resData.orders);
-      // setIsLoading(false);
-      console.log(resData);
       setOrders((prevOrders) =>
         Array.isArray(prevOrders)
           ? prevOrders.map((order) =>
@@ -132,14 +134,16 @@ export default function OrderManagement() {
             )
           : []
       );
-      // console.log(resData);
     } catch (error) {
-      console.log(error);
     }
   };
+
   useEffect(() => {
     getOrders();
-  });
+  }, []);
+  //   useEffect(() => {
+  //   updateOrderStatus()
+  // },[selected])
   // Update status filter value when search params change
   useEffect(() => {
     setStatusFilterValue(`${pathname}?${searchParams}`);
@@ -240,19 +244,19 @@ export default function OrderManagement() {
 
   function statusColor(orderStatus: string) {
     switch (orderStatus) {
-      case "Pending":
+      case "pending":
         return "text-[#FFC600] bg-[#FFC60029]";
-      case "Confirmed":
+      case "confirmed":
         return "text-[#28C76F] bg-[#28C76F29]";
-      case "Processing":
+      case "processing":
         return "text-[#0FB7FF] bg-[#0FB7FF29]";
-      case "Shipped":
+      case "shipped":
         return "text-[#BD00FF] bg-[#BD00FF29]";
-      case "Cancelled":
+      case "cancelled":
         return "text-[#EA5455] bg-[#ffbeaa]";
-      case "Picked":
+      case "picked":
         return "text-[#1EB564] bg-[#0F60FF29]";
-      case "Delivered":
+      case "delivered":
         return "text-[#33189D] bg-[#33189D29]";
       default:
         return "text-[#FFC600] bg-[#FFC60029]";
@@ -328,8 +332,9 @@ export default function OrderManagement() {
           // selectedKeys={[selected]}
           defaultSelectedKeys={[order.status]}
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-            setSelected(e.target.value);
-            updateOrderStatus(order.orderId);
+            const status = e.target.value;
+            setSelected(status);
+            updateOrderStatus(order.orderId, status);
           }}
         >
           {status.map((item) => (
@@ -342,22 +347,49 @@ export default function OrderManagement() {
     },
     [statusFilterValue, filteredItems, selected]
   );
-  // const getOrders = async () => {
-  //   try {
-  //     const res = await fetch(`${API}/orders/order/all`, {
-  //       headers: {
-  //         AUTHORIZATION: "Bearer " + token,
-  //       },
-  //     });
 
-  //     const resData = await res.json();
+  //generate document
+  const generateDocument = (orderData: any) => {
+    const documentContent = `
+      Order ID: ${orderData.orderId}\n
+      User ID: ${orderData.userId}\n
+      Customer Address: ${orderData.customerAddress.address}, ${
+      orderData.customerAddress.city
+    }, ${orderData.customerAddress.state}, ${
+      orderData.customerAddress.country
+    }, ${orderData.customerAddress.postal_code}\n
+      Customer Phone Number: ${orderData.customerPhoneNumber}\n
+      Ordered Items:\n
+      ${orderData.orderedItems
+        .map(
+          (item: any) =>
+            `Product: ${item.productName}, Quantity: ${item.quantity}, Validity: ${item.validity} days`
+        )
+        .join("\n")}
+      Order Status: ${orderData.orderStatus}\n
+      Created At: ${new Date(orderData.createdAt).toLocaleString()}\n
+      Updated At: ${new Date(orderData.updatedAt).toLocaleString()}
+    `;
 
-  //     console.log(resData);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+    const blob = new Blob([documentContent], {
+      type: "text/plain;charset=utf-8",
+    });
+    // saves(blob, `Order_${orderData.orderId}.txt`);
+  };
+  const getorderDetails = async (id: string) => {
+    try {
+      const res = await fetch(`${API}/orders/order/${id}`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
 
+      const resData = await res.json();
+      generateDocument(resData.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="pb-12" suppressHydrationWarning={true}>
       <div className="w-full overflow-x-auto py-2">
@@ -443,7 +475,7 @@ export default function OrderManagement() {
             </div>
           </div>
         </div>
-        <div className="w-fit lg:w-full">
+        <div className="w-full justify-center items-center ">
           {Items &&
             Items.map((order, index) => (
               <Accordion
@@ -573,6 +605,10 @@ export default function OrderManagement() {
                                 color="black"
                                 size={20}
                                 className="cursor-pointer"
+                                onClick={() => {
+                                  getorderDetails(order.orderId);
+                                  alert(order.orderId)
+                                }}
                               />
                             </p>
                           </div>
@@ -612,8 +648,8 @@ export default function OrderManagement() {
             </div>
           )}
           {Items.length < 1 && isLoading && (
-            <div className="min-h-[40vh] flex justify-center items-center">
-              <Spinner color="default"></Spinner>
+            <div className="min-h-[40vh] w-full flex justify-center items-center mx-auto">
+              <Spinner color="default" className="mx-auto"></Spinner>
             </div>
           )}
         </div>
@@ -646,7 +682,7 @@ export default function OrderManagement() {
           showControls
           color="success"
           initialPage={1}
-          total={pages}
+          total={pages || 1}
           page={page}
           onChange={(page) => {
             setPage(page);
