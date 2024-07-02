@@ -8,7 +8,7 @@ import { IoCloseOutline } from "react-icons/io5";
 import { AiOutlineUser } from "react-icons/ai";
 import { GiHamburgerMenu } from "react-icons/gi";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import Modal from "./LoginModal";
 import CheckoutModal from "./CheckoutModal";
 import Cookies from "js-cookie";
@@ -16,14 +16,21 @@ import { useRouter } from "next/navigation";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
 import { useRefetch } from "../context/refetchContext";
-
 const LandingHeader = () => {
   const { refetch } = useRefetch();
 
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-
+  const [search, setSearch] = useState("");
   const [cartItems, setCartItems] = useState([]);
+
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    const query = new URLSearchParams({
+      product: e.target.value,
+    });
+      router.push(`/search/product?${query}`);
+  };
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -40,7 +47,7 @@ const LandingHeader = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message);
+          "Error fetching resource",error?.response?.data || error?.message);
       } finally {
         // Any cleanup or final actions
       }
@@ -123,6 +130,8 @@ const LandingHeader = () => {
               type="search"
               className="rounded-[4px] h-[48px] w-[260px] lg:w-[600px] px-[20px] py-[14px] outline-none text-[14px] hidden lg:flex z-0"
               placeholder="Search for anything..."
+              value={search}
+              onChange={(e) => handleSearch(e)}
             />
             <FiSearch className="text-white lg:text-black lg:absolute right-4 top-4 w-[20px] h-[20px]" />
           </div>
@@ -161,7 +170,9 @@ const LandingHeader = () => {
           </div>
           <div className="hidden lg:flex justify-center items-center gap-[24px] mt-4 lg:mt-0">
             <button
-              onClick={() => (token ? router.push("/account/order") : openModal())}
+              onClick={() =>
+                token ? router.push("/account/order") : openModal()
+              }
               className="flex justify-center items-center gap-1 text-[14px] text-white leading-[20px]"
             >
               <PiMapPinLine />
@@ -169,7 +180,7 @@ const LandingHeader = () => {
             </button>
             <div className="flex justify-center items-center gap-1 text-[14px] text-white leading-[20px]">
               <FiHeadphones />
-              <p>Customer SUpport</p>
+              <p>Customer Support</p>
             </div>
           </div>
         </div>

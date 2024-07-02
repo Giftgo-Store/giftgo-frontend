@@ -40,11 +40,19 @@ const Account = () => {
   const pendingOrders =
     user &&
     user.orders &&
-    user.orders.filter((item: any) => item.orderStatus === "pending");
+    user.orders.filter(
+      (item: any) =>
+        item.orderStatus === "pending" || item.orderStatus === "processing" || item.orderStatus === "shipped"
+    );
   const completedOrders =
     user &&
     user.orders &&
-    user.orders.filter((item: any) => item.orderStatus === "complete");
+    user.orders.filter(
+      (item: any) =>
+        item.orderStatus === "delivered" ||
+        item.orderStatus === "picked" ||
+        item.orderStatus === "confirmed"
+    );
 
   return (
     <>
@@ -75,14 +83,16 @@ const Account = () => {
           <div className="pt-[36px] px-[24px]">
             <div className="flex justify-start items-center gap-4 mb-[20px]">
               {/* <Image src="/avatarr.svg" alt="" width={48} height={48} /> */}
-              <RxAvatar className="w-[48px] h-[48px]"/>
+              <RxAvatar className="w-[48px] h-[48px]" />
 
               <div className="flex justify-start items-start flex-col gap-1">
                 <p className="font-[500] text-[14px] leading-[20px] text-[#191C1F]">
                   {user && user?.name && user?.name}
                 </p>
                 <p className="font-[500] text-[14px] leading-[20px] text-[#5F6C72]">
-                  My address here
+                  {user && user?.address && user?.address.country},{" "}
+                  {user && user?.address && user?.address.state}{" "}
+                  {user && user?.address && user?.address.city}
                 </p>
               </div>
             </div>
@@ -122,7 +132,9 @@ const Account = () => {
                   {user && user?.name}
                 </p>
                 <p className="font-[500] text-[14px] leading-[20px] text-[#5F6C72]">
-                  Detailed address here
+                  {user && user?.address && user?.address.country},{" "}
+                  {user && user?.address && user?.address.state}{" "}
+                  {user && user?.address && user?.address.city}
                 </p>
               </div>
             </div>
