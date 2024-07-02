@@ -374,7 +374,7 @@ export default function OrderManagement() {
     const blob = new Blob([documentContent], {
       type: "text/plain;charset=utf-8",
     });
-    saves(blob, `Order_${orderData.orderId}.txt`);
+    // saves(blob, `Order_${orderData.orderId}.txt`);
   };
   const getorderDetails = async (id: string) => {
     try {
