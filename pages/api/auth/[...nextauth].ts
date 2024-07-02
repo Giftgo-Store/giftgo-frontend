@@ -2,7 +2,10 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import Credentials from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+
+ const API = process.env.NEXT_PUBLIC_API_ROUTE;
 export const authOptions = {
+  
   // Configure one or more authentication providers
   pages: {
     signIn: "/admin/auth/login",
@@ -20,7 +23,7 @@ export const authOptions = {
           };
           if (data) {
             const res = await fetch(
-              "https://giftgo.onrender.com/api/v1/auth/sign-in",
+              `${API}/auth/sign-in`,
               {
                 headers: {
                   Accept: "application/json",

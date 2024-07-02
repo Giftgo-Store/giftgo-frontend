@@ -26,6 +26,7 @@ import { json } from "stream/consumers";
 import { log } from "console";
 
 export interface order {
+  _id: string;
   orderId: string;
   created: string;
   customer: string;
@@ -79,7 +80,7 @@ export default function OrderManagement() {
   const pathname = usePathname();
   const { replace } = useRouter();
   const searchParams = useSearchParams();
-  console.log(selected);
+  
 
   const sesssion = useSession({
     required: true,
@@ -104,14 +105,13 @@ export default function OrderManagement() {
       const resData = await res.json();
       setOrders(resData.orders);
       setIsLoading(false);
-      // console.log(resData);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
   //update orderStatus
-  const updateOrderStatus = async (orderId: string,status:string) => {
+  const updateOrderStatus = async (orderId: string, status: string) => {
     const data = {
       status,
     };
@@ -119,9 +119,9 @@ export default function OrderManagement() {
       const res = await fetch(`${API}/orders/${orderId}/status`, {
         headers: {
           AUTHORIZATION: "Bearer " + token,
-           "Content-Type":"application/json",
+          "Content-Type": "application/json",
         },
-           
+
         method: "PATCH",
         body: JSON.stringify(data),
       });
@@ -134,18 +134,16 @@ export default function OrderManagement() {
             )
           : []
       );
-      console.log(orders);
     } catch (error) {
-      console.log(error);
     }
   };
 
   useEffect(() => {
     getOrders();
-  },[]);
-//   useEffect(() => {
-//   updateOrderStatus()
-// },[selected])
+  }, []);
+  //   useEffect(() => {
+  //   updateOrderStatus()
+  // },[selected])
   // Update status filter value when search params change
   useEffect(() => {
     setStatusFilterValue(`${pathname}?${searchParams}`);
@@ -334,9 +332,9 @@ export default function OrderManagement() {
           // selectedKeys={[selected]}
           defaultSelectedKeys={[order.status]}
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-            const status=e.target.value
+            const status = e.target.value;
             setSelected(status);
-            updateOrderStatus(order.orderId,status);
+            updateOrderStatus(order.orderId, status);
           }}
         >
           {status.map((item) => (
@@ -347,24 +345,51 @@ export default function OrderManagement() {
         </Select>
       );
     },
-    [statusFilterValue, filteredItems,selected]
+    [statusFilterValue, filteredItems, selected]
   );
-  // const getOrders = async () => {
-  //   try {
-  //     const res = await fetch(`${API}/orders/order/all`, {
-  //       headers: {
-  //         AUTHORIZATION: "Bearer " + token,
-  //       },
-  //     });
 
-  //     const resData = await res.json();
+  //generate document
+  const generateDocument = (orderData: any) => {
+    const documentContent = `
+      Order ID: ${orderData.orderId}\n
+      User ID: ${orderData.userId}\n
+      Customer Address: ${orderData.customerAddress.address}, ${
+      orderData.customerAddress.city
+    }, ${orderData.customerAddress.state}, ${
+      orderData.customerAddress.country
+    }, ${orderData.customerAddress.postal_code}\n
+      Customer Phone Number: ${orderData.customerPhoneNumber}\n
+      Ordered Items:\n
+      ${orderData.orderedItems
+        .map(
+          (item: any) =>
+            `Product: ${item.productName}, Quantity: ${item.quantity}, Validity: ${item.validity} days`
+        )
+        .join("\n")}
+      Order Status: ${orderData.orderStatus}\n
+      Created At: ${new Date(orderData.createdAt).toLocaleString()}\n
+      Updated At: ${new Date(orderData.updatedAt).toLocaleString()}
+    `;
 
-  //     console.log(resData);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+    const blob = new Blob([documentContent], {
+      type: "text/plain;charset=utf-8",
+    });
+    saves(blob, `Order_${orderData.orderId}.txt`);
+  };
+  const getorderDetails = async (id: string) => {
+    try {
+      const res = await fetch(`${API}/orders/order/${id}`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
 
+      const resData = await res.json();
+      generateDocument(resData.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="pb-12" suppressHydrationWarning={true}>
       <div className="w-full overflow-x-auto py-2">
@@ -580,6 +605,10 @@ export default function OrderManagement() {
                                 color="black"
                                 size={20}
                                 className="cursor-pointer"
+                                onClick={() => {
+                                  getorderDetails(order.orderId);
+                                  alert(order.orderId)
+                                }}
                               />
                             </p>
                           </div>
@@ -653,7 +682,7 @@ export default function OrderManagement() {
           showControls
           color="success"
           initialPage={1}
-          total={pages||1}
+          total={pages || 1}
           page={page}
           onChange={(page) => {
             setPage(page);

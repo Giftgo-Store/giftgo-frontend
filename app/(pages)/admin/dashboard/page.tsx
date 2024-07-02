@@ -13,7 +13,7 @@ import {
   User,
   Skeleton,
   Spinner,
-  Link
+  Link,
 } from "@nextui-org/react";
 import { redirect } from "next/navigation";
 import { IoArrowUpOutline } from "react-icons/io5";
@@ -98,7 +98,7 @@ export default function Dashboard() {
       const leastSold = b.totalOrders;
       return leastSold - mostSold;
     }) || [];
-console.log(bestSellingProducts);
+  console.log(bestSellingProducts);
   const sesssion = useSession({
     required: true,
     onUnauthenticated() {
@@ -127,14 +127,16 @@ console.log(bestSellingProducts);
       const j = Math.floor(Math.random() * i);
       [array[i], array[j]] = [array[j], array[i]];
     }
-    return array.slice(0,6);
+    return array.slice(0, 6);
   };
-  const sorted_recent_orders = recentOrders?.slice(0, 6).sort((a:any, b:any) => {
-    const latestorder = a.created
-    const olderorder = b.created
-    return olderorder-latestorder
-  })
-
+  const sorted_recent_orders = recentOrders
+    ?.slice(0, 6)
+    .sort((a: any, b: any) => {
+      const latestorder = a.created;
+      const olderorder = b.created;
+      return olderorder - latestorder;
+    });
+  console.log(sorted_recent_orders);
   const trending_products = shuffle([...bestSellingProducts]);
   const salesByLocation = reportData[5] || [];
   const maxOrders = Math.max(
@@ -376,7 +378,26 @@ console.log(bestSellingProducts);
       </div>
     );
   }, []);
-
+  function statusColor(orderStatus: string) {
+    switch (orderStatus) {
+      case "pending":
+        return "text-[#FFC600] ";
+      case "confirmed":
+        return "text-[#28C76F] ";
+      case "processing":
+        return "text-[#0FB7FF] ";
+      case "shipped":
+        return "text-[#BD00FF] ";
+      case "cancelled":
+        return "text-[#EA5455] ";
+      case "picked":
+        return "text-[#1EB564] ";
+      case "delivered":
+        return "text-[#33189D] ";
+      default:
+        return "text-[#FFC600] ";
+    }
+  }
   const renderCell = useCallback((item: any, columnKey: React.Key) => {
     switch (columnKey) {
       case "id":
@@ -426,11 +447,10 @@ console.log(bestSellingProducts);
               out
             </Chip>
           );
-        } else if (item.status === "pending") {
-          return <p className="text-[#FFC600]">{item.status}</p>;
-        } else if (item.status === "completed") {
-          return <p className="text-[#1EB564]">{item.status}</p>;
+        } else if (item.status) {
+          return <p className={statusColor(item.status)}>{item.status}</p>;
         }
+
       case "price":
         return <p className="font-normal">₦{item.price}</p>;
       case "customer":
@@ -560,7 +580,7 @@ console.log(bestSellingProducts);
       "/statistics/sales-by-area",
     ];
 
-    fetchReports(urls)
+    fetchReports(urls);
   }, []);
   return (
     <div>
@@ -651,7 +671,7 @@ console.log(bestSellingProducts);
             <div className="flex flex-col gap-3">
               {revenueStats ? (
                 <p className="font-bold text-[#23272E] text-2xl">
-                  {reportData[1]&&formatNumber(reportData[1])}
+                  {reportData[1] && formatNumber(reportData[1])}
                 </p>
               ) : (
                 <Skeleton className="w-[60px] h-[30px]"></Skeleton>
@@ -663,7 +683,7 @@ console.log(bestSellingProducts);
             <div className="flex flex-col gap-3">
               {revenueStats ? (
                 <p className="font-bold text-[#23272E] text-2xl">
-                  {reportData[2]&&formatNumber(reportData[2])}
+                  {reportData[2] && formatNumber(reportData[2])}
                 </p>
               ) : (
                 <Skeleton className="w-[60px] h-[30px]"></Skeleton>
@@ -675,7 +695,7 @@ console.log(bestSellingProducts);
             <div className="flex flex-col gap-3">
               {revenueStats ? (
                 <p className="font-bold text-[#23272E] text-2xl">
-                  {reportData[3]&& formatNumber(reportData[3])}
+                  {reportData[3] && formatNumber(reportData[3])}
                 </p>
               ) : (
                 <Skeleton className="w-[60px] h-[30px]"></Skeleton>
@@ -711,7 +731,7 @@ console.log(bestSellingProducts);
             </p>
             {revenueStats ? (
               <span className="font-bold text-[2.0rem] leading-[2.0rem]">
-                {reportData[4]&&formatNumber(reportData[4])}
+                {reportData[4] && formatNumber(reportData[4])}
               </span>
             ) : (
               <Skeleton className="w-[60px] h-[30px]"></Skeleton>
@@ -897,7 +917,7 @@ console.log(bestSellingProducts);
               isLoading={loading}
               loadingContent={<Spinner label="Loading..." color="default" />}
               className="min-h-[450px]"
-              emptyContent={!loading&&"There is no data"}
+              emptyContent={!loading && "There is no data"}
             >
               {(item) => (
                 <TableRow key={item.total}>
@@ -942,7 +962,7 @@ console.log(bestSellingProducts);
               items={bestSellingProducts || []}
               isLoading={loading}
               loadingContent={<Spinner label="Loading..." color="default" />}
-              emptyContent={!loading&&"There is no data"}
+              emptyContent={!loading && "There is no data"}
             >
               {(item: BestSellingProduct) => (
                 <TableRow key={item.productId + item.productName}>
@@ -1065,10 +1085,10 @@ console.log(bestSellingProducts);
               )}
             </TableHeader>
             <TableBody
-              items={sorted_recent_orders||[]}
+              items={sorted_recent_orders || []}
               isLoading={loading}
               loadingContent={<Spinner label="Loading..." color="default" />}
-              emptyContent={!loading&&"There is no data"}
+              emptyContent={!loading && "There is no data"}
             >
               {(item) => (
                 <TableRow key={item.orderId}>
