@@ -119,7 +119,7 @@ export default function Customers() {
             isDisabled={filterValue.length > 1}
             showControls
             color="success"
-            total={pages}
+            total={pages||1}
             initialPage={1}
             page={page}
             onChange={(page) => {
