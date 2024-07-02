@@ -692,3 +692,4 @@ export default function OrderManagement() {
     </div>
   );
 }
+OrderManagement.requireAuth=true

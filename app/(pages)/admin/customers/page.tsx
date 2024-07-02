@@ -45,6 +45,7 @@ export default function Customers() {
   const [userIdToDelete, setUserIdToDelete] = useState("");
   const [page, setPage] = useState(1);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  
   const appSession = useSession({
     required: true,
     onUnauthenticated() {
