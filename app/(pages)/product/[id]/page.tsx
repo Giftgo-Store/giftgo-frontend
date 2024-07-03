@@ -166,21 +166,21 @@ const Page = () => {
             height={148}
             className="w-full lg:w-[80%] h-[315px] object-cover rounded-[8px]"
           />
-          <div className="flex gap-2 lg:w-[80%] justify-between mt-2 items-center relative">
-            <div>
-              <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center absolute cursor-pointer -left-6 custom-nextt z-40">
+          <div className="flex gap-2 lg:w-[80%] justify-between mt-2 items-center relative overflow-x-hidden">
+            <div className=' absolute cursor-pointer -left-6 custom-nextt z-40'>
+              <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center z-[999]">
                 <FaArrowLeft className="h-6 w-6 text-white" />
               </div>
             </div>
-            <div>
-              <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center absolute cursor-pointer -right-6 custom-prevv z-40">
+            <div className='absolute cursor-pointer -right-6 custom-prevv z-40'>
+              <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center">
                 <FaArrowRight className="h-6 w-6 text-white " />
               </div>
             </div>
             <Swiper
               modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
               spaceBetween={10}
-              slidesPerView={3}
+              slidesPerView={2}
               // scrollbar={{ draggable: true }}
               autoplay={{
                 delay: 5000,
@@ -193,7 +193,7 @@ const Page = () => {
               }}
               // className="w-full flex justify-between items-center"
             >
-              {product && product?.images && product?.images[2] && (
+              {product && product?.images && product?.images[1] && (
                 <SwiperSlide>
                   {" "}
                   <Image
