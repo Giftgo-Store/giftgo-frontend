@@ -14,6 +14,9 @@ const History = () => {
   const [showDetails, setShowDetails] = useState(true);
   const [show, setShow] = useState(false);
   const [single, setSingle] = useState<any>([]);
+  const [ratedProduct, setRatedProduct] = useState("");
+  const [rate, setRate] = useState("");
+  const [comment, setComment] = useState("")
 
   const handleShow = () => {
     setShow(true);
@@ -51,6 +54,42 @@ const History = () => {
   const handleHideDetails = () => {
     setShowDetails(true);
   };
+
+    const handleReview = async (e: { preventDefault: () => void }) => {
+      e.preventDefault()
+      if(rate.length < 1 || comment.length < 1 || ratedProduct.length < 1){
+        toast({
+          status: "error",
+          description: "Please select a product, rate and write a comment",
+        });
+        return;
+      }
+      try {
+        const response = await axios.post(`${BASE_URL}/api/v1/products/${ratedProduct}/reviews`,{
+          'rating': Number(rate),
+          comment
+        }, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        });
+        toast({
+          status: "success",
+          description: response.data.message || "Success",
+        });
+        setComment('')
+        setRate('')
+      } catch (error) {
+        toast({
+          status: "error",
+          description:
+            //@ts-expect-error
+            error?.response?.data || error?.message || "an error occurred ",
+        });
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
 
   const [user, setUser] = useState<any>([]);
   const [order, setOrder] = useState<any>([]);
@@ -90,7 +129,6 @@ const History = () => {
             },
           }
         );
-        console.log(response.data.data);
         // Handle successful response, e.g., save token, redirect, etc.
         setOrder(response.data.data);
        
@@ -208,7 +246,10 @@ const History = () => {
                                 </td>
                                 <td
                                   className={`${
-                                    order.orderStatus === "delivered"
+                                    order.orderStatus === "shipped" ||
+                                    order.orderStatus === "delivered" ||
+                                    order.orderStatus === "picked" ||
+                                    order.orderStatus === "confirmed"
                                       ? "text-[#2DB224]"
                                       : order.orderStatus === "pending"
                                       ? "text-[#FA8232]"
@@ -221,7 +262,21 @@ const History = () => {
                                   {formatDateString(order.createdAt)}
                                 </td>
                                 <td className="whitespace-nowrap px-6 py-4 font-medium text-[#475156] leading-[20px] text-[14px]">
-                                  ₦160 ({order.orderedItems.length} Products)
+                                  ₦
+                                  {formatNumberWithCommas(
+                                    order.orderedItems
+                                      .map(
+                                        (item: any) =>
+                                          Number(item.quantity) *
+                                          Number(item && item.salePrice)
+                                      )
+                                      .reduce(
+                                        (accumulator: any, currentValue: any) =>
+                                          accumulator + currentValue,
+                                        0
+                                      )
+                                  )}
+                                  ({order.orderedItems.length} Products)
                                 </td>
                                 <td
                                   className="whitespace-nowrap px-6 py-4 text-[14px] font-[600] cursor-pointer text-primary flex justify-center items-start gap-2"
@@ -402,10 +457,8 @@ const History = () => {
                                         {item.productName}
                                       </h1>
                                       <p className="text-[#191C1F] lg:text-[14px] font-[400]">
-                                        {item.description && item.description.split(
-                                          0,
-                                          20
-                                        )}
+                                        {item.description &&
+                                          item.description.split(0, 20)}
                                         ...
                                       </p>
                                     </div>
@@ -420,7 +473,10 @@ const History = () => {
                                   </p>
                                 </td>
                                 <td className="text-[14px] font-[600] text-[#475156] px-2 lg:px-6 py-4">
-                                  ₦{formatNumberWithCommas(item.salePrice)}
+                                  ₦
+                                  {formatNumberWithCommas(
+                                    item.salePrice * item.quantity
+                                  )}
                                 </td>
                               </tr>
                             );
@@ -500,30 +556,33 @@ const History = () => {
                 LEAVE A REVIEW
               </p>
 
-              <div className="flex justify-center items-center mb-6">
-                <div className="flex justify-center items-center gap-[24px] w-[80%]">
-                  {/* <div className=" bg-red-400"> */}
-                  <Image
-                    src="/cam.png"
-                    alt=""
-                    width={61}
-                    height={64}
-                    className="relative z-0 border-[#EDEDED] rounded-[12px] border-[6px]"
-                  />
-                  {/* </div> */}
-                  <div>
-                    <div className="">
-                      <div>
-                        <p className="font-[400] text-[14px] leading-[20px] text-[#475156]">
-                          2-Barrel Carburetor Carb 2100 Engine Increase
-                          Horsepower
-                        </p>
-                      </div>
-                      <p className="font-[500] text-[14px] leading-[20px] text-[#191C1F]">
-                        ₦13,000
-                      </p>
-                    </div>
-                  </div>
+              <div className="px-6 mb-6">
+                <div className="flex flex-col items-start gap-2 w-full">
+                  <label
+                    htmlFor=""
+                    className="text-[14px] leading-[20px] text-[#191C1F]"
+                  >
+                    Select a product to rate
+                  </label>
+                  <select
+                    name=""
+                    id=""
+                    className="border-[#E4E7E9] rounded-[2px] h-[44px] outline-none w-full border-[1px] px-[18px] text-[14px] text-[#475156]"
+                    value={ratedProduct}
+                    onChange={(e) => setRatedProduct(e.target.value)}
+                  >
+                    <option value="" selected disabled>
+                      Select a product
+                    </option>
+                    {single.orderedItems &&
+                      single.orderedItems.map((item: any, i: any) => {
+                        return (
+                          <option value={item.productId} key={i}>
+                            {item.productName}
+                          </option>
+                        );
+                      })}
+                  </select>
                 </div>
               </div>
 
@@ -540,12 +599,17 @@ const History = () => {
                       name=""
                       id=""
                       className="border-[#E4E7E9] rounded-[2px] h-[44px] outline-none w-full border-[1px] px-[18px] text-[14px] text-[#475156]"
+                      value={rate}
+                      onChange={(e) => setRate(e.target.value)}
                     >
-                      <option value="">5 Star Rating</option>
-                      <option value="">4 Star Rating</option>{" "}
-                      <option value="">3 Star Rating</option>{" "}
-                      <option value="">2 Star Rating</option>{" "}
-                      <option value="">1 Star Rating</option>
+                      <option value="" selected disabled>
+                        Select a rating
+                      </option>
+                      <option value="5">5 Star Rating</option>
+                      <option value="4">4 Star Rating</option>{" "}
+                      <option value="3">3 Star Rating</option>{" "}
+                      <option value="2">2 Star Rating</option>{" "}
+                      <option value="1">1 Star Rating</option>
                     </select>
                   </fieldset>
                   <fieldset className="flex flex-col items-start gap-2 mb-[24px]">
@@ -555,12 +619,14 @@ const History = () => {
                     >
                       Feedback
                     </label>
-                    <input
+                    {/* <input
                       type="text"
                       className="border-[#E4E7E9] rounded-[2px] h-[44px] outline-none w-full border-[1px] px-[18px] text-[14px] text-[#475156]"
                       placeholder="Review Heading"
-                    />
+                    /> */}
                     <textarea
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
                       name=""
                       className="border-[#E4E7E9] rounded-[2px] mt-2 h-[124px] outline-none w-full border-[1px] px-[18px] text-[14px] text-[#475156]"
                       id=""
@@ -568,7 +634,10 @@ const History = () => {
                     ></textarea>
                   </fieldset>
 
-                  <button className="flex justify-center items-center w-[204px] gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[14px]">
+                  <button
+                    className="flex justify-center items-center w-[204px] gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[14px]"
+                    onClick={(e) => handleReview(e)}
+                  >
                     PUBLISH REVIEW
                   </button>
                 </form>

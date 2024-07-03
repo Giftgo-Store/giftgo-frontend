@@ -65,7 +65,9 @@ const Order = () => {
       ? 30
       : single.status === "shipped"
       ? 70
-      : single.status === "delivered"
+      : single.status === "delivered" ||
+        single.status === "picked" ||
+        single.status === "confirmed"
       ? 100
       : 0;
 
@@ -183,13 +185,15 @@ const Order = () => {
             <div className="px-[90px]">
               <p className="text-[15px] text-[#787C82] leading-[19px]">
                 Delivery progress -{" "}
-                {single && single.status === "pending"
+                {single.status === "pending"
                   ? 5
                   : single.status === "processing"
                   ? 30
                   : single.status === "shipped"
                   ? 70
-                  : single.status === "delivered"
+                  : single.status === "delivered" ||
+                    single.status === "picked" ||
+                    single.status === "confirmed"
                   ? 100
                   : 0}
                 %
@@ -216,7 +220,7 @@ const Order = () => {
               <div className="flex justify-start items-center gap-[40px] pb-[56px] relative">
                 <div
                   className={`w-[1px] h-[80px] top-8 left-3 absolute ${
-                    single.status !== "shipped" && single.status !== "delivered"
+                  single.status !== "delivered"
                       ? "bg-[#FF7A00]"
                       : single.status === "processing"
                       ? "bg-[#FF7A00]"
@@ -225,7 +229,7 @@ const Order = () => {
                 ></div>
                 <div
                   className={`w-[25px] h-[25px] rounded-full ${
-                    single.status !== "shipped" && single.status !== "delivered"
+                  single.status !== "delivered"
                       ? "bg-[#FF7A00]"
                       : "bg-[#B6B9C1]"
                   }`}
@@ -242,14 +246,14 @@ const Order = () => {
               <div className="flex justify-start items-center gap-[40px] pb-[56px] relative">
                 <div
                   className={`w-[1px] h-[80px] top-8 left-3 absolute ${
-                    single.status === "delivered"
+                    single.status !== "delivered"
                       ? "bg-[#FF7A00]"
                       : "bg-[#B6B9C1]"
                   }`}
                 ></div>
                 <div
                   className={`w-[25px] h-[25px] rounded-full ${
-                    single.status === "delivered"
+                    single.status !== "delivered"
                       ? "bg-[#FF7A00]"
                       : "bg-[#B6B9C1]"
                   }`}
