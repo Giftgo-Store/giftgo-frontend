@@ -95,6 +95,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
         status: "success",
         description: response.data.message || "Success",
       });
+      Cookie.set("token", response.data.data.token);
       closeModal();
     } catch (error) {
       // console.error("Sign Up Error", error.response?.data || error.message);
