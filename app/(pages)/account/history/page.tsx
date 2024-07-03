@@ -116,7 +116,7 @@ const History = () => {
       }
     };
     fetchUser();
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -144,7 +144,7 @@ const History = () => {
       }
     };
     fetchUser();
-  }, []);
+  }, [toast]);
 
   function formatDateString(dateString: string): string {
     const date = new Date(dateString);
@@ -571,6 +571,9 @@ const History = () => {
                     value={ratedProduct}
                     onChange={(e) => setRatedProduct(e.target.value)}
                   >
+                    <option value="" selected disabled>
+                      Select a product
+                    </option>
                     {single.orderedItems &&
                       single.orderedItems.map((item: any, i: any) => {
                         return (
@@ -599,11 +602,14 @@ const History = () => {
                       value={rate}
                       onChange={(e) => setRate(e.target.value)}
                     >
-                      <option value="1">5 Star Rating</option>
-                      <option value="2">4 Star Rating</option>{" "}
+                      <option value="" selected disabled>
+                        Select a rating
+                      </option>
+                      <option value="5">5 Star Rating</option>
+                      <option value="4">4 Star Rating</option>{" "}
                       <option value="3">3 Star Rating</option>{" "}
-                      <option value="4">2 Star Rating</option>{" "}
-                      <option value="5">1 Star Rating</option>
+                      <option value="2">2 Star Rating</option>{" "}
+                      <option value="1">1 Star Rating</option>
                     </select>
                   </fieldset>
                   <fieldset className="flex flex-col items-start gap-2 mb-[24px]">
@@ -628,7 +634,10 @@ const History = () => {
                     ></textarea>
                   </fieldset>
 
-                  <button className="flex justify-center items-center w-[204px] gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[14px]" onClick={(e) => handleReview(e)}>
+                  <button
+                    className="flex justify-center items-center w-[204px] gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[14px]"
+                    onClick={(e) => handleReview(e)}
+                  >
                     PUBLISH REVIEW
                   </button>
                 </form>

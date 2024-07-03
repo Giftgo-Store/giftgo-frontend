@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import Card from "@/app/components/Card";
@@ -10,51 +10,50 @@ import Cookies from "js-cookie";
 
 const Page = () => {
   const [showResult, setShowResult] = useState(false);
-  const[result, setResult] = useState([])
+  const [result, setResult] = useState([]);
 
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
 
-
-    useEffect(() => {
-      const fetchCartItems = async () => {
-        try {
-          const response = await axios.post(
-            `${BASE_URL}/api/v1/products/search`,{
-              query: searchParams?.get("product")
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const response = await axios.post(
+          `${BASE_URL}/api/v1/products/search`,
+          {
+            query: searchParams?.get("product"),
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${Cookies.get("token")}`,
             },
-            {
-              headers: {
-                Authorization: `Bearer ${Cookies.get("token")}`,
-              },
-            }
-          );
-          console.log(response.data.data.length);
-          // Handle successful response, e.g., save token, redirect, etc.
-          if (response.data.data.length > 0){
-            setResult(response.data.data);
-            console.log('trueeeeeee')
-setShowResult(true)
-return
-          } else {
-            showResult(false)
-            return
           }
-
-          console.log("Successful", response.data.data);
-        } catch (error) {
-          console.error(
-            //@ts-ignore
-            "Error fetching resource",error?.response?.data || error?.message
-          );
-        } finally {
-          // Any cleanup or final actions
+        );
+        console.log(response.data.data.length);
+        // Handle successful response, e.g., save token, redirect, etc.
+        if (response.data.data.length > 0) {
+          setResult(response.data.data);
+          console.log("trueeeeeee");
+          setShowResult(true);
+          return;
+        } else {
+          setShowResult(false);
+          return;
         }
-      };
-      fetchCartItems();
-    }, [searchParams]);
 
-    console.log(result)
-    console.log(showResult)
+        console.log("Successful", response.data.data);
+      } catch (error) {
+        console.error(
+          //@ts-ignore
+          "Error fetching resource", error?.response?.data || error?.message );
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+    fetchCartItems();
+  }, [searchParams]);
+
+  console.log(result);
+  console.log(showResult);
 
   const handleShow = () => {
     setShowResult(true);
@@ -113,12 +112,12 @@ return
               <Card express={true} />
               <Card /> */}
               {result.length > 0 ? (
-              result.map((product: any, i: any) => {
-                return <Card key={i} lists={product} />;
-              })
-            ) : (
-              <>No product available</>
-            )}
+                result.map((product: any, i: any) => {
+                  return <Card key={i} lists={product} />;
+                })
+              ) : (
+                <>No product available</>
+              )}
             </div>
           </div>
         </div>

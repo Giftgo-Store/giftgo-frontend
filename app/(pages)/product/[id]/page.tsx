@@ -45,6 +45,15 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "swiper/css/autoplay";
 
+interface Review {
+  rating: number;
+  comment: string;
+  createdAt: string;
+  reviewerName: string;
+  updatedAt: string;
+  _id: string;
+}
+
 const Page = () => {
   const toast = useAppToast();
   const { triggerRefetch } = useRefetch();
@@ -137,6 +146,21 @@ const Page = () => {
     }
   };
 
+  console.log(product && product.reviews)
+
+const calculateAverageRating = (reviews: Review[]): number => {
+  if (!reviews || reviews.length === 0) return 0; // Correct check for empty array
+
+  const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+  const averageRating = totalRating / reviews.length;
+
+  return averageRating;
+};
+
+const averageRating = calculateAverageRating(product && product.reviews);
+console.log(`Average Rating: ${averageRating}`);
+
+
   return (
     <div className="">
       {showLogin && <Modal showModal={showModal} closeModal={closeModal} />}
@@ -166,13 +190,13 @@ const Page = () => {
             height={148}
             className="w-full lg:w-[80%] h-[315px] object-cover rounded-[8px]"
           />
-          <div className="flex gap-2 lg:w-[80%] justify-between mt-2 items-center relative overflow-x-hidden">
-            <div className=' absolute cursor-pointer -left-6 custom-nextt z-40'>
+          <div className="flex gap-2 lg:w-[80%] justify-between mt-2 items-center relative overflow-x-hidden z-40">
+            <div className=" absolute cursor-pointer -left-6 custom-nextt z-40">
               <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center z-[999]">
                 <FaArrowLeft className="h-6 w-6 text-white" />
               </div>
             </div>
-            <div className='absolute cursor-pointer -right-6 custom-prevv z-40'>
+            <div className="absolute cursor-pointer -right-6 custom-prevv z-40">
               <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center">
                 <FaArrowRight className="h-6 w-6 text-white " />
               </div>
@@ -238,12 +262,20 @@ const Page = () => {
               {product && product?.productName}
             </h2>
             <div className="flex justify-start items-center gap-[2px]">
-              <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-              <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-              <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-              <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-              <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-              <p className="text-[#77878F] text-[12px] pl-1">(583)</p>
+             
+              {[...Array(5)].map((_, index) => (
+                <FaStar
+                  key={index}
+                  className={
+                    index < averageRating
+                      ? "text-[#FA8232] w-[13px] h-[12px]"
+                      : "text-gray-300 w-[13px] h-[12px]"
+                  }
+                />
+              ))}
+              <p className="text-[#77878F] text-[12px] pl-1">
+                ({product && product.reviews && product.reviews.length})
+              </p>
             </div>
           </div>
 
@@ -350,10 +382,10 @@ const Page = () => {
               <h2 className="text-[#191C1F] font-[500]">
                 Shipping Information
               </h2>
-              <div className="bg-primary rounded-br-[8px] mt-2 lg:mt-5 rounded-tl-[8px] py-[5px] px-[12px] flex justify-center items-center gap-1 text-white w-[fit-content]">
+              {product.expressShipping && <div className="bg-primary rounded-br-[8px] mt-2 lg:mt-5 rounded-tl-[8px] py-[5px] px-[12px] flex justify-center items-center gap-1 text-white w-[fit-content]">
                 <LiaFighterJetSolid />
                 <p className="text-[11px]">Express shipping</p>
-              </div>
+              </div>}
               <p className="text-[#5F6C72] mt-1">
                 <span className="font-[500]">Courier : </span> 2-4 days free
                 shipping
@@ -365,127 +397,182 @@ const Page = () => {
         {activeNav === "2" && (
           <div>
             <div className="flex justify-between flex-wrap items-start mt-[24px] gap-[8px]">
-              <div className="flex flex-col items-start justify-between lg:w-[30%] gap-2 ">
-                <div className="flex justify-start items-center gap-[2px]">
-                  <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                  <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                  <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                  <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                  <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                </div>
-                <h2 className="font-[400] text-[#191C1F] text-[16px]">
-                  I like the product
-                </h2>
-                <p className="text-[#475156] text-[14px]">
-                  I like the Lorem ipsum dolor sit amet, consectetur adipisicing
-                  elit, sed do eiusmod tempor incididunt ut labore et dolore
-                  magna aliqua. Ut enim ad minim veniam.
-                </p>
-                <p className="text-[12px] text-[#77878F]">18-04-2024 by John</p>
-              </div>
-              <div className="flex flex-col items-start justify-between lg:w-[30%] gap-2">
-                <div className="flex justify-start items-center gap-[2px]">
-                  <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                  <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                  <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                  <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                  <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                </div>
-                <h2 className="font-[400] text-[#191C1F] text-[16px]">
-                  I like the product
-                </h2>
-                <p className="text-[#475156] text-[14px]">
-                  I like the Lorem ipsum dolor sit amet, consectetur adipisicing
-                  elit, sed do eiusmod tempor incididunt ut labore et dolore
-                  magna aliqua. Ut enim ad minim veniam.
-                </p>
-                <p className="text-[12px] text-[#77878F]">18-04-2024 by John</p>
-              </div>
-              <div className="flex flex-col items-start justify-between lg:w-[30%] gap-2">
-                <div className="flex justify-start items-center gap-[2px]">
-                  <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                  <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                  <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                  <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                  <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                </div>
-                <h2 className="font-[400] text-[#191C1F] text-[16px]">
-                  I like the product
-                </h2>
-                <p className="text-[#475156] text-[14px]">
-                  I like the Lorem ipsum dolor sit amet, consectetur adipisicing
-                  elit, sed do eiusmod tempor incididunt ut labore et dolore
-                  magna aliqua. Ut enim ad minim veniam.
-                </p>
-                <p className="text-[12px] text-[#77878F]">18-04-2024 by John</p>
-              </div>
-              {showMore && (
-                <div className="flex flex-col items-start mt-4 justify-between lg:w-[30%] gap-2">
-                  <div className="flex justify-start items-center gap-[2px]">
-                    <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                    <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                    <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                    <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                    <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                  </div>
-                  <h2 className="font-[400] text-[#191C1F] text-[16px]">
-                    I like the product
-                  </h2>
-                  <p className="text-[#475156] text-[14px]">
-                    I like the Lorem ipsum dolor sit amet, consectetur
-                    adipisicing elit, sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua. Ut enim ad minim veniam.
-                  </p>
-                  <p className="text-[12px] text-[#77878F]">
-                    18-04-2024 by John
-                  </p>
-                </div>
-              )}
+              {product &&
+                product.reviews &&
+                product.reviews.slice(0, 6).map((review: any, i: any) => {
+                  const dateString = review.createdAt;
+                  const date: Date = new Date(dateString);
 
-              {showMore && (
-                <div className="flex flex-col items-start mt-4 justify-between lg:w-[30%] gap-2">
-                  <div className="flex justify-start items-center gap-[2px]">
-                    <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                    <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                    <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                    <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                    <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                  </div>
-                  <h2 className="font-[400] text-[#191C1F] text-[16px]">
-                    I like the product
-                  </h2>
-                  <p className="text-[#475156] text-[14px]">
-                    I like the Lorem ipsum dolor sit amet, consectetur
-                    adipisicing elit, sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua. Ut enim ad minim veniam.
-                  </p>
-                  <p className="text-[12px] text-[#77878F]">
-                    18-04-2024 by John
-                  </p>
-                </div>
-              )}
-              {showMore && (
-                <div className="flex flex-col items-start mt-4 justify-between lg:w-[30%] gap-2">
-                  <div className="flex justify-start items-center gap-[2px]">
-                    <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                    <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                    <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                    <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                    <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-                  </div>
-                  <h2 className="font-[400] text-[#191C1F] text-[16px]">
-                    I like the product
-                  </h2>
-                  <p className="text-[#475156] text-[14px]">
-                    I like the Lorem ipsum dolor sit amet, consectetur
-                    adipisicing elit, sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua. Ut enim ad minim veniam.
-                  </p>
-                  <p className="text-[12px] text-[#77878F]">
-                    18-04-2024 by John
-                  </p>
-                </div>
-              )}
+                  const day: string = String(date.getDate()).padStart(2, "0");
+                  const month: string = String(date.getMonth() + 1).padStart(
+                    2,
+                    "0"
+                  ); // getMonth() is zero-based
+                  const year: number = date.getFullYear();
+
+                  const formattedDate: string = `${day}-${month}-${year}`;
+                  return (
+                    <div
+                      key={i}
+                      className="flex flex-col items-start justify-between lg:w-fit gap-2 "
+                    >
+                      <div className="flex justify-start items-center gap-[2px]">
+                        {[...Array(5)].map((_, index) => (
+                          <FaStar
+                            key={index}
+                            className={
+                              index < review.rating
+                                ? "text-[#FA8232] w-[13px] h-[12px]"
+                                : "text-gray-300 w-[13px] h-[12px]"
+                            }
+                          />
+                        ))}
+                      </div>
+                      {/* <h2 className="font-[400] text-[#191C1F] text-[16px]">
+                        I like the product
+                      </h2> */}
+                      <p className="text-[#475156] text-[14px]">
+                        {review.comment}
+                      </p>
+                      <p className="text-[12px] text-[#77878F]">
+                        {formattedDate}
+                      </p>
+                    </div>
+                  );
+                })}
+              {showMore &&
+                product &&
+                product.reviews &&
+                product.reviews.slice(6, 7).map((review: any, i: any) => {
+                  const dateString = review.createdAt;
+                  const date: Date = new Date(dateString);
+
+                  const day: string = String(date.getDate()).padStart(2, "0");
+                  const month: string = String(date.getMonth() + 1).padStart(
+                    2,
+                    "0"
+                  ); // getMonth() is zero-based
+                  const year: number = date.getFullYear();
+
+                  const formattedDate: string = `${day}-${month}-${year}`;
+                  return (
+                    <div
+                      key={i}
+                      className="flex flex-col items-start justify-between lg:w-[30%] gap-2 "
+                    >
+                      <div className="flex justify-start items-center gap-[2px]">
+                        {[...Array(5)].map((_, index) => (
+                          <FaStar
+                            key={index}
+                            className={
+                              index < review.rating
+                                ? "text-[#FA8232] w-[13px] h-[12px]"
+                                : "text-gray-300 w-[13px] h-[12px]"
+                            }
+                          />
+                        ))}
+                      </div>
+                      {/* <h2 className="font-[400] text-[#191C1F] text-[16px]">
+                        I like the product
+                      </h2> */}
+                      <p className="text-[#475156] text-[14px]">
+                        {review.comment}
+                      </p>
+                      <p className="text-[12px] text-[#77878F]">
+                        {formattedDate}
+                      </p>
+                    </div>
+                  );
+                })}
+
+              {showMore &&
+                product &&
+                product.reviews &&
+                product.reviews.slice(7, 8).map((review: any, i: any) => {
+                  const dateString = review.createdAt;
+                  const date: Date = new Date(dateString);
+
+                  const day: string = String(date.getDate()).padStart(2, "0");
+                  const month: string = String(date.getMonth() + 1).padStart(
+                    2,
+                    "0"
+                  ); // getMonth() is zero-based
+                  const year: number = date.getFullYear();
+
+                  const formattedDate: string = `${day}-${month}-${year}`;
+                  return (
+                    <div
+                      key={i}
+                      className="flex flex-col items-start justify-between lg:w-[30%] gap-2 "
+                    >
+                      <div className="flex justify-start items-center gap-[2px]">
+                        {[...Array(5)].map((_, index) => (
+                          <FaStar
+                            key={index}
+                            className={
+                              index < review.rating
+                                ? "text-[#FA8232] w-[13px] h-[12px]"
+                                : "text-gray-300 w-[13px] h-[12px]"
+                            }
+                          />
+                        ))}
+                      </div>
+                      {/* <h2 className="font-[400] text-[#191C1F] text-[16px]">
+                        I like the product
+                      </h2> */}
+                      <p className="text-[#475156] text-[14px]">
+                        {review.comment}
+                      </p>
+                      <p className="text-[12px] text-[#77878F]">
+                        {formattedDate}
+                      </p>
+                    </div>
+                  );
+                })}
+              {showMore &&
+                product &&
+                product.reviews &&
+                product.reviews.slice(8, 9).map((review: any, i: any) => {
+                  const dateString = review.createdAt;
+                  const date: Date = new Date(dateString);
+
+                  const day: string = String(date.getDate()).padStart(2, "0");
+                  const month: string = String(date.getMonth() + 1).padStart(
+                    2,
+                    "0"
+                  ); // getMonth() is zero-based
+                  const year: number = date.getFullYear();
+
+                  const formattedDate: string = `${day}-${month}-${year}`;
+                  return (
+                    <div
+                      key={i}
+                      className="flex flex-col items-start justify-between lg:w-[30%] gap-2 "
+                    >
+                      <div className="flex justify-start items-center gap-[2px]">
+                        {[...Array(5)].map((_, index) => (
+                          <FaStar
+                            key={index}
+                            className={
+                              index < review.rating
+                                ? "text-[#FA8232] w-[13px] h-[12px]"
+                                : "text-gray-300 w-[13px] h-[12px]"
+                            }
+                          />
+                        ))}
+                      </div>
+                      {/* <h2 className="font-[400] text-[#191C1F] text-[16px]">
+                        I like the product
+                      </h2> */}
+                      <p className="text-[#475156] text-[14px]">
+                        {review.comment}
+                      </p>
+                      <p className="text-[12px] text-[#77878F]">
+                        {formattedDate}
+                      </p>
+                    </div>
+                  );
+                })}
             </div>
 
             <div
