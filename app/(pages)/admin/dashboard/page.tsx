@@ -479,7 +479,7 @@ export default function Dashboard() {
 
   const getRevenueStats = async () => {
     try {
-      const res = await fetch(`${API}/products/general/stats`, {
+      const res = await fetch(`${API}/api/v1/products/general/stats`, {
         headers: {
           AUTHORIZATION: "Bearer " + token,
         },
