@@ -28,6 +28,7 @@ import { TbEdit } from "react-icons/tb";
 import React from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import BASE_URL from "@/app/config/baseurl";
 
 interface users {
   _id: string;
@@ -55,7 +56,7 @@ export default function Customers() {
 
   const session: any = useSession();
   const token = session?.data?.token;
-  const API = process.env.NEXT_PUBLIC_API_ROUTE;
+  const API = BASE_URL+"/api/v1";
   
   const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
   const columns = [

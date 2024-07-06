@@ -15,6 +15,7 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import { ProductListSkeletonCard } from "@/app/components/productlistskeletonLoad";
 import { useSession } from "next-auth/react";
 import { redirect,useRouter} from "next/navigation";
+import BASE_URL from "@/app/config/baseurl";
 interface item {
   _id: string;
   productName: string;
@@ -46,7 +47,7 @@ export default function ProductList() {
   });
   const session: any = useSession();
   const token = session?.data?.token;
-  const API = process.env.NEXT_PUBLIC_API_ROUTE;
+  const API = BASE_URL + "/api/v1";
 
   const router = useRouter();
 
