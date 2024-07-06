@@ -109,7 +109,7 @@ export default function Dashboard() {
 
   const session: any = useSession();
   const token = session?.data?.token;
-  const API = BASE_URL;
+  const API = BASE_URL+"/api/v1";
 
   const weeklyorders = revenueStats?.weeklyStats?.map((totalOrders) => {
     return totalOrders.totalOrders;
@@ -479,7 +479,7 @@ export default function Dashboard() {
 
   const getRevenueStats = async () => {
     try {
-      const res = await fetch(`${API}/api/v1/products/general/stats`, {
+      const res = await fetch(`${API}/products/general/stats`, {
         headers: {
           AUTHORIZATION: "Bearer " + token,
         },

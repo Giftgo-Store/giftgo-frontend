@@ -20,6 +20,7 @@ import { SlPicture } from "react-icons/sl";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
+import BASE_URL from "@/app/config/baseurl";
 interface Category {
   name: string;
   image: string;
@@ -44,7 +45,7 @@ export default function AddCategories() {
   });
   const session: any = useSession();
   const token = session?.data?.token;
-  const API = process.env.NEXT_PUBLIC_API_ROUTE;
+  const API = BASE_URL+"/api/v1";
 
 
   const selectedValue = useMemo(

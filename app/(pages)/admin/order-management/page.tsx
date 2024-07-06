@@ -24,6 +24,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { json } from "stream/consumers";
 import { log } from "console";
+import BASE_URL from "@/app/config/baseurl";
 
 export interface order {
   _id: string;
@@ -91,7 +92,7 @@ export default function OrderManagement() {
 
   const session: any = useSession();
   const token = session?.data?.token;
-  const API = process.env.NEXT_PUBLIC_API_ROUTE;
+ const API = BASE_URL+"/api/v1";
 
   // fetchdata
   const getOrders = async () => {

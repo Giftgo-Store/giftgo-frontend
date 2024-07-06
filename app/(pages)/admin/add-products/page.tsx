@@ -26,6 +26,7 @@ import {
 } from "react";
 import { SlPicture } from "react-icons/sl";
 import { countries } from "@/app/assets/data";
+import BASE_URL from "@/app/config/baseurl";
 interface Form {
   USD: string;
   GBP: string;
@@ -108,7 +109,7 @@ export default function AddProducts() {
   });
   const session: any = useSession();
   const token = session?.data?.token;
-  const API = process.env.NEXT_PUBLIC_API_ROUTE;
+  const API = BASE_URL + "/api/v1";
   const flags: Flag[] = [
     {
       currency: "NGN",
