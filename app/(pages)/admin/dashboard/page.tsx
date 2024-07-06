@@ -30,6 +30,7 @@ import { SlArrowUp } from "react-icons/sl";
 import { useSession } from "next-auth/react";
 import { TrendingProductLoader } from "@/app/components/trendingProductLoader";
 import { SalesByAreaLoader } from "@/app/components/salesByAreaLoader";
+import BASE_URL from "@/app/config/baseurl";
 
 interface TopSellingCategory {
   totalSales: number;
@@ -108,7 +109,7 @@ export default function Dashboard() {
 
   const session: any = useSession();
   const token = session?.data?.token;
-  const API = process.env.NEXT_PUBLIC_API_ROUTE;
+  const API = BASE_URL;
 
   const weeklyorders = revenueStats?.weeklyStats?.map((totalOrders) => {
     return totalOrders.totalOrders;
