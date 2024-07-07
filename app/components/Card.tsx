@@ -25,6 +25,15 @@ type CardProps = {
   lists: List | any;
 };
 
+interface Review {
+  rating: number;
+  comment: string;
+  createdAt: string;
+  reviewerName: string;
+  updatedAt: string;
+  _id: string;
+}
+
 const Card = ({ lists }: CardProps) => {
   const router = useRouter();
 
@@ -45,13 +54,28 @@ const Card = ({ lists }: CardProps) => {
 
     console.log(lists)
 
+    const calculateAverageRating = (reviews: Review[]): number => {
+      if (!reviews || reviews.length === 0) return 0; // Correct check for empty array
+
+      const totalRating = reviews.reduce(
+        (sum, review) => sum + review.rating,
+        0
+      );
+      const averageRating = totalRating / reviews.length;
+
+      return averageRating;
+    };
+
+    const averageRating = calculateAverageRating(lists && lists.reviews);
+    console.log(`Average Rating: ${averageRating}`);
+
   return (
     <>
-        <Slider
-          showModal={showModal}
-          closeModal={closeModal}
-          images={lists?.images}
-        />
+      <Slider
+        showModal={showModal}
+        closeModal={closeModal}
+        images={lists?.images}
+      />
       <div className="w-[290px] flex flex-col gap-[16px] border-[#E4E7E9] border-[1px] rounded-[8px] p-[8px] drop-shadow-sm hover:shadow-2xl shadow-white/12 cursor-pointer relative">
         {lists && lists?.expressShipping && (
           <div className="bg-primary rounded-br-[8px] rounded-tl-[8px] absolute top-0 left-0 py-[7px] px-[10px] flex justify-center items-center gap-1 text-white z-50">
@@ -101,12 +125,19 @@ const Card = ({ lists }: CardProps) => {
           </p>
 
           <div className="flex justify-start items-center gap-[2px]">
-            <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-            <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-            <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-            <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-            <FaStar className="text-[#FA8232] w-[13px] h-[12px]" />
-            <p className="text-[#77878F] text-[12px] pl-1">(583)</p>
+            {[...Array(5)].map((_, index) => (
+              <FaStar
+                key={index}
+                className={
+                  index < averageRating
+                    ? "text-[#FA8232] w-[13px] h-[12px]"
+                    : "text-gray-300 w-[13px] h-[12px]"
+                }
+              />
+            ))}
+            <p className="text-[#77878F] text-[12px] pl-1">
+              ({lists && lists.reviews && lists.reviews.length})
+            </p>
           </div>
           <p className="text-[#05031A] text-[16px] font-[600] pt-2">
             ₦ {formatNumberWithCommas(lists && lists?.salePrice)}
