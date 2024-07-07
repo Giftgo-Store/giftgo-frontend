@@ -40,7 +40,7 @@ const CheckoutModal: React.FC<ModalProps> = ({
         console.error(
           //@ts-ignore
           "Error fetching resource",
-          error?.response?.data || error?.message
+          // error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions

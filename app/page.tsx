@@ -26,10 +26,9 @@ const Landing = () => {
         console.log("Successful", response.data.data);
       } catch (error) {
         //@ts-ignore
-        //@ts-expect-error
         console.error(
           "Error fetching resource",
-          error?.response?.data || error?.message
+          // error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
