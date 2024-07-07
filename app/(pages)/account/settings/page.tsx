@@ -160,7 +160,7 @@ const Settings = () => {
       e.preventDefault();
       try {
         const response = await axios.put(
-          `${BASE_URL}/api/v1/user//update-address`,
+          `${BASE_URL}/api/v1/user/update-address`,
           {
             address,
             city,
