@@ -6,7 +6,7 @@ import { IoEyeOutline } from "react-icons/io5";
 import { PiShoppingCart } from "react-icons/pi";
 import { LiaFighterJetSolid } from "react-icons/lia";
 import { useRouter } from "next/navigation";
-import Slider from "../commons/Slider";
+import Slider from "./commons/Slider";
 
 type List = {
   brandName: string;
@@ -54,20 +54,17 @@ const Card = ({ lists }: CardProps) => {
 
   console.log(lists);
 
-    const calculateAverageRating = (reviews: Review[]): number => {
-      if (!reviews || reviews.length === 0) return 0; // Correct check for empty array
+  const calculateAverageRating = (reviews: Review[]): number => {
+    if (!reviews || reviews.length === 0) return 0; // Correct check for empty array
 
-      const totalRating = reviews.reduce(
-        (sum, review) => sum + review.rating,
-        0
-      );
-      const averageRating = totalRating / reviews.length;
+    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+    const averageRating = totalRating / reviews.length;
 
-      return averageRating;
-    };
+    return averageRating;
+  };
 
-    const averageRating = calculateAverageRating(lists && lists.reviews);
-    console.log(`Average Rating: ${averageRating}`);
+  const averageRating = calculateAverageRating(lists && lists.reviews);
+  console.log(`Average Rating: ${averageRating}`);
 
   return (
     <>
