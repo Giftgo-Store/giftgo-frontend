@@ -109,7 +109,7 @@ export default function Dashboard() {
 
   const session: any = useSession();
   const token = session?.data?.token;
-  const API = BASE_URL+"/api/v1";
+  const API = BASE_URL + "/api/v1";
 
   const weeklyorders = revenueStats?.weeklyStats?.map((totalOrders) => {
     return totalOrders.totalOrders;
@@ -140,9 +140,11 @@ export default function Dashboard() {
   console.log(sorted_recent_orders);
   const trending_products = shuffle([...bestSellingProducts]);
   const salesByLocation = reportData[5] || [];
-  const maxOrders = Math.max(
-    ...salesByLocation.map((loc: any) => loc.totalOrders)
+  const totalOrders = salesByLocation.reduce(
+    (sum: number, loc: any) => sum + loc.totalOrders,
+    0
   );
+  const averageOrders = totalOrders / (salesByLocation.length - 1);
 
   const series: any = [
     {
@@ -304,8 +306,8 @@ export default function Dashboard() {
       label: "STATUS",
     },
     {
-      key: "price",
-      label: "PRICE",
+      key: "revenue",
+      label: "REVENUE",
     },
   ];
 
@@ -454,6 +456,8 @@ export default function Dashboard() {
 
       case "price":
         return <p className="font-normal">₦{item.price}</p>;
+      case "revenue":
+        return <p className="font-normal">₦{item.revenue}</p>;
       case "customer":
         return <p>{item.customer}</p>;
 
@@ -473,7 +477,7 @@ export default function Dashboard() {
     } else if (x === 0) {
       return "0";
     } else {
-      return x.toString();
+      return x.toLocaleString().toString();
     }
   }
 
@@ -754,9 +758,9 @@ export default function Dashboard() {
               {!loading ? (
                 salesByLocation.map((location: any) => {
                   const percentage = Number(
-                    ((location.totalOrders / maxOrders) * 100).toFixed(1)
+                    ((location.totalOrders / averageOrders) * 100).toFixed(1)
                   );
-                  const isDecrease = Number(percentage) < 100;
+                  const isDecrease = Number(percentage) < averageOrders;
 
                   return (
                     <div
