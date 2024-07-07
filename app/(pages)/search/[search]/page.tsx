@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Card from "@/app/components/Card";
+import Card from "@/app/components/cards/Card";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import BASE_URL from "@/app/config/baseurl";
@@ -44,7 +44,9 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message );
+          "Error fetching resource",
+          error?.response?.data || error?.message
+        );
       } finally {
         // Any cleanup or final actions
       }

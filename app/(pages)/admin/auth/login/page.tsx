@@ -29,35 +29,7 @@ const AdminLogin = () => {
       setErrorMessage(error);
     }
   }, [error]);
-  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   setPending(true);
-
-  //   const formData = new FormData(e.currentTarget);
-  //   const email = formData.get("email") as string;
-  //   const password = formData.get("password") as string;
-
-  //   try {
-  //     const response = await signIn("credentials", {
-  //       redirect: false,
-  //       email,
-  //       password,
-  //     });
-
-  //     setPending(false);
-
-  //     if (!response || !response.ok) {
-  //       setErrorMessage(response?.error || "Invalid login credentials");
-  //     } else {
-  //       setErrorMessage("");
-  //       router.push("/admin/dashboard"); // Redirect after successful login
-  //     }
-  //   } catch (error) {
-  //     console.error("Login error:", error);
-  //     setPending(false);
-  //     setErrorMessage("An error occurred during login");
-  //   }
-  // };
+ 
 
   return (
     <div className="flex justify-center items-center w-full min-h-[80vh] h-full">
@@ -70,7 +42,7 @@ const AdminLogin = () => {
             email,
             password,
             redirect: true,
-            callbackUrl: "/admin/dashboard",
+            callbackUrl: "/admin",
           });
         }}
       >

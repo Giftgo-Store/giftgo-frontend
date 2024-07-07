@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Image from "next/image";
 import { useState } from "react";
 import { FaStar } from "react-icons/fa6";
@@ -6,19 +6,19 @@ import { IoEyeOutline } from "react-icons/io5";
 import { PiShoppingCart } from "react-icons/pi";
 import { LiaFighterJetSolid } from "react-icons/lia";
 import { useRouter } from "next/navigation";
-import Slider from "./Slider";
+import Slider from "../commons/Slider";
 
 type List = {
   brandName: string;
-  images: string[],
-  createdAt: string,
+  images: string[];
+  createdAt: string;
   description: string;
-  expressShipping: string,
+  expressShipping: string;
   productName: string;
   regularPrice: string;
   salesPrice: string;
   stockQuantity: string;
-  _id:string;
+  _id: string;
 };
 
 type CardProps = {
@@ -34,24 +34,24 @@ const Card = ({ lists }: CardProps) => {
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
 
-    function formatNumberWithCommas(amount: number): string {
-      return new Intl.NumberFormat("en-US").format(amount);
-    }
+  function formatNumberWithCommas(amount: number): string {
+    return new Intl.NumberFormat("en-US").format(amount);
+  }
 
   const [showModal, setShowModal] = useState(false);
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
 
-    console.log(lists)
+  console.log(lists);
 
   return (
     <>
-        <Slider
-          showModal={showModal}
-          closeModal={closeModal}
-          images={lists?.images}
-        />
+      <Slider
+        showModal={showModal}
+        closeModal={closeModal}
+        images={lists?.images}
+      />
       <div className="w-[290px] flex flex-col gap-[16px] border-[#E4E7E9] border-[1px] rounded-[8px] p-[8px] drop-shadow-sm hover:shadow-2xl shadow-white/12 cursor-pointer relative">
         {lists && lists?.expressShipping && (
           <div className="bg-primary rounded-br-[8px] rounded-tl-[8px] absolute top-0 left-0 py-[7px] px-[10px] flex justify-center items-center gap-1 text-white z-50">
@@ -116,5 +116,5 @@ const Card = ({ lists }: CardProps) => {
     </>
   );
 };
- 
+
 export default Card;

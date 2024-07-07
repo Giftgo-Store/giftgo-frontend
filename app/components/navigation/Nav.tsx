@@ -13,7 +13,7 @@ import { LuUsers } from "react-icons/lu";
 import { FiFileText } from "react-icons/fi";
 import { FiBox } from "react-icons/fi";
 import { IoMdAddCircleOutline } from "react-icons/io";
-import BoxAdd from "../../public/box-add.svg";
+import BoxAdd from "../../../public/box-add.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -86,14 +86,14 @@ export default function Nav() {
         >
           <ListboxItem
             className={`${
-              pathname === "/admin/dashboard" ? "bg-[#F3F4F8]" : "opacity-60"
+              pathname === "/admin" ? "bg-[#F3F4F8]" : "opacity-60"
             } ${
               showOnlyIcon ? "gap-0 " : "px-2"
             } transition-[width] transform ease-in-out duration-300 `}
             startContent={<TbSmartHome size={34} />}
             key="dashboard"
             aria-label="dashboard"
-            href="/admin/dashboard"
+            href="/admin"
           >
             <p
               className={`text-base font-semibold transition-[width] transform ease-in-out block duration-300 ${

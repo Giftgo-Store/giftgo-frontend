@@ -1,6 +1,6 @@
 "use client";
 
-import Card from "@/app/components/Card";
+import Card from "@/app/components/cards/Card";
 import { FaArrowRight } from "react-icons/fa6";
 import Image from "next/image";
 import { useRouter, useParams } from "next/navigation";
@@ -46,7 +46,6 @@ const Page = () => {
 
     fetchData();
   }, [location, toast]);
-
 
   const cat: any =
     category &&

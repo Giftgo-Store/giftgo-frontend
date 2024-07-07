@@ -4,7 +4,7 @@ import { FaArrowRight } from "react-icons/fa6";
 import Image from "next/image";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import axios from "axios";
-import BASE_URL from "../config/baseurl";
+import BASE_URL from "../../config/baseurl";
 import Cookie from "js-cookie";
 import { useAppToast } from "@/app/providers/useAppToast";
 
