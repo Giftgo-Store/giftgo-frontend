@@ -1,6 +1,6 @@
 "use client";
 
-import Card from "@/app/components/Card";
+import Card from "@/app/components/cards/Card";
 import {
   FaArrowRight,
   FaArrowLeft,
@@ -26,7 +26,7 @@ import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
-import Modal from "@/app/components/LoginModal";
+import Modal from "@/app/components/modals/LoginModal";
 import { useRefetch } from "@/app/context/refetchContext";
 import Link from "next/link";
 import { useAppToast } from "@/app/providers/useAppToast";
@@ -84,7 +84,9 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message);
+          "Error fetching resource",
+          // error?.response?.data || error?.message
+        );
       } finally {
         // Any cleanup or final actions
       }
@@ -92,9 +94,9 @@ const Page = () => {
 
     fetchData();
   }, [location, params]);
-  
+
   const query = new URLSearchParams({
-    quantity: quantity.toString()
+    quantity: quantity.toString(),
   }).toString();
 
   const handleIncrease = () => {
@@ -146,20 +148,19 @@ const Page = () => {
     }
   };
 
-  console.log(product && product.reviews)
+  console.log(product && product.reviews);
 
-const calculateAverageRating = (reviews: Review[]): number => {
-  if (!reviews || reviews.length === 0) return 0; // Correct check for empty array
+  const calculateAverageRating = (reviews: Review[]): number => {
+    if (!reviews || reviews.length === 0) return 0; // Correct check for empty array
 
-  const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
-  const averageRating = totalRating / reviews.length;
+    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+    const averageRating = totalRating / reviews.length;
 
-  return averageRating;
-};
+    return averageRating;
+  };
 
-const averageRating = calculateAverageRating(product && product.reviews);
-console.log(`Average Rating: ${averageRating}`);
-
+  const averageRating = calculateAverageRating(product && product.reviews);
+  console.log(`Average Rating: ${averageRating}`);
 
   return (
     <div className="">
@@ -262,7 +263,6 @@ console.log(`Average Rating: ${averageRating}`);
               {product && product?.productName}
             </h2>
             <div className="flex justify-start items-center gap-[2px]">
-             
               {[...Array(5)].map((_, index) => (
                 <FaStar
                   key={index}
@@ -382,10 +382,12 @@ console.log(`Average Rating: ${averageRating}`);
               <h2 className="text-[#191C1F] font-[500]">
                 Shipping Information
               </h2>
-              {product.expressShipping && <div className="bg-primary rounded-br-[8px] mt-2 lg:mt-5 rounded-tl-[8px] py-[5px] px-[12px] flex justify-center items-center gap-1 text-white w-[fit-content]">
-                <LiaFighterJetSolid />
-                <p className="text-[11px]">Express shipping</p>
-              </div>}
+              {product.expressShipping && (
+                <div className="bg-primary rounded-br-[8px] mt-2 lg:mt-5 rounded-tl-[8px] py-[5px] px-[12px] flex justify-center items-center gap-1 text-white w-[fit-content]">
+                  <LiaFighterJetSolid />
+                  <p className="text-[11px]">Express shipping</p>
+                </div>
+              )}
               <p className="text-[#5F6C72] mt-1">
                 <span className="font-[500]">Courier : </span> 2-4 days free
                 shipping

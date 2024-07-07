@@ -9,13 +9,13 @@ import { AiOutlineUser } from "react-icons/ai";
 import { GiHamburgerMenu } from "react-icons/gi";
 import Link from "next/link";
 import { useState, useEffect, ChangeEvent } from "react";
-import Modal from "./LoginModal";
-import CheckoutModal from "./CheckoutModal";
+import Modal from "../modals/LoginModal";
+import CheckoutModal from "../modals/CheckoutModal";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
-import { useRefetch } from "../context/refetchContext";
+import { useRefetch } from "../../context/refetchContext";
 const LandingHeader = () => {
   const { refetch } = useRefetch();
 
@@ -29,7 +29,7 @@ const LandingHeader = () => {
     const query = new URLSearchParams({
       product: e.target.value,
     });
-      router.push(`/search/product?${query}`);
+    router.push(`/search/product?${query}`);
   };
 
   useEffect(() => {
@@ -47,7 +47,9 @@ const LandingHeader = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource",error?.response?.data || error?.message);
+          "Error fetching resource",
+          // error?.response?.data || error?.message
+        );
       } finally {
         // Any cleanup or final actions
       }

@@ -9,7 +9,7 @@ import Link from "next/link";
 import Cookies from "js-cookie";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
-import { useRefetch } from "../context/refetchContext";
+import { useRefetch } from "../../context/refetchContext";
 import { useAppToast } from "@/app/providers/useAppToast";
 
 interface ModalProps {
@@ -39,7 +39,8 @@ const CheckoutModal: React.FC<ModalProps> = ({
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message
+          "Error fetching resource",
+          // error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
@@ -47,7 +48,6 @@ const CheckoutModal: React.FC<ModalProps> = ({
     };
     fetchCartItems();
   }, [refetch]);
-
 
   const handleDeleteCartItem = async (id: string) => {
     try {
@@ -103,9 +103,6 @@ const CheckoutModal: React.FC<ModalProps> = ({
   function formatNumberWithCommas(amount: number): string {
     return new Intl.NumberFormat("en-US").format(amount);
   }
-
-  
-
 
   return (
     <div

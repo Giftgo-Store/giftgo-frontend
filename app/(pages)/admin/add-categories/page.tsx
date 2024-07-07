@@ -20,6 +20,8 @@ import { SlPicture } from "react-icons/sl";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
+import BASE_URL from "@/app/config/baseurl";
+import { toast } from "react-toastify";
 interface Category {
   name: string;
   image: string;
@@ -44,8 +46,7 @@ export default function AddCategories() {
   });
   const session: any = useSession();
   const token = session?.data?.token;
-  const API = process.env.NEXT_PUBLIC_API_ROUTE;
-
+  const API = BASE_URL + "/api/v1";
 
   const selectedValue = useMemo(
     () => Array.from(selectedKeys).join(", "),
@@ -205,9 +206,6 @@ export default function AddCategories() {
                     <div className="flex justify-center items-center flex-col gap-4  p-4 py-5 bordered-input">
                       <div className="w-full h-full">
                         <form
-                          onSubmit={(event) => {
-                            alert("ok");
-                          }}
                         >
                           <input
                             type="file"
@@ -253,7 +251,13 @@ export default function AddCategories() {
                 <ModalFooter className="flex justify-center">
                   <Button
                     className="bg-[#1EB564] text-white text-sm w-[150px]"
-                    onClick={addCategory}
+                    onClick={() => {
+                      toast.promise(addCategory(), {
+                        pending: "Adding product information ",
+                        success: "Product information editted",
+                        error: "An error occured , please try again",
+                      });
+                    }}
                   >
                     CONFIRM
                   </Button>

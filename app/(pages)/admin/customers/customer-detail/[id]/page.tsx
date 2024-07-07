@@ -30,6 +30,7 @@ import {
   redirect,
 } from "next/navigation";
 import { useSession } from "next-auth/react";
+import BASE_URL from "@/app/config/baseurl";
 
 interface users {
   _id: string;
@@ -102,7 +103,7 @@ export default function Workspace({ params }: { params: { id: string } }) {
 
   const session: any = useSession();
   const token = session?.data?.token;
-  const API = process.env.NEXT_PUBLIC_API_ROUTE;
+  const API = BASE_URL + "/api/v1";
 
   // Update status filter value when search params change
   useEffect(() => {

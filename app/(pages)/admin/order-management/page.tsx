@@ -10,7 +10,15 @@ import {
   Tab,
   Tabs,
 } from "@nextui-org/react";
-import { useState, useMemo, useCallback, Suspense, useEffect } from "react";
+import {
+  useState,
+  useMemo,
+  useCallback,
+  Suspense,
+  useEffect,
+  useRef,
+  MutableRefObject,
+} from "react";
 import { SlArrowDown } from "react-icons/sl";
 import { CiSearch } from "react-icons/ci";
 import { PiPrinterFill } from "react-icons/pi";
@@ -22,8 +30,8 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { json } from "stream/consumers";
-import { log } from "console";
+import BASE_URL from "@/app/config/baseurl";
+import { ToastContainer, toast } from "react-toastify";
 
 export interface order {
   _id: string;
@@ -80,7 +88,6 @@ export default function OrderManagement() {
   const pathname = usePathname();
   const { replace } = useRouter();
   const searchParams = useSearchParams();
-  
 
   const sesssion = useSession({
     required: true,
@@ -91,7 +98,7 @@ export default function OrderManagement() {
 
   const session: any = useSession();
   const token = session?.data?.token;
-  const API = process.env.NEXT_PUBLIC_API_ROUTE;
+  const API = BASE_URL + "/api/v1";
 
   // fetchdata
   const getOrders = async () => {
@@ -134,16 +141,13 @@ export default function OrderManagement() {
             )
           : []
       );
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
     getOrders();
   }, []);
-  //   useEffect(() => {
-  //   updateOrderStatus()
-  // },[selected])
+
   // Update status filter value when search params change
   useEffect(() => {
     setStatusFilterValue(`${pathname}?${searchParams}`);
@@ -334,7 +338,11 @@ export default function OrderManagement() {
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
             const status = e.target.value;
             setSelected(status);
-            updateOrderStatus(order.orderId, status);
+            toast.promise(updateOrderStatus(order.orderId, status), {
+              pending: "updating status to " + status,
+              success: "status updated to " + status,
+              error: "an error occured , please try again",
+            });
           }}
         >
           {status.map((item) => (
@@ -390,8 +398,11 @@ export default function OrderManagement() {
       console.log(error);
     }
   };
+
   return (
     <div className="pb-12" suppressHydrationWarning={true}>
+      {/* Same as */}
+
       <div className="w-full overflow-x-auto py-2">
         <Suspense fallback={<TabFallback />}>{MyTabs()}</Suspense>
       </div>
@@ -607,7 +618,7 @@ export default function OrderManagement() {
                                 className="cursor-pointer"
                                 onClick={() => {
                                   getorderDetails(order.orderId);
-                                  alert(order.orderId)
+                                  alert(order.orderId);
                                 }}
                               />
                             </p>
@@ -692,4 +703,4 @@ export default function OrderManagement() {
     </div>
   );
 }
-OrderManagement.requireAuth=true
+OrderManagement.requireAuth = true;

@@ -1,5 +1,5 @@
 "use client";
-import { ImageUploadCard } from "@/app/components/imageUploadCard";
+import { ImageUploadCard } from "@/app/components/cards/imageUploadCard";
 import {
   Avatar,
   Input,
@@ -26,6 +26,8 @@ import {
 } from "react";
 import { SlPicture } from "react-icons/sl";
 import { countries } from "@/app/assets/data";
+import BASE_URL from "@/app/config/baseurl";
+import { toast } from "react-toastify";
 interface Form {
   USD: string;
   GBP: string;
@@ -76,7 +78,7 @@ export default function AddProducts() {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [imageNames, setImageNames] = useState<string[]>([]);
   const [productName, setProductName] = useState("");
-  const [productCategory, setProductCategory] = useState("");
+  const [productCategory, setProductCategory] = useState<string>("");
   const [productDescription, setProductDescription] = useState("");
   const [regularPrice, setRegularPrice] = useState<number | any>();
   const [brandName, setBrandName] = useState("");
@@ -86,7 +88,7 @@ export default function AddProducts() {
   const [sku, setSku] = useState("");
   const [expressShipping, setExpressShipping] = useState<boolean>(false);
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<Form>({
     USD: "",
     GBP: "",
@@ -108,7 +110,7 @@ export default function AddProducts() {
   });
   const session: any = useSession();
   const token = session?.data?.token;
-  const API = process.env.NEXT_PUBLIC_API_ROUTE;
+  const API = BASE_URL + "/api/v1";
   const flags: Flag[] = [
     {
       currency: "NGN",
@@ -262,14 +264,6 @@ export default function AddProducts() {
     ));
   }, [imagePreviews, imageNames]);
 
-  function randomStr(len: number, arr: string) {
-    let ans = "";
-    for (let i = len; i > 0; i--) {
-      ans += arr[Math.floor(Math.random() * arr.length)];
-    }
-    return ans;
-  }
-
   const resetForm = () => {
     setProductName("");
     setProductCategory("");
@@ -312,16 +306,13 @@ export default function AddProducts() {
     formdata.append("location", location);
     setLoading(true);
     try {
-      const res = await fetch(
-        `${API}/products/add-product`,
-        {
-          headers: {
-            AUTHORIZATION: "Bearer " + token,
-          },
-          method: "POST",
-          body: formdata,
-        }
-      );
+      const res = await fetch(`${API}/products/add-product`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+        method: "POST",
+        body: formdata,
+      });
 
       const productData = await res.json();
       if (res.ok) {
@@ -398,15 +389,12 @@ export default function AddProducts() {
   // },[])
   const getAllCategory = async () => {
     try {
-      const res = await fetch(
-        `${API}/category/all-categories`,
-        {
-          headers: {
-            AUTHORIZATION: "Bearer " + token,
-          },
-        }
-      );
-
+      const res = await fetch(`${API}/category/all-categories`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
+      setLoading(false);
       const resData = await res.json();
       setCategories(resData.data);
     } catch (error) {}
@@ -418,14 +406,11 @@ export default function AddProducts() {
   }, [token]);
   const fetchProduct = async (id: string) => {
     try {
-      const res = await fetch(
-        `${API}/products/${id}`,
-        {
-          headers: {
-            AUTHORIZATION: "Bearer " + token,
-          },
-        }
-      );
+      const res = await fetch(`${API}/products/${id}`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
       const productData = await res.json();
       // console.log(productData.data);
       return productData.data;
@@ -528,6 +513,9 @@ export default function AddProducts() {
     }
   }, [edit, conversionRates, token]);
 
+  function handleCategoryChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    setProductCategory(e.target.value);
+  }
   return (
     <div className="pb-8">
       <form
@@ -535,9 +523,17 @@ export default function AddProducts() {
         onSubmit={(e) => {
           e.preventDefault();
           if (edit) {
-            editProducts();
+            toast.promise(editProducts(), {
+              pending: "Editing product information ",
+              success: "Product information editted",
+              error: "An error occured , please try again",
+            });
           } else {
-            addProducts();
+            toast.promise(addProducts(), {
+              pending: "Adding product information ",
+              success: "Product information editted",
+              error: "An error occured , please try again",
+            });
           }
         }}
       >
@@ -621,18 +617,17 @@ export default function AddProducts() {
               className="w-full bg-white shadow-none border-1 rounded-lg"
               placeholder="Select category"
               variant="flat"
-              aria-label="filter select"
+              aria-label="category"
+              isLoading={loading}
               classNames={{
                 trigger: [
-                  "bg-white",
+                  "bg-white text-black",
                   "data-focus-[within=true]:bg-white",
                   "data-[hover=true]:bg-white",
                   "group-data-[focus=true]:bg-white",
                 ],
               }}
-              onChange={(e) => {
-                setProductCategory(e.target.value);
-              }}
+              onChange={handleCategoryChange}
               selectedKeys={[productCategory]}
             >
               {categories &&
@@ -724,7 +719,7 @@ export default function AddProducts() {
                   size="md"
                   radius="sm"
                   className="w-full bg-white shadow-none border-1 rounded-lg"
-                  placeholder="Select category"
+                  placeholder="Select location"
                   variant="flat"
                   aria-label="filter select"
                   classNames={{
@@ -743,7 +738,9 @@ export default function AddProducts() {
                 >
                   {countries &&
                     countries.map((country: { name: string }) => (
-                      <SelectItem key={country.name.toUpperCase()}>{country.name}</SelectItem>
+                      <SelectItem key={country.name.toUpperCase()}>
+                        {country.name}
+                      </SelectItem>
                     ))}
                 </Select>
               </div>

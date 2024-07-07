@@ -1,6 +1,6 @@
 "use client";
 
-import ReviewModal from "@/app/components/ReviewModal";
+import ReviewModal from "@/app/components/modals/ReviewModal";
 import Image from "next/image";
 import Cookies from "js-cookie";
 import BASE_URL from "@/app/config/baseurl";

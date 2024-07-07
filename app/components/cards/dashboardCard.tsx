@@ -18,7 +18,7 @@ export function DashboardCard({
     <div className={`${customstyle} w-full p-5 bg-white rounded-2xl min-h-[191px]`}>
       <div className="flex flex-col">
         <p className="font-semibold text-lg text-[#23272E]">{title}</p>
-        <span className="text-[#8B909A] text-base">Last 7 days</span>
+        <span className="text-[#8B909A] text-base">Number of orders placed</span>
       </div>
       <div className="flex flex-col gap-5">
         <div className="flex gap-5 flex-wrap sm:flex-nowrap flex-row justify-between ">

@@ -30,7 +30,7 @@ export function Header() {
   const pathname = usePathname();
   function pageName() {
     switch (pathname) {
-      case "/admin/dashboard":
+      case "/admin":
         return "Dashboard";
       case "/admin/order-management":
         return "Order Management";
@@ -107,7 +107,7 @@ export function Header() {
                     size="sm"
                   >
                     <Avatar
-                      src="https://th.bing.com/th/id/OIP.DUflnJMpmj75BYf1WR6ZEwHaEK?rs=1&pid=ImgDetMain"
+         
                       size="md"
                     ></Avatar>
                   </Badge>
@@ -143,12 +143,12 @@ export function Header() {
           </NavbarItem>
           <NavbarItem
             className={`flex gap-3 justify-normal items-center p-[6px] rounded text-black ${
-              pathname === "/admin/dashboard" ? "bg-[#F3F4F8]" : "opacity-60"
+              pathname === "/admin" ? "bg-[#F3F4F8]" : "opacity-60"
             }   transition-[width] transform ease-in-out duration-300 `}
             as={Link}
             key="dashboard"
             aria-label="dashboard"
-            href="/admin/dashboard"
+            href="/admin"
           >
             <TbSmartHome size={34} />
             <p

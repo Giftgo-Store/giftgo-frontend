@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { FiArrowRight } from "react-icons/fi";
 import { useEffect, useRef, useState } from "react";
-import Modal from "@/app/components/LoginModal";
+import Modal from "@/app/components/modals/LoginModal";
 import Cookies from "js-cookie";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
@@ -16,7 +16,6 @@ const Page = () => {
   const toast = useAppToast();
   const router = useRouter();
   const { triggerRefetch } = useRefetch();
-  
 
   const [showModal, setShowModal] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
@@ -60,7 +59,9 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message );
+          "Error fetching resource",
+          // error?.response?.data || error?.message
+        );
       } finally {
         // Any cleanup or final actions
       }
@@ -68,27 +69,28 @@ const Page = () => {
     fetchCartItems();
   }, []);
 
-    useEffect(() => {
-      const fetchUser = async () => {
-        try {
-          const response = await axios.get(`${BASE_URL}/api/v1/user/profile`, {
-            headers: {
-              Authorization: `Bearer ${Cookies.get("token")}`,
-            },
-          });
-          // Handle successful response, e.g., save token, redirect, etc.
-          setUser(response.data.data);
-        } catch (error) {
-          console.error(
-            //@ts-ignore
-            "Error fetching resource",error?.response?.data || error?.message
-          );
-        } finally {
-          // Any cleanup or final actions
-        }
-      };
-      fetchUser();
-    }, []);
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/v1/user/profile`, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        });
+        // Handle successful response, e.g., save token, redirect, etc.
+        setUser(response.data.data);
+      } catch (error) {
+        console.error(
+          //@ts-ignore
+          "Error fetching resource",
+          // error?.response?.data || error?.message
+        );
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+    fetchUser();
+  }, []);
 
   const [isFormValid, setIsFormValid] = useState(false);
 
@@ -108,17 +110,17 @@ const Page = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
 
-    useEffect(() => {
-      if (user && user.address) {
-        setAddress(user.address.address);
-             setCountry(user.address && user.address.country);
-             setCity(user.address && user.address.city);
-             setRegion(user.address && user.address.state);
-        setZipCode(user.address.postal_code);
-      }
-    }, [user]);
+  useEffect(() => {
+    if (user && user.address) {
+      setAddress(user.address.address);
+      setCountry(user.address && user.address.country);
+      setCity(user.address && user.address.city);
+      setRegion(user.address && user.address.state);
+      setZipCode(user.address.postal_code);
+    }
+  }, [user]);
 
-  console.log(user && user.address && user.address.address)
+  console.log(user && user.address && user.address.address);
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -136,7 +138,9 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message);
+          "Error fetching resource",
+          // error?.response?.data || error?.message
+        );
       } finally {
         // Any cleanup or final actions
       }
@@ -163,7 +167,9 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message);
+          "Error fetching resource",
+          // error?.response?.data || error?.message
+        );
       } finally {
         // Any cleanup or final actions
       }
@@ -188,7 +194,6 @@ const Page = () => {
     }));
 
   const handlePlaceOrder = async () => {
-   
     try {
       const response = await axios.post(
         `${BASE_URL}/api/v1/orders/make-order`,
@@ -285,13 +290,13 @@ const Page = () => {
 
   const validateForm = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-     const token = Cookies.get("token");
-     if (!token) {
-       console.log("No token");
-       openModal();
-       setShowLogin(true);
-       return;
-     }
+    const token = Cookies.get("token");
+    if (!token) {
+      console.log("No token");
+      openModal();
+      setShowLogin(true);
+      return;
+    }
     if (
       address === "" ||
       city === "" ||

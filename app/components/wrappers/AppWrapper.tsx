@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
 import React, { ReactNode } from "react";
-import Header from "./LandingHeader";
-import Footer from "./Footer";
+import Header from "../headers/LandingHeader";
+import Footer from "../footer/Footer";
 import { usePathname } from "next/navigation";
-import "../globals.css";
+import "../../globals.css";
 import Image from "next/image";
 
 const AppWrapper = ({
@@ -28,10 +28,7 @@ const AppWrapper = ({
               className="absolute right-2"
             />
           </div>
-          <div>
-
-          {children}
-          </div>
+          <div>{children}</div>
           <Footer />
         </div>
       )}
