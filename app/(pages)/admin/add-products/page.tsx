@@ -27,6 +27,7 @@ import {
 import { SlPicture } from "react-icons/sl";
 import { countries } from "@/app/assets/data";
 import BASE_URL from "@/app/config/baseurl";
+import { toast } from "react-toastify";
 interface Form {
   USD: string;
   GBP: string;
