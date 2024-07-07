@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-"use client"
+"use client";
 
-import Card from "./components/Card";
-import Category from "./components/Category";
+import Card from "./components/cards/Card";
+import Category from "./components/commons/Category";
 import "./globals.css";
 import Image from "next/image";
 import { IoTrophyOutline } from "react-icons/io5";
@@ -15,27 +15,29 @@ import Link from "next/link";
 import Cookies from "js-cookie";
 
 const Landing = () => {
-  const [location, setLocation] = useState([])
- 
- useEffect(() => {
-   const fetchData = async () => {
-     try {
-       const response = await axios.get(`${BASE_URL}/api/v1/location`);
-       setLocation(response.data.data)
-       // Handle successful response, e.g., save token, redirect, etc.
-       console.log("Successful", response.data.data);
-     } catch (error) {
-      //@ts-ignore
-      //@ts-expect-error
-       console.error("Error fetching resource", error?.response?.data || error?.message);
-     } finally {
-       // Any cleanup or final actions
-     }
-   };
+  const [location, setLocation] = useState([]);
 
-   fetchData();
- }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/v1/location`);
+        setLocation(response.data.data);
+        // Handle successful response, e.g., save token, redirect, etc.
+        console.log("Successful", response.data.data);
+      } catch (error) {
+        //@ts-ignore
+        //@ts-expect-error
+        console.error(
+          "Error fetching resource",
+          error?.response?.data || error?.message
+        );
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
 
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -113,21 +115,22 @@ const Landing = () => {
         </h2>
 
         <div className="bg-[#F5F5F5] py-10 px-10 lg:px-20 w-full flex justify-center items-center lg:gap-x-[140px] gap-y-5 gap-x-14 lg:gap-y-10 flex-wrap">
-          {location.length > 0 && location.map((loc:any, i:any) => {
-            return (
-              <Link
-                href={`/category/${loc._id}`}
-                key={i}
-                className="flex flex-col items-center justify-center gap-1"
-                onClick={() => Cookies.set("location", loc.location)}
-              >
-                <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
-                  <Image src={loc.image} alt="" width={68} height={50} />
-                </div>
-                <p className="text-[20px]">{loc.location}</p>
-              </Link>
-            );
-          })}
+          {location.length > 0 &&
+            location.map((loc: any, i: any) => {
+              return (
+                <Link
+                  href={`/category/${loc._id}`}
+                  key={i}
+                  className="flex flex-col items-center justify-center gap-1"
+                  onClick={() => Cookies.set("location", loc.location)}
+                >
+                  <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
+                    <Image src={loc.image} alt="" width={68} height={50} />
+                  </div>
+                  <p className="text-[20px]">{loc.location}</p>
+                </Link>
+              );
+            })}
         </div>
       </div>
     </>

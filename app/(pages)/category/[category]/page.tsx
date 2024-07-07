@@ -2,8 +2,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import Card from "@/app/components/Card";
-import Category from "@/app/components/Category";
+import Card from "@/app/components/cards/Card";
+import Category from "@/app/components/commons/Category";
 import { FaArrowRight, FaArrowLeft } from "react-icons/fa6";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -27,7 +27,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "swiper/css/autoplay";
-
 
 const page = () => {
   const toast = useAppToast();
@@ -86,9 +85,6 @@ const page = () => {
 
     fetchData();
   }, [params && params.category]);
-
-  
-
 
   return (
     <>

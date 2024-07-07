@@ -1,5 +1,5 @@
 "use client";
-import ProductListCard from "@/app/components/ProductListCard";
+import ProductListCard from "@/app/components/cards/ProductListCard";
 import { useEffect, useMemo, useState } from "react";
 import {
   Button,
@@ -12,7 +12,7 @@ import {
 } from "@nextui-org/react";
 import { CiSearch } from "react-icons/ci";
 import { IoMdAddCircleOutline } from "react-icons/io";
-import { ProductListSkeletonCard } from "@/app/components/productlistskeletonLoad";
+import { ProductListSkeletonCard } from "@/app/components/loaders/productlistskeletonLoad";
 import { useSession } from "next-auth/react";
 import { redirect,useRouter} from "next/navigation";
 import BASE_URL from "@/app/config/baseurl";

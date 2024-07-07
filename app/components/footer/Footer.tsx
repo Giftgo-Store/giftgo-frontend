@@ -1,5 +1,5 @@
 import Image from "next/image";
-import '../globals.css'
+import '../../globals.css'
 import { FaXTwitter, FaInstagram, FaFacebook } from "react-icons/fa6";
 import { IoIosSend } from "react-icons/io";
 

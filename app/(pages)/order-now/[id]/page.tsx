@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { FiArrowRight } from "react-icons/fi";
 import { useEffect, useRef, useState } from "react";
-import Modal from "@/app/components/LoginModal";
+import Modal from "@/app/components/modals/LoginModal";
 import Cookies from "js-cookie";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
@@ -19,7 +19,7 @@ const Page = () => {
   const params = useParams();
   const searchParams = useSearchParams();
 
-  const quantity = searchParams?.get('quantity')
+  const quantity = searchParams?.get("quantity");
 
   const [showModal, setShowModal] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
@@ -52,18 +52,20 @@ const Page = () => {
 
   useEffect(() => {
     const fetchCartItems = async () => {
-        try {
+      try {
         const response = await axios.get(
           `${BASE_URL}/api/v1/products/${params && params.id}`
         );
         // Handle successful response, e.g., save token, redirect, etc.
         setCartItems(response.data.data);
-        console.log('product')
+        console.log("product");
         console.log(response.data.data);
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message );
+          "Error fetching resource",
+          error?.response?.data || error?.message
+        );
       } finally {
         // Any cleanup or final actions
       }
@@ -84,7 +86,9 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message);
+          "Error fetching resource",
+          error?.response?.data || error?.message
+        );
       } finally {
         // Any cleanup or final actions
       }
@@ -138,7 +142,9 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message);
+          "Error fetching resource",
+          error?.response?.data || error?.message
+        );
       } finally {
         // Any cleanup or final actions
       }
@@ -165,7 +171,9 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message);
+          "Error fetching resource",
+          error?.response?.data || error?.message
+        );
       } finally {
         // Any cleanup or final actions
       }
@@ -189,15 +197,17 @@ const Page = () => {
             postal_code: zipCode,
           },
           customerPhoneNumber: user.phone,
-          orderedItems: [{
-            productId: cartItems._id,
-            quantity: Number(quantity),
-            price: cartItems.salePrice,
-            lifetime: false,
-            validity: 30,
-            productName: cartItems.productName,
-            licenses: [],
-          }],
+          orderedItems: [
+            {
+              productId: cartItems._id,
+              quantity: Number(quantity),
+              price: cartItems.salePrice,
+              lifetime: false,
+              validity: 30,
+              productName: cartItems.productName,
+              licenses: [],
+            },
+          ],
         },
         {
           headers: {
@@ -223,9 +233,7 @@ const Page = () => {
     }
   };
 
-  const total =  Number(quantity) * Number(cartItems.salePrice)
-;
-
+  const total = Number(quantity) * Number(cartItems.salePrice);
   function formatNumberWithCommas(amount: number): string {
     return new Intl.NumberFormat("en-US").format(amount);
   }
@@ -290,8 +298,10 @@ const Page = () => {
           Checkout
         </h2>
         <p className="text-[#475156] text-[18px] font-[500]">
-          <span className="cursor-pointer" onClick={() => router.push('/')}>Home</span> / <span className="cursor-pointer"> Shopping card</span> /
-          Checkout
+          <span className="cursor-pointer" onClick={() => router.push("/")}>
+            Home
+          </span>{" "}
+          / <span className="cursor-pointer"> Shopping card</span> / Checkout
         </p>
       </div>
 
@@ -377,7 +387,10 @@ const Page = () => {
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
                 >
-                  <option selected value={user && user?.address && user?.address?.country}>
+                  <option
+                    selected
+                    value={user && user?.address && user?.address?.country}
+                  >
                     {user && user.address ? user.address.country : "Select"}
                   </option>
                   {countries.length > 0 &&
@@ -402,7 +415,10 @@ const Page = () => {
                   value={region}
                   onChange={(e) => setRegion(e.target.value)}
                 >
-                  <option selected value={user && user?.address && user?.address?.state}>
+                  <option
+                    selected
+                    value={user && user?.address && user?.address?.state}
+                  >
                     {user && user.address ? user.address.state : "Select"}
                   </option>
                   {selectedState.length > 0 &&
@@ -579,43 +595,38 @@ const Page = () => {
           </div>
 
           <div className="flex flex-col items-start gap-4 px-5 w-full">
-
-                  <div
-                    className="flex justify-between w-full items-center gap-4"
-                  >
-                    <Image
-                      src={cartItems && cartItems?.images && cartItems?.images[0]}
-                      alt=""
-                      width={72}
-                      height={72}
-                      className="relative z-0 object-cover w-[72px] h-[72px]"
-                    />
-                    <div className="">
-                      <p className="text-[14px] font-[400]">
-                        {cartItems && cartItems?.brandName}{" "}
-                        {cartItems && cartItems?.productName}{" "}
-                        {cartItems && cartItems?.description && cartItems?.description.split(0, 20)}...
-                      </p>
-                      <p className="text-[14px] font-[400]">
-                        {quantity} x{" "}
-                        <span className="font-[700] text-[14px]">
-                          ₦
-                          {formatNumberWithCommas(
-                            cartItems && cartItems?.salePrice
-                          )}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-  
+            <div className="flex justify-between w-full items-center gap-4">
+              <Image
+                src={cartItems && cartItems?.images && cartItems?.images[0]}
+                alt=""
+                width={72}
+                height={72}
+                className="relative z-0 object-cover w-[72px] h-[72px]"
+              />
+              <div className="">
+                <p className="text-[14px] font-[400]">
+                  {cartItems && cartItems?.brandName}{" "}
+                  {cartItems && cartItems?.productName}{" "}
+                  {cartItems &&
+                    cartItems?.description &&
+                    cartItems?.description.split(0, 20)}
+                  ...
+                </p>
+                <p className="text-[14px] font-[400]">
+                  {quantity} x{" "}
+                  <span className="font-[700] text-[14px]">
+                    ₦{formatNumberWithCommas(cartItems && cartItems?.salePrice)}
+                  </span>
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="flex flex-col items-start gap-3 px-5 pt-4">
             <div className="flex justify-between items-center w-full">
               <p className="text-[#5F6C72] text-[14px]">Sub-total</p>
               <p className="text-[#191C1F] text-[14px] font-[700]">
-                ₦{" "}
-                {formatNumberWithCommas(total)}
+                ₦ {formatNumberWithCommas(total)}
               </p>
             </div>
             <div className="flex justify-between items-center w-full">
@@ -629,8 +640,7 @@ const Page = () => {
           <div className="flex justify-between items-center w-full px-5">
             <p className="text-[#191C1F] text-[16px]">Sub-total</p>
             <p className="text-[#191C1F] text-[16px] font-[700]">
-              ₦{" "}
-              {formatNumberWithCommas(total)}
+              ₦ {formatNumberWithCommas(total)}
             </p>
           </div>
 
