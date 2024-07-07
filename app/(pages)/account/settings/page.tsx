@@ -156,6 +156,43 @@ const Settings = () => {
         }
   };
 
+    const handleAddressUpdate = async (e: { preventDefault: () => void }) => {
+      e.preventDefault();
+      try {
+        const response = await axios.put(
+          `${BASE_URL}/api/v1/user//update-address`,
+          {
+            address,
+            city,
+            state: region,
+            country,
+            postal_code: zipCode,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+          }
+        );
+        console.log(response.data);
+        // Handle successful response, e.g., save token, redirect, etc.
+        toast({
+          status: "success",
+          description: response.data.message || "Success",
+        });
+      } catch (error) {
+        //@ts-ignore
+        toast({
+          status: "error",
+          description:
+            //@ts-expect-error
+            error?.response?.data || error?.message || "an error occurred ",
+        });
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+
 
   const handlePassword = () => {
     setShowPassword(!showPassword);
@@ -369,7 +406,7 @@ const Settings = () => {
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
               >
-                <option value="">
+                <option value={user && user?.address && user?.address?.state}>
                   {user && user?.address && user?.address?.state}
                 </option>
                 {selectedState.length > 0 &&
@@ -394,7 +431,7 @@ const Settings = () => {
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
               >
-                <option value="">
+                <option value={user && user?.address && user?.address?.city}>
                   {user && user?.address && user?.address?.city}
                 </option>
                 {selectedCity.length > 0 &&
@@ -404,6 +441,14 @@ const Settings = () => {
                     return (
                       <option key={i} value={city}>
                         {city}
+                      </option>
+                    );
+                  })}
+                {selectedCity.length > 0 &&
+                  selectedCity.map((count: any, i: any) => {
+                    return (
+                      <option key={i} value={count.name}>
+                        {count.name}
                       </option>
                     );
                   })}
@@ -445,7 +490,10 @@ const Settings = () => {
               />
             </fieldset>
           </div>
-          <button className="mt-2 flex justify-center items-center w-[204px] gap-[35px] text-white px-6 py-4 bg-primary rounded-[3px] font-[700] text-[14px]">
+          <button
+            className="mt-2 flex justify-center items-center w-[204px] gap-[35px] text-white px-6 py-4 bg-primary rounded-[3px] font-[700] text-[14px]"
+            onClick={(e) => handleAddressUpdate(e)}
+          >
             SAVE CHANGES
           </button>
         </form>
