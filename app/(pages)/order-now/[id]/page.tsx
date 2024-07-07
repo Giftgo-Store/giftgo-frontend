@@ -64,7 +64,7 @@ const Page = () => {
         console.error(
           //@ts-ignore
           "Error fetching resource",
-          error?.response?.data || error?.message
+          // error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
@@ -87,7 +87,7 @@ const Page = () => {
         console.error(
           //@ts-ignore
           "Error fetching resource",
-          error?.response?.data || error?.message
+          // error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
@@ -143,7 +143,7 @@ const Page = () => {
         console.error(
           //@ts-ignore
           "Error fetching resource",
-          error?.response?.data || error?.message
+          // error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
@@ -172,7 +172,7 @@ const Page = () => {
         console.error(
           //@ts-ignore
           "Error fetching resource",
-          error?.response?.data || error?.message
+          // error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
