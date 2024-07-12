@@ -109,6 +109,7 @@ const Page = () => {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
+  const [coupon, setCoupon] = useState("");
 
   useEffect(() => {
     if (user && user.address) {
@@ -678,6 +679,21 @@ const Page = () => {
               </p>
             </div>
             <div className="flex justify-between items-center w-full">
+              <p className="text-[#5F6C72] text-[14px]">
+                Discount <span className="text-primary">-10%</span>
+              </p>
+              <p className="text-primary text-[14px] font-[700]">
+                -₦{" "}
+                {formatNumberWithCommas(
+                  total.reduce(
+                    (accumulator: any, currentValue: any) =>
+                      accumulator + currentValue,
+                    0
+                  )
+                )}
+              </p>
+            </div>
+            <div className="flex justify-between items-center w-full">
               <p className="text-[#5F6C72] text-[14px]">Shipping</p>
               <p className="text-[#191C1F] text-[14px] font-[700]">Free</p>
             </div>
@@ -686,7 +702,7 @@ const Page = () => {
           <div className="bg-[#E4E7E9] h-[1px] w-full my-[16px]"></div>
 
           <div className="flex justify-between items-center w-full px-5">
-            <p className="text-[#191C1F] text-[16px]">Sub-total</p>
+            <p className="text-[#191C1F] text-[16px]">Total</p>
             <p className="text-[#191C1F] text-[16px] font-[700]">
               ₦{" "}
               {formatNumberWithCommas(
@@ -697,6 +713,20 @@ const Page = () => {
                 )
               )}
             </p>
+          </div>
+
+          <div className="flex justify-between flex-col items-start w-full px-5 pt-[24px] gap-2">
+            {" "}
+            <label htmlFor="username" className="text-[#191C1F] text-[14px]">
+              Enter Coupon <span className="text-[#929FA5]">(Optional)</span>
+            </label>
+            <input
+              type="tel"
+              className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none"
+              placeholder="Coupon Code"
+              value={coupon}
+              onChange={(e) => setCoupon(e.target.value)}
+            />
           </div>
 
           <div className="flex justify-center items-center my-6">
