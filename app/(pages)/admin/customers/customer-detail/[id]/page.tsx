@@ -10,6 +10,7 @@ import {
   Selection,
   Skeleton,
   Spacer,
+  Spinner,
   Tab,
   Tabs,
   User,
@@ -31,6 +32,7 @@ import {
 } from "next/navigation";
 import { useSession } from "next-auth/react";
 import BASE_URL from "@/app/config/baseurl";
+import { toast } from "react-toastify";
 
 interface users {
   _id: string;
@@ -41,17 +43,18 @@ interface users {
   createdAt: string;
   updatedAt: string;
 }
-interface order {
+export interface order {
+  _id: string;
   orderId: string;
-  timestamp: string;
-  customerName: string;
-  totalAmount: number;
+  created: string;
+  customer: string;
+  total: number;
   status: string;
   profit: number;
-  products: [
+  items: [
     {
-      productId: string;
-      productName: string;
+      sku: string;
+      name: string;
       price: number;
       originalPrice: number;
       sellingPrice: number;
@@ -62,13 +65,16 @@ interface order {
   ];
 }
 export default function Workspace({ params }: { params: { id: string } }) {
+  const [userDetails, setUserDeatails] = useState<users>();
+  const [userOrders, setUserOrders] = useState<order[]>([]);
   const [sortOption, setSortOption] = useState<string>("Recent");
   const [filterValue, setFilterValue] = useState("");
   const [page, setPage] = useState(1);
   const [statusFilterValue, setStatusFilterValue] = useState("All");
   const [rowsPerPage, setRowsPerPage] = useState<any | string[]>("10");
-  const [userDetails, setUserDeatails] = useState<users>();
-  const [userOrders, setUserOrders] = useState<order[]>([]);
+  const [selected, setSelected] = useState<any>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [orders, setOrders] = useState<order[]>([]);
   const filters = ["Recent", "Older", "Most products", "Less products"];
   const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
   const tabs = [
@@ -82,13 +88,13 @@ export default function Workspace({ params }: { params: { id: string } }) {
     "Cancelled",
   ];
   const status = [
-    "Pending",
-    "Confirmed",
-    "Processing",
-    "Picked",
-    "Shipped",
-    "Delivered",
-    "Cancelled",
+    "pending",
+    "confirmed",
+    "processing",
+    "picked",
+    "shipped",
+    "delivered",
+    "cancelled",
   ];
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -105,6 +111,71 @@ export default function Workspace({ params }: { params: { id: string } }) {
   const token = session?.data?.token;
   const API = BASE_URL + "/api/v1";
 
+  // fetchdata
+  const getOrders = async () => {
+    try {
+      const res = await fetch(`${API}/orders/user/${id}`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
+
+      const resData = await res.json();
+      setOrders(resData.orders);
+      setIsLoading(false);
+    } catch (error) {
+      // console.log(error);
+    }
+  };
+  const getUserDetails = async () => {
+    try {
+      const res = await fetch(`${API}/user/${id}`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
+
+      const resData = await res.json();
+
+      console.log(resData);
+      setUserDeatails(resData.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //update orderStatus
+  const updateOrderStatus = async (orderId: string, status: string) => {
+    const data = {
+      status,
+    };
+    try {
+      const res = await fetch(`${API}/orders/${orderId}/status`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+          "Content-Type": "application/json",
+        },
+
+        method: "PATCH",
+        body: JSON.stringify(data),
+      });
+
+      const resData = await res.json();
+      setOrders((prevOrders) =>
+        Array.isArray(prevOrders)
+          ? prevOrders.map((order) =>
+              order.orderId === orderId ? { ...order, status: selected } : order
+            )
+          : []
+      );
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    getUserDetails();
+    getOrders();
+  }, []);
+
   // Update status filter value when search params change
   useEffect(() => {
     setStatusFilterValue(`${pathname}?${searchParams}`);
@@ -112,39 +183,39 @@ export default function Workspace({ params }: { params: { id: string } }) {
 
   // Filter and sort items based on sort option
   const filteredItems = useMemo(() => {
-    let sortedList = userOrders.slice(); // Create a copy of the original list
+    let sortedList = orders.slice(); // Create a copy of the original list
 
     // Sort the list based on the sortOption
 
     //filter recent orders
     if (sortOption === "Recent") {
       sortedList.sort((a, b) => {
-        const earlyOrder = new Date(a.timestamp) as unknown as number;
-        const laterOrder = new Date(b.timestamp) as unknown as number;
+        const earlyOrder = new Date(a.created) as unknown as number;
+        const laterOrder = new Date(b.created) as unknown as number;
         return laterOrder - earlyOrder;
       });
     }
     //filter by older orders
     else if (sortOption === "Older") {
       sortedList.sort((a, b) => {
-        const earlyOrder = new Date(a.timestamp) as unknown as number;
-        const laterOrder = new Date(b.timestamp) as unknown as number;
+        const earlyOrder = new Date(a.created) as unknown as number;
+        const laterOrder = new Date(b.created) as unknown as number;
         return earlyOrder - laterOrder;
       });
     }
     //filter by most products
     else if (sortOption === "Most products") {
       sortedList.sort((a, b) => {
-        const largeOrder = a.products.length;
-        const smallOrder = b.products.length;
+        const largeOrder = a.items.length;
+        const smallOrder = b.items.length;
         return smallOrder - largeOrder;
       });
     }
     //filter by less products
     else if (sortOption === "Less products") {
       sortedList.sort((a, b) => {
-        const largeOrder = a.products.length;
-        const smallOrder = b.products.length;
+        const largeOrder = a.items.length;
+        const smallOrder = b.items.length;
         return largeOrder - smallOrder;
       });
     }
@@ -154,7 +225,9 @@ export default function Workspace({ params }: { params: { id: string } }) {
       // Apply status and orderId filters
       if (statusFilterValue.includes("All")) {
         if (filterValue.length > 0) {
-          return item.orderId.includes(filterValue);
+          return item.orderId
+            .toLocaleLowerCase()
+            .includes(filterValue.toLocaleLowerCase());
         }
         return true;
       } else {
@@ -169,16 +242,16 @@ export default function Workspace({ params }: { params: { id: string } }) {
                 .includes(item.status.toLocaleLowerCase())
             );
           }
-          return statusFilterValue.includes(item.status);
+          return statusFilterValue
+            .toLocaleLowerCase()
+            .includes(item.status.toLocaleLowerCase());
         }
         return false;
       }
     });
 
     return filteredList;
-  }, [userOrders, statusFilterValue, filterValue, sortOption]);
-
-  //pagination for orders
+  }, [orders, statusFilterValue, filterValue, sortOption]);
 
   const Items = useMemo(() => {
     const start = (page - 1) * Number(rowsPerPage);
@@ -188,12 +261,14 @@ export default function Workspace({ params }: { params: { id: string } }) {
   }, [
     page,
     filteredItems,
-    userOrders,
+    orders,
     statusFilterValue,
     filterValue,
     sortOption,
     rowsPerPage,
   ]);
+
+  //pagination for orders
 
   const pages = useMemo(() => {
     return Math.ceil(filteredItems.length / Number(rowsPerPage));
@@ -201,24 +276,44 @@ export default function Workspace({ params }: { params: { id: string } }) {
 
   function statusColor(orderStatus: string) {
     switch (orderStatus) {
-      case "Pending":
-        return "text-[#FFC600]";
-      case "Confirmed":
-        return "text-[#28C76F]";
-      case "Processing":
-        return "text-[#0FB7FF]";
-      case "Shipped":
-        return "text-[#BD00FF]";
-      case "Cancelled":
-        return "text-[#EA5455]";
-      case "Picked":
-        return "text-[#1EB564]";
-      case "Delivered":
-        return "text-[#33189D]";
+      case "pending":
+        return "text-[#FFC600] bg-[#FFC60029]";
+      case "confirmed":
+        return "text-[#28C76F] bg-[#28C76F29]";
+      case "processing":
+        return "text-[#0FB7FF] bg-[#0FB7FF29]";
+      case "shipped":
+        return "text-[#BD00FF] bg-[#BD00FF29]";
+      case "cancelled":
+        return "text-[#EA5455] bg-[#ffbeaa]";
+      case "picked":
+        return "text-[#1EB564] bg-[#0F60FF29]";
+      case "delivered":
+        return "text-[#33189D] bg-[#33189D29]";
       default:
-        return "text-[#FFC600]";
+        return "text-[#FFC600] bg-[#FFC60029]";
     }
   }
+  //tab fallback
+  function TabFallback() {
+    return (
+      <Tabs
+        variant="underlined"
+        color="success"
+        className="border-b py-0 w-full"
+        classNames={{
+          tabContent: ["group-data-[selected=true]:text-[#1EB564]"],
+          cursor: ["group-data-[selected=true]:bg-[#1EB564]"],
+          tabList: "py-0",
+        }}
+      >
+        {tabs.map((tab) => (
+          <Tab className="text-[#8B909A]" title={tab} key={tab}></Tab>
+        ))}
+      </Tabs>
+    );
+  }
+
   //tabs for orders
   const MyTabs = useCallback(() => {
     return (
@@ -226,7 +321,7 @@ export default function Workspace({ params }: { params: { id: string } }) {
         selectedKey={`${pathname}?${searchParams}`}
         variant="underlined"
         color="success"
-        className="border-t py-0 w-full bg-white pt-3 rounded-b-2xl px-3"
+        className="border-b py-0 w-full"
         classNames={{
           tabContent: ["group-data-[selected=true]:text-[#1EB564]"],
           cursor: ["group-data-[selected=true]:bg-[#1EB564]"],
@@ -249,45 +344,89 @@ export default function Workspace({ params }: { params: { id: string } }) {
     );
   }, [searchParams]);
 
-  //tab fallback
-  function TabFallback() {
-    return (
-      <Tabs
-        variant="underlined"
-        color="success"
-        className="border-t py-0 w-full"
-        classNames={{
-          tabContent: ["group-data-[selected=true]:text-[#1EB564]"],
-          cursor: ["group-data-[selected=true]:bg-[#1EB564]"],
-          tabList: "py-0",
-        }}
-      >
-        {tabs.map((tab) => (
-          <Tab className="text-[#8B909A]" title={tab} key={tab}></Tab>
-        ))}
-      </Tabs>
-    );
-  }
+  //select for orders
+  const MySelect = useCallback(
+    (order: { orderId: string; status: string }) => {
+      return (
+        <Select
+          aria-label={order.status}
+          suppressHydrationWarning={true}
+          radius="none"
+          size="sm"
+          classNames={{
+            trigger: [statusColor(order.status)],
+            value: [
+              `group-data-[has-value=true]:${statusColor(order.status)}`,
+              statusColor(order.status),
+              "bg-[color:unset]",
+            ],
+          }}
+          // selectedKeys={[selected]}
+          defaultSelectedKeys={[order.status]}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+            const status = e.target.value;
+            setSelected(status);
+            toast.promise(updateOrderStatus(order.orderId, status), {
+              pending: "updating status to " + status,
+              success: "status updated to " + status,
+              error: "an error occured , please try again",
+            });
+          }}
+        >
+          {status.map((item) => (
+            <SelectItem key={item} value={item} className="">
+              {item}
+            </SelectItem>
+          ))}
+        </Select>
+      );
+    },
+    [statusFilterValue, filteredItems, selected]
+  );
 
-  const getUserDetails = async () => {
+  //generate document
+  const generateDocument = (orderData: any) => {
+    const documentContent = `
+      Order ID: ${orderData.orderId}\n
+      User ID: ${orderData.userId}\n
+      Customer Address: ${orderData.customerAddress.address}, ${
+      orderData.customerAddress.city
+    }, ${orderData.customerAddress.state}, ${
+      orderData.customerAddress.country
+    }, ${orderData.customerAddress.postal_code}\n
+      Customer Phone Number: ${orderData.customerPhoneNumber}\n
+      Ordered Items:\n
+      ${orderData.orderedItems
+        .map(
+          (item: any) =>
+            `Product: ${item.productName}, Quantity: ${item.quantity}, Validity: ${item.validity} days`
+        )
+        .join("\n")}
+      Order Status: ${orderData.orderStatus}\n
+      Created At: ${new Date(orderData.createdAt).toLocaleString()}\n
+      Updated At: ${new Date(orderData.updatedAt).toLocaleString()}
+    `;
+
+    const blob = new Blob([documentContent], {
+      type: "text/plain;charset=utf-8",
+    });
+    // saves(blob, `Order_${orderData.orderId}.txt`);
+  };
+  //details to print
+  const getorderDetails = async (id: string) => {
     try {
-      const res = await fetch(`${API}/user/${id}`, {
+      const res = await fetch(`${API}/orders/order/${id}`, {
         headers: {
           AUTHORIZATION: "Bearer " + token,
         },
       });
 
       const resData = await res.json();
-
-      console.log(resData);
-      setUserDeatails(resData.data);
+      generateDocument(resData.data);
     } catch (error) {
       console.log(error);
     }
   };
-  useEffect(() => {
-    getUserDetails();
-  }, []);
 
   return (
     <div>
@@ -387,12 +526,12 @@ export default function Workspace({ params }: { params: { id: string } }) {
           </div>
         </div>
       </div>
+      <div className="pb-12" suppressHydrationWarning={true}>
+        {/* Same as */}
 
-      <div className="pb-12">
-        <div className="w-full overflow-x-auto">
+        <div className="w-full overflow-x-auto py-2">
           <Suspense fallback={<TabFallback />}>{MyTabs()}</Suspense>
         </div>
-        <Spacer y={4}></Spacer>
         <div className="flex justify-between gap-3 pt-4 py-3">
           <Input
             placeholder="Search by order id"
@@ -443,7 +582,7 @@ export default function Workspace({ params }: { params: { id: string } }) {
             ))}
           </Select>
         </div>
-        <div className="w-full bg-white rounded-2xl overflow-x-auto overflow-y-hidden">
+        <div className="w-full bg-white rounded-t-2xl overflow-x-auto overflow-y-hidden min-h-[40vh]">
           <div className="flex justify-between py-2 border-b w-full min-w-max">
             <div className=" flex-1 min-w-[150px] w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
               <span>ORDER ID</span>
@@ -473,7 +612,7 @@ export default function Workspace({ params }: { params: { id: string } }) {
               </div>
             </div>
           </div>
-          <div className="w-fit lg:w-full">
+          <div className="w-full justify-center items-center ">
             {Items &&
               Items.map((order, index) => (
                 <Accordion
@@ -505,21 +644,23 @@ export default function Workspace({ params }: { params: { id: string } }) {
                           </span>
                         </div>
                         <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 pr-4 pl-0">
-                          <span>{order.timestamp}</span>
+                          <span>{new Date(order.created).toDateString()}</span>
                         </div>
                         <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 lg:px-4">
-                          <span className="mx-auto">{order.customerName}</span>
+                          <span className="mx-auto">{order.customer}</span>
                         </div>
                         <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 lg:px-4 ">
-                          <span className="mx-auto">₦{order.totalAmount}</span>
+                          <span className="mx-auto">
+                            ₦{order.total && order.total.toLocaleString()}
+                          </span>
                         </div>
                         <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 lg:px-4 ">
-                          <span className="mx-auto">₦{order.profit}</span>
+                          <span className="mx-auto">
+                            ₦{order.profit && order.profit.toLocaleString()}
+                          </span>
                         </div>
                         <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 lg:px-4 ">
-                          <p className={statusColor(order.status)}>
-                            {order.status}
-                          </p>
+                          {MySelect(order)}
                         </div>
                         <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-4">
                           <span className="hidden">dropdown</span>
@@ -560,39 +701,55 @@ export default function Workspace({ params }: { params: { id: string } }) {
                           </p>
                         </div>
                       </div>
-                      {order.products.map((product, index) => (
+                      {order.items.map((product, index) => (
                         <div key={index}>
                           <div
                             key={index}
-                            className="flex justify-between border-b"
+                            className="flex justify-between border-b pl-2"
                             suppressHydrationWarning={true}
                           >
                             <div className=" flex-1  w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
                               <span className="hidden">#</span>
                             </div>
                             <div className=" flex-1  w-full  flex-grow text-sm font-medium py-4 px-4">
-                              <span>{product.productId}</span>
+                              <span>{product.sku}</span>
                             </div>
                             <div className=" flex-1  w-full  flex-grow  text-sm  py-4 px-4 font-semibold">
-                              <span>{product.productName}</span>
+                              <span>{product.name}</span>
                             </div>
                             <div className=" flex-1  w-full  flex-grow  text-sm font-medium py-4 px-4">
-                              <span>₦{product.price}</span>
+                              <span>
+                                ₦
+                                {product.price &&
+                                  product.price.toLocaleString()}
+                              </span>
                             </div>
                             <div className=" flex-1  w-full  flex-grow  text-sm font-medium py-4 px-4">
                               <span>x{product.quantity}</span>
                             </div>
                             <div className=" flex-1  w-full  flex-grow text-[#EA5455] text-sm font-medium py-4 px-4">
-                              <span>{product.discount}%</span>
+                              <span>
+                                {product.discount &&
+                                  product.discount.toLocaleString()}
+                              </span>
                             </div>
                             <div className=" flex-1  w-full  flex-grow  text-sm font-medium py-4 px-4">
-                              <span>₦{product.total}</span>
+                              <span>
+                                ₦
+                                {product.total &&
+                                  product.total.toLocaleString()}
+                              </span>
                             </div>
                             <div className=" flex-1 max-w-[100px]  w-full  flex-grow  text-sm font-medium py-4 px-4">
                               <p className="flex gap-2">
                                 <HiOutlineDotsHorizontal
                                   color="black"
                                   size={20}
+                                  className="cursor-pointer"
+                                  onClick={() => {
+                                    getorderDetails(order.orderId);
+                                    alert(order.orderId);
+                                  }}
                                 />
                               </p>
                             </div>
@@ -610,17 +767,15 @@ export default function Workspace({ params }: { params: { id: string } }) {
                         <div className=" flex-1  w-full flex-grow  text-sm  py-4 px-4 font-semibold"></div>
                         <div className=" flex-1  w-full flex-grow  text-sm font-medium py-4 px-4"></div>
                         <div className=" flex-1  w-full flex-grow  text-sm font-medium py-4 px-4">
-                          <p className="py-4">Subtotal</p>
                           <p className="py-4">Shipping</p>
                           <p className="py-4">Discount</p>
                           <p className="py-4">Total</p>
                         </div>
                         <div className=" flex-1  w-full flex-grow text-[#EA5455] text-sm font-medium py-4 px-4"></div>
                         <div className=" flex-1  w-full flex-grow  text-sm font-medium py-4 px-4">
-                          <p className="py-4">₦11,000</p>
-                          <p className="py-4">₦900</p>
+                          <p className="py-4">₦1000</p>
                           <p className="text-[#EA5455] py-4">₦0</p>
-                          <p className="py-4">₦{order.totalAmount}</p>
+                          <p className="py-4">₦{order.total}</p>
                         </div>
                         <div className=" flex-1 max-w-[100px] w-full flex-grow  text-sm font-medium py-4 px-4"></div>
                       </div>
@@ -628,47 +783,52 @@ export default function Workspace({ params }: { params: { id: string } }) {
                   </AccordionItem>
                 </Accordion>
               ))}
-            {Items && Items.length < 0 && (
-              <div className="min-w-[40vh] flex justify-center items-center">
+            {Items.length < 1 && !isLoading && (
+              <div className="min-h-[40vh] flex justify-center items-center">
                 <p className="text-lg font-semibold">No orders found !</p>
               </div>
             )}
+            {Items.length < 1 && isLoading && (
+              <div className="min-h-[40vh] w-full flex justify-center items-center mx-auto">
+                <Spinner color="default" className="mx-auto"></Spinner>
+              </div>
+            )}
           </div>
-          <div className="flex justify-between items-center py-2 px-3">
-            <div className="flex justify-normal gap-2 items-center text-[#8B909A] text-sm font-medium">
-              <p>Showing</p>
-              <Select
-                size="sm"
-                className=" w-[100px]"
-                selectedKeys={[rowsPerPage]}
-                onChange={(e) => {
-                  setRowsPerPage(e.target.value);
-                }}
-                aria-label="rows"
-              >
-                {rowsPerPageOptions.map((option) => (
-                  <SelectItem
-                    isDisabled={filteredItems.length < Number(option)}
-                    key={option}
-                    value={option}
-                  >
-                    {option}
-                  </SelectItem>
-                ))}
-              </Select>
-              <p>of {filteredItems.length}</p>
-            </div>
-            <Pagination
-              showControls
-              color="success"
-              total={pages}
-              initialPage={1}
-              page={page}
-              onChange={(page) => {
-                setPage(page);
+        </div>
+        <div className="flex justify-between items-center py-2 pb-3 px-3 bg-white  rounded-b-2xl">
+          <div className="flex justify-normal gap-2 items-center text-[#8B909A] text-sm font-medium">
+            <p>Showing</p>
+            <Select
+              size="sm"
+              className=" w-[100px]"
+              selectedKeys={[rowsPerPage]}
+              onChange={(e) => {
+                setRowsPerPage(e.target.value);
               }}
-            />
+              aria-label="rows"
+            >
+              {rowsPerPageOptions.map((option) => (
+                <SelectItem
+                  isDisabled={filteredItems.length < Number(option)}
+                  key={option}
+                  value={option}
+                >
+                  {option}
+                </SelectItem>
+              ))}
+            </Select>
+            <p>of {filteredItems.length}</p>
           </div>
+          <Pagination
+            showControls
+            color="success"
+            initialPage={1}
+            total={pages || 1}
+            page={page}
+            onChange={(page) => {
+              setPage(page);
+            }}
+          />
         </div>
       </div>
     </div>

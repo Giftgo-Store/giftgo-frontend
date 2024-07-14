@@ -44,6 +44,8 @@ export function Header() {
         return "Add Products";
       case "/admin/product-list":
         return "Product List";
+      case "/admin/coupons":
+        return "Coupons"
       default:
         return "Dashboard";
     }
