@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import Credentials from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-
+import BASE_URL from "@/app/config/baseurl";
 
 export const authOptions = {
   
@@ -23,7 +23,7 @@ export const authOptions = {
           };
           if (data) {
             const res = await fetch(
-              `https://giftgo-1muz.onrender.com/api/v1/auth/sign-in`,
+              `${BASE_URL}/api/v1/auth/sign-in`,
               {
                 headers: {
                   Accept: "application/json",

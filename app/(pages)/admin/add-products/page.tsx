@@ -89,6 +89,7 @@ export default function AddProducts() {
   const [expressShipping, setExpressShipping] = useState<boolean>(false);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [couponAccess, setCouponAccess] = useState(false);
   const [form, setForm] = useState<Form>({
     USD: "",
     GBP: "",
@@ -303,6 +304,7 @@ export default function AddProducts() {
     formdata.append("salePrice", form.NGN);
     formdata.append("stockQuantity", stockQuantity);
     formdata.append("expressShipping", expressShipping.toString());
+    formdata.append("couponAccess", couponAccess.toString());
     formdata.append("location", location);
     setLoading(true);
     try {
@@ -333,11 +335,13 @@ export default function AddProducts() {
       brandName,
       salePrice: form.NGN,
       expressShipping: expressShipping ? "true" : "false",
+      couponAccess: couponAccess ? "true" : "false",
       stockQuantity: String(stockQuantity),
       regularPrice: String(regularPrice),
       category: productCategory,
       location,
     };
+
     setLoading(true);
     try {
       const res = await fetch(`${API}/products/${edit}`, {
@@ -433,6 +437,7 @@ export default function AddProducts() {
           setstockQuantity(productData.stockQuantity);
           setSku(productData.sku);
           setExpressShipping(productData.expressShipping === "true");
+          setCouponAccess(productData.couponAccess === "true");
           setLocation(productData.location.location.toUpperCase());
           // Handle image previews if necessary
           setSelectedImages(productData.images);
@@ -607,6 +612,27 @@ export default function AddProducts() {
               }}
               isSelected={expressShipping}
               onValueChange={setExpressShipping}
+            ></Switch>
+          </div>
+          <div className="flex gap-2">
+            <p>Coupon Access</p>
+            <Switch
+              classNames={{
+                base: cn("data-[selected=true]:border-[#DDDDDD]"),
+                wrapper: [
+                  "p-0 h-4 overflow-visible bg-white",
+                  " group-data-[selected=true]:bg-[#DDDDDD] border-1 border-[#DDDDDD]",
+                  "bg-[#e6e6e6] mr-0 w-[45px]",
+                ],
+                thumb: cn(
+                  "border-[#DDDDDD]",
+                  "w-6 h-6 border-2 shadow-lg",
+                  //selected
+                  "group-data-[selected=true]:bg-[#1EB564] bg-white border-[#DDDDDD] border-[2px]"
+                ),
+              }}
+              isSelected={couponAccess}
+              onValueChange={setCouponAccess}
             ></Switch>
           </div>
           <div className="flex flex-col gap-3">
