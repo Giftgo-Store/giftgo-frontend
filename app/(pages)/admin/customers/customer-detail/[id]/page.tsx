@@ -51,10 +51,10 @@ export interface order {
   total: number;
   status: string;
   profit: number;
-  items: [
+  orderedItems: [
     {
       sku: string;
-      name: string;
+      productName: string;
       price: number;
       originalPrice: number;
       sellingPrice: number;
@@ -121,7 +121,8 @@ export default function Workspace({ params }: { params: { id: string } }) {
       });
 
       const resData = await res.json();
-      setOrders(resData.orders);
+      setOrders(resData.data);
+      console.log(resData.data);
       setIsLoading(false);
     } catch (error) {
       // console.log(error);
@@ -136,8 +137,6 @@ export default function Workspace({ params }: { params: { id: string } }) {
       });
 
       const resData = await res.json();
-
-      console.log(resData);
       setUserDeatails(resData.data);
     } catch (error) {
       console.log(error);
@@ -171,11 +170,6 @@ export default function Workspace({ params }: { params: { id: string } }) {
     } catch (error) {}
   };
 
-  useEffect(() => {
-    getUserDetails();
-    getOrders();
-  }, []);
-
   // Update status filter value when search params change
   useEffect(() => {
     setStatusFilterValue(`${pathname}?${searchParams}`);
@@ -206,16 +200,16 @@ export default function Workspace({ params }: { params: { id: string } }) {
     //filter by most products
     else if (sortOption === "Most products") {
       sortedList.sort((a, b) => {
-        const largeOrder = a.items.length;
-        const smallOrder = b.items.length;
+        const largeOrder = a.orderedItems.length;
+        const smallOrder = b.orderedItems.length;
         return smallOrder - largeOrder;
       });
     }
     //filter by less products
     else if (sortOption === "Less products") {
       sortedList.sort((a, b) => {
-        const largeOrder = a.items.length;
-        const smallOrder = b.items.length;
+        const largeOrder = a.orderedItems.length;
+        const smallOrder = b.orderedItems.length;
         return largeOrder - smallOrder;
       });
     }
@@ -267,6 +261,11 @@ export default function Workspace({ params }: { params: { id: string } }) {
     sortOption,
     rowsPerPage,
   ]);
+
+  useEffect(() => {
+    getUserDetails();
+    getOrders();
+  }, []);
 
   //pagination for orders
 
@@ -479,7 +478,7 @@ export default function Workspace({ params }: { params: { id: string } }) {
                 )}
               </p>
             </div> */}
-            <div className="flex justify-start gap-5">
+            {/* <div className="flex justify-start gap-5">
               <p className="flex-1">Date of Birth</p>
               {userDetails ? (
                 <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
@@ -488,7 +487,7 @@ export default function Workspace({ params }: { params: { id: string } }) {
               ) : (
                 <Skeleton className="w-[60px] h-[30px]"></Skeleton>
               )}
-            </div>
+            </div> */}
             <div className="flex justify-start gap-5">
               <p className="flex-1">Member Since</p>
               {userDetails ? (
@@ -500,7 +499,7 @@ export default function Workspace({ params }: { params: { id: string } }) {
               )}
             </div>
           </div>
-          <div className="flex flex-col gap-3  w-full px-5 lg:max-w-[300px]">
+          {/* <div className="flex flex-col gap-3  w-full px-5 lg:max-w-[300px]">
             <p className="text-sm font-medium text-[#8B909A]">
               Shipping Address
             </p>
@@ -523,7 +522,7 @@ export default function Workspace({ params }: { params: { id: string } }) {
                 <p className="font-medium text-sm text-[#8B909A]">Canceled</p>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="pb-12" suppressHydrationWarning={true}>
@@ -701,61 +700,62 @@ export default function Workspace({ params }: { params: { id: string } }) {
                           </p>
                         </div>
                       </div>
-                      {order.items.map((product, index) => (
-                        <div key={index}>
-                          <div
-                            key={index}
-                            className="flex justify-between border-b pl-2"
-                            suppressHydrationWarning={true}
-                          >
-                            <div className=" flex-1  w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
-                              <span className="hidden">#</span>
-                            </div>
-                            <div className=" flex-1  w-full  flex-grow text-sm font-medium py-4 px-4">
-                              <span>{product.sku}</span>
-                            </div>
-                            <div className=" flex-1  w-full  flex-grow  text-sm  py-4 px-4 font-semibold">
-                              <span>{product.name}</span>
-                            </div>
-                            <div className=" flex-1  w-full  flex-grow  text-sm font-medium py-4 px-4">
-                              <span>
-                                ₦
-                                {product.price &&
-                                  product.price.toLocaleString()}
-                              </span>
-                            </div>
-                            <div className=" flex-1  w-full  flex-grow  text-sm font-medium py-4 px-4">
-                              <span>x{product.quantity}</span>
-                            </div>
-                            <div className=" flex-1  w-full  flex-grow text-[#EA5455] text-sm font-medium py-4 px-4">
-                              <span>
-                                {product.discount &&
-                                  product.discount.toLocaleString()}
-                              </span>
-                            </div>
-                            <div className=" flex-1  w-full  flex-grow  text-sm font-medium py-4 px-4">
-                              <span>
-                                ₦
-                                {product.total &&
-                                  product.total.toLocaleString()}
-                              </span>
-                            </div>
-                            <div className=" flex-1 max-w-[100px]  w-full  flex-grow  text-sm font-medium py-4 px-4">
-                              <p className="flex gap-2">
-                                <HiOutlineDotsHorizontal
-                                  color="black"
-                                  size={20}
-                                  className="cursor-pointer"
-                                  onClick={() => {
-                                    getorderDetails(order.orderId);
-                                    alert(order.orderId);
-                                  }}
-                                />
-                              </p>
+                      {order.orderedItems &&
+                        order.orderedItems.map((product, index) => (
+                          <div key={index}>
+                            <div
+                              key={index}
+                              className="flex justify-between border-b pl-2"
+                              suppressHydrationWarning={true}
+                            >
+                              <div className=" flex-1  w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
+                                <span className="hidden">#</span>
+                              </div>
+                              <div className=" flex-1  w-full  flex-grow text-sm font-medium py-4 px-4">
+                                <span>{product.sku}</span>
+                              </div>
+                              <div className=" flex-1  w-full  flex-grow  text-sm  py-4 px-4 font-semibold">
+                                <span>{product.productName}</span>
+                              </div>
+                              <div className=" flex-1  w-full  flex-grow  text-sm font-medium py-4 px-4">
+                                <span>
+                                  ₦
+                                  {product.price &&
+                                    product.price.toLocaleString()}
+                                </span>
+                              </div>
+                              <div className=" flex-1  w-full  flex-grow  text-sm font-medium py-4 px-4">
+                                <span>x{product.quantity}</span>
+                              </div>
+                              <div className=" flex-1  w-full  flex-grow text-[#EA5455] text-sm font-medium py-4 px-4">
+                                <span>
+                                  {product.discount &&
+                                    product.discount.toLocaleString()}
+                                </span>
+                              </div>
+                              <div className=" flex-1  w-full  flex-grow  text-sm font-medium py-4 px-4">
+                                <span>
+                                  ₦
+                                  {product.total &&
+                                    product.total.toLocaleString()}
+                                </span>
+                              </div>
+                              <div className=" flex-1 max-w-[100px]  w-full  flex-grow  text-sm font-medium py-4 px-4">
+                                <p className="flex gap-2">
+                                  <HiOutlineDotsHorizontal
+                                    color="black"
+                                    size={20}
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                      getorderDetails(order.orderId);
+                                      alert(order.orderId);
+                                    }}
+                                  />
+                                </p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
                       <div
                         className="flex justify-between "
                         suppressHydrationWarning={true}

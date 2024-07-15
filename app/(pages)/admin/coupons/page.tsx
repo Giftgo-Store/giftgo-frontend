@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -14,16 +14,146 @@ import {
 import { IoMdAddCircleOutline } from "react-icons/io";
 import CouponCard from "@/app/components/coupon/couponCard";
 import { PiWarningCircleThin } from "react-icons/pi";
+import { redirect } from "next/navigation";
+import { useSession } from "next-auth/react";
+import BASE_URL from "@/app/config/baseurl";
+import CouponLoader from "@/app/components/loaders/couponLoader";
+import { toast } from "react-toastify";
 
 export default function Coupons() {
+  const [coupons, setCoupons] = useState<any>([]);
   const [couponValue, setCouponValue] = useState("");
+  const [couponPercentage, setCouponPercentage] = useState("");
   const [createNewCoupon, setCreateNewCoupon] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleOpen = () => {
-    onOpen();
+  const session: any = useSession();
+  const token = session?.data?.token;
+  const API = BASE_URL + "/api/v1";
+
+  //secure page
+  const sesssion = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/admin/auth/login");
+    },
+  });
+
+  const getAllCoupons = async () => {
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${API}/coupons`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
+
+      const resData = await res.json();
+      setLoading(false);
+      if (resData.length < 1) {
+        setCoupons([]);
+      }
+      setCoupons(resData);
+      // console.log(resData);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
+  const addCoupon = async () => {
+    setLoading(true);
+    const data = {
+      code: couponValue,
+      discountPercentage: Number(couponPercentage),
+    };
+    try {
+      const res = await fetch(`${API}/coupons/add`, {
+        headers: {
+          "Content-Type": "application/json",
+          AUTHORIZATION: "Bearer " + token,
+        },
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+      console.log(data);
+      const resData = await res.json();
+      // console.log(resData.data);
+      setCouponPercentage("");
+      setCouponValue("");
+      setCreateNewCoupon(false);
+     setCoupons((prevCoupons:any) => [...prevCoupons, resData]); 
+      onClose();
+    } catch (error) {
+      // console.log(error);
+    }
+  };
+  // Update the coupon's active state in the local state
+  const updateCouponState = (id: string, isActive: boolean) => {
+    setCoupons((prevCoupons:any) =>
+      prevCoupons.map((coupon:any) =>
+        coupon._id === id ? { ...coupon, isActive } : coupon
+      )
+    );
+  };
+
+  const activateCoupon = async (id: string) => {
+    setLoading(true);
+    const data = {
+      isActive: true,
+    };
+    try {
+      const res = await fetch(`${API}/coupons/${id}/activate`, {
+        headers: {
+          "Content-Type": "application/json",
+          AUTHORIZATION: "Bearer " + token,
+        },
+        method: "PATCH",
+        body: JSON.stringify(data),
+      });
+      updateCouponState(id, true);
+    } catch (error) {
+      // console.log(error);
+    }
+  };
+  const deactivateCoupon = async (id: string) => {
+    setLoading(true);
+    const data = {
+      isActive: false,
+    };
+    try {
+      const res = await fetch(`${API}/coupons/${id}/deactivate`, {
+        headers: {
+          "Content-Type": "application/json",
+          AUTHORIZATION: "Bearer " + token,
+        },
+        method: "PATCH",
+        body: JSON.stringify(data),
+      });
+      updateCouponState(id, false);
+    } catch (error) {
+      // console.log(error);
+    }
+  };
+  function handleActivateCoupon(id: string) {
+    toast.promise(activateCoupon(id), {
+      pending: "Activating coupon ",
+      success: "Coupon activated",
+      error: "An error occured , please try again",
+    });
+  }
+  function handleDeactivateCoupon(id: string) {
+    toast.promise(deactivateCoupon(id), {
+      pending: "Deactivating coupon ",
+      success: "Coupon deactivated",
+      error: "An error occured , please try again",
+    });
+  }
+
+  useEffect(() => {
+    getAllCoupons();
+  }, []);
   return (
     <>
       <div className="flex w-full justify-end items-center gap-4">
@@ -39,8 +169,41 @@ export default function Coupons() {
         </Button>
       </div>
       <div className="flex flex-col gap-3 py-4">
-        <CouponCard coupon="PHSY54" />
+        {coupons &&
+          coupons.map(
+            (coupon: {
+              code: string;
+              discountPercentage: number;
+              isActive: boolean;
+              _id: string;
+            }) => (
+              <CouponCard
+                key={coupon.code}
+                isActive={coupon.isActive}
+                coupon={coupon.code}
+                percentageOff={coupon.discountPercentage}
+                activateCoupon={() => {
+                  handleActivateCoupon(coupon._id);
+                }}
+                deactivateCoupon={() => {
+                  handleDeactivateCoupon(coupon._id);
+                }}
+              />
+            )
+          )}
       </div>
+      {coupons.length === 0 && !loading && (
+        <div className="min-h-[40vh] flex justify-center items-center">
+          <p className="text-lg font-semibold">No coupons found !</p>
+        </div>
+      )}
+      {coupons.length < 1 && loading && (
+        <div className="w-full flex flex-col gap-3 py-4">
+          <CouponLoader></CouponLoader>
+          <CouponLoader></CouponLoader>
+          <CouponLoader></CouponLoader>
+        </div>
+      )}
       <Modal size="md" isOpen={isOpen} onClose={onClose} className="py-5">
         <ModalContent>
           {(onClose) => (
@@ -65,7 +228,31 @@ export default function Coupons() {
                     : "Previous coupon will be deleted"}
                 </p>
                 {createNewCoupon ? (
-                  <div>
+                  <div className="flex flex-col gap-3">
+                    <Input
+                      isRequired
+                      placeholder="PHSY54"
+                      type="text"
+                      size="md"
+                      radius="sm"
+                      label="Coupon code"
+                      labelPlacement="outside"
+                      className=" rounded-lg w-full border-1"
+                      classNames={{
+                        label: "text-base font-semibold",
+                        input: "py-2 text-base",
+                        inputWrapper: [
+                          "bg-white",
+                          "data-focus-[within=true]:bg-white",
+                          "data-[hover=true]:bg-white",
+                          "group-data-[focus=true]:bg-white",
+                        ],
+                      }}
+                      value={couponValue}
+                      onChange={(e) => {
+                        setCouponValue(e.target.value);
+                      }}
+                    ></Input>
                     <Input
                       isRequired
                       placeholder="01-99"
@@ -85,16 +272,16 @@ export default function Coupons() {
                           "group-data-[focus=true]:bg-white",
                         ],
                       }}
-                      value={couponValue}
+                      value={couponPercentage}
                       onChange={(e) => {
-                        setCouponValue(e.target.value);
+                        setCouponPercentage(e.target.value);
                       }}
                     ></Input>
                     <div className="flex gap-1 items-center">
                       <PiWarningCircleThin color="#70706E" />
                       <p className="text-[#70706E]">
-                        {couponValue.length > 0 ? couponValue : "--"}% off for
-                        31 products
+                        {couponPercentage.length > 0 ? couponPercentage : "--"}%
+                        off for customer products
                       </p>
                     </div>
                   </div>
@@ -120,6 +307,11 @@ export default function Coupons() {
                     if (!createNewCoupon) {
                       setCreateNewCoupon(true);
                     } else {
+                      toast.promise(addCoupon(), {
+                        pending: "Creating coupon ",
+                        success: "Coupon created",
+                        error: "An error occured , please try again",
+                      });
                     }
                   }}
                   className="text-white bg-[#1EB564] w-[200px]"
@@ -135,3 +327,4 @@ export default function Coupons() {
     </>
   );
 }
+Coupons.requireAuth = true;
