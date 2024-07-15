@@ -75,7 +75,7 @@ export function Header() {
 
         <NavbarContent justify="end">
           <div className="flex gap-6 max-[200px] justify-between items-center">
-            <Dropdown placement="bottom-start">
+            {/* <Dropdown placement="bottom-start">
               <DropdownTrigger suppressHydrationWarning>
                 <Button
                   isIconOnly
@@ -94,7 +94,7 @@ export function Header() {
 
                 <DropdownItem key="system">New notification</DropdownItem>
               </DropdownMenu>
-            </Dropdown>
+            </Dropdown> */}
             <Dropdown placement="bottom-start">
               <DropdownTrigger suppressHydrationWarning>
                 <Button
