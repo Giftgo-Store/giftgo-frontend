@@ -99,6 +99,7 @@ export default function Dashboard() {
       const leastSold = b.totalOrders;
       return leastSold - mostSold;
     }) || [];
+  console.log(bestSellingProducts);
   const sesssion = useSession({
     required: true,
     onUnauthenticated() {
@@ -729,7 +730,7 @@ export default function Dashboard() {
                 className="w-full max-w-full"
                 removeWrapper
                 classNames={{
-                  wrapper:"max-w-full"
+                  wrapper: "max-w-full",
                 }}
               ></Image>
             </div>
@@ -737,7 +738,7 @@ export default function Dashboard() {
           <div className="flex flex-col gap-3">
             <p className="py-2 font-bold text-lg">Sales by Area</p>
             <div className="flex flex-col gap-3">
-              {!loading ? (
+              {!loading && salesByLocation ? (
                 salesByLocation.map((location: any) => {
                   const percentage = Number(
                     ((location.totalOrders / averageOrders) * 100).toFixed(1)

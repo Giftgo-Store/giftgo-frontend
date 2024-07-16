@@ -18,12 +18,23 @@ export default function CouponCard({
   percentageOff: number;
   isActive: boolean;
   activateCoupon: MouseEventHandler<HTMLButtonElement>;
-  deactivateCoupon:MouseEventHandler<HTMLButtonElement>
+  deactivateCoupon: MouseEventHandler<HTMLButtonElement>;
 }) {
   async function copyTextToClipboard(text: string) {
     try {
       await navigator.clipboard.writeText(text);
     } catch (err) {}
+  }
+  async function shareCoupon(coupon: string) {
+    try {
+      const data = {
+        title: "giftgo coupon",
+        text: coupon,
+      };
+      await navigator.share(data);
+    } catch (err) {
+      toast.error("an error occurred, please try again");
+    }
   }
   return (
     <div className="bg-white p-4 rounded-md flex flex-col gap-3">
@@ -52,6 +63,11 @@ export default function CouponCard({
             <Button
               startContent={<IoShareOutline size="24" color="#8B909A" />}
               className="bg-white w-[100px] border-1 text-[#8B909A]"
+              onClick={
+                () => {
+                  shareCoupon(coupon)
+                }
+              }
             >
               Share
             </Button>

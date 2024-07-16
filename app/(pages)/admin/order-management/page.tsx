@@ -135,11 +135,9 @@ export default function OrderManagement() {
 
       const resData = await res.json();
       setOrders((prevOrders) =>
-        Array.isArray(prevOrders)
-          ? prevOrders.map((order) =>
-              order.orderId === orderId ? { ...order, status: selected } : order
-            )
-          : []
+        prevOrders.map((order) =>
+          order.orderId === orderId ? { ...order, status } : order
+        )
       );
     } catch (error) {}
   };
@@ -337,7 +335,7 @@ export default function OrderManagement() {
           defaultSelectedKeys={[order.status]}
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
             const status = e.target.value;
-            setSelected(status);
+
             toast.promise(updateOrderStatus(order.orderId, status), {
               pending: "updating status to " + status,
               success: "status updated to " + status,
