@@ -25,6 +25,7 @@ import { TbBell, TbSmartHome } from "react-icons/tb";
 import Image from "next/image";
 import BoxAdd from "../../public/box-add.svg";
 import { signOut } from "next-auth/react";
+import { TicketDiscount } from "iconsax-react";
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -45,12 +46,12 @@ export function Header() {
       case "/admin/product-list":
         return "Product List";
       case "/admin/coupons":
-        return "Coupons"
+        return "Coupons";
       default:
         return "Dashboard";
     }
   }
- const nav=useCallback(() => {
+  const nav = useCallback(() => {
     return (
       <Navbar
         onMenuOpenChange={setIsMenuOpen}
@@ -108,10 +109,7 @@ export function Header() {
                     placement="bottom-right"
                     size="sm"
                   >
-                    <Avatar
-         
-                      size="md"
-                    ></Avatar>
+                    <Avatar size="md"></Avatar>
                   </Badge>
                 </Button>
               </DropdownTrigger>
@@ -207,7 +205,24 @@ export function Header() {
               Transactions
             </p>
           </NavbarItem>
-
+          <NavbarItem>
+            <p className="px-3 py-1 opacity-60">COUPONS</p>
+          </NavbarItem>
+          <NavbarItem
+            className={`flex gap-3 justify-normal items-center p-[6px] rounded text-black ${
+              pathname === "/admin/coupons" ? "bg-[#F3F4F8]" : "opacity-60"
+            }   transition-[width] transform ease-in-out  duration-300`}
+            key="coupons"
+            as={Link}
+            href="/admin/coupons"
+          >
+            <TicketDiscount size="34" color="#000000" />
+            <p
+              className={`flex gap-3 justify-normal items-center p-[6px] rounded text-black text-lg font-semibold `}
+            >
+              Coupons
+            </p>
+          </NavbarItem>
           <NavbarItem>
             <p className="px-3 py-1 opacity-60">PRODUCTS</p>
           </NavbarItem>
@@ -262,8 +277,6 @@ export function Header() {
         </NavbarMenu>
       </Navbar>
     );
-  },[isMenuOpen, pageName, pathname])
-  return (
-   nav()
-  );
+  }, [isMenuOpen, pageName, pathname]);
+  return nav();
 }

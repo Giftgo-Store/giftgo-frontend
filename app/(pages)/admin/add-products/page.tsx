@@ -89,7 +89,7 @@ export default function AddProducts() {
   const [expressShipping, setExpressShipping] = useState<boolean>(false);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [couponAccess, setCouponAccess] = useState(false);
+  const [isCouponActive, setIsCouponActive] = useState(false);
   const [form, setForm] = useState<Form>({
     USD: "",
     GBP: "",
@@ -304,7 +304,7 @@ export default function AddProducts() {
     formdata.append("salePrice", form.NGN);
     formdata.append("stockQuantity", stockQuantity);
     formdata.append("expressShipping", expressShipping.toString());
-    formdata.append("couponAccess", couponAccess.toString());
+    formdata.append("isCouponActive", isCouponActive.toString());
     formdata.append("location", location);
     setLoading(true);
     try {
@@ -335,7 +335,7 @@ export default function AddProducts() {
       brandName,
       salePrice: form.NGN,
       expressShipping: expressShipping ? "true" : "false",
-      couponAccess: couponAccess ? "true" : "false",
+      isCouponActive: isCouponActive ? "true" : "false",
       stockQuantity: String(stockQuantity),
       regularPrice: String(regularPrice),
       category: productCategory,
@@ -437,7 +437,7 @@ export default function AddProducts() {
           setstockQuantity(productData.stockQuantity);
           setSku(productData.sku);
           setExpressShipping(productData.expressShipping === "true");
-          setCouponAccess(productData.couponAccess === "true");
+          setIsCouponActive(productData.isCouponActive === "true");
           setLocation(productData.location.location.toUpperCase());
           // Handle image previews if necessary
           setSelectedImages(productData.images);
@@ -593,8 +593,8 @@ export default function AddProducts() {
               }}
             />
           </div>
-          <div className="flex gap-2">
-            <p>Express Shipping</p>
+          <div className="flex gap-2 items-center justify-normal">
+            <p className="w-[180px]">Express Shipping</p>
             <Switch
               classNames={{
                 base: cn("data-[selected=true]:border-[#DDDDDD]"),
@@ -614,8 +614,8 @@ export default function AddProducts() {
               onValueChange={setExpressShipping}
             ></Switch>
           </div>
-          <div className="flex gap-2">
-            <p>Coupon Access</p>
+          <div className="flex gap-2 items-center justify-normal">
+            <p className="w-[180px]">Coupon Access</p>
             <Switch
               classNames={{
                 base: cn("data-[selected=true]:border-[#DDDDDD]"),
@@ -631,8 +631,8 @@ export default function AddProducts() {
                   "group-data-[selected=true]:bg-[#1EB564] bg-white border-[#DDDDDD] border-[2px]"
                 ),
               }}
-              isSelected={couponAccess}
-              onValueChange={setCouponAccess}
+              isSelected={isCouponActive}
+              onValueChange={setIsCouponActive}
             ></Switch>
           </div>
           <div className="flex flex-col gap-3">
