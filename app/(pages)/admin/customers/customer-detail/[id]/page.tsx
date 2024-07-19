@@ -15,7 +15,14 @@ import {
   Tabs,
   User,
 } from "@nextui-org/react";
-import { useState, useMemo, useCallback, Suspense, useEffect } from "react";
+import {
+  useState,
+  useMemo,
+  useCallback,
+  Suspense,
+  useEffect,
+  useRef,
+} from "react";
 import { SlArrowDown } from "react-icons/sl";
 import { CiSearch } from "react-icons/ci";
 import { PiPrinterFill } from "react-icons/pi";
@@ -33,6 +40,8 @@ import {
 import { useSession } from "next-auth/react";
 import BASE_URL from "@/app/config/baseurl";
 import { toast } from "react-toastify";
+import { useReactToPrint } from "react-to-print";
+import OrderPrint from "@/app/components/printSlips/orderPrint";
 
 interface users {
   _id: string;
@@ -71,7 +80,11 @@ export interface order {
     }
   ];
 }
-export default function CustomerDetails({ params }: { params: { id: string } }) {
+export default function CustomerDetails({
+  params,
+}: {
+  params: { id: string };
+}) {
   const [userDetails, setUserDeatails] = useState<users>();
   const [userOrders, setUserOrders] = useState<order[]>([]);
   const [sortOption, setSortOption] = useState<string>("Recent");
@@ -82,6 +95,7 @@ export default function CustomerDetails({ params }: { params: { id: string } }) 
   const [selected, setSelected] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
   const [orders, setOrders] = useState<order[]>([]);
+  const ComponenstToPrint = useRef([]);
   const filters = ["Recent", "Older", "Most products", "Less products"];
   const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
   const tabs = [
@@ -437,7 +451,7 @@ export default function CustomerDetails({ params }: { params: { id: string } }) 
       // console.log(error);
     }
   };
-
+  
   return (
     <div>
       <div>
@@ -721,8 +735,8 @@ export default function CustomerDetails({ params }: { params: { id: string } }) 
                         </div>
                       </div>
                       {order.items &&
-                        order.items.map((product, index) => (
-                          <div key={index}>
+                        order.items.map((product) => (
+                          <div key={product.sku}>
                             <div
                               key={index}
                               className="flex justify-between border-b pl-2"
@@ -760,19 +774,11 @@ export default function CustomerDetails({ params }: { params: { id: string } }) 
                                     product.total.toLocaleString()}
                                 </span>
                               </div>
-                              <div className=" flex-1 max-w-[100px]  w-full  flex-grow  text-sm font-medium py-4 px-4">
-                                <p className="flex gap-2">
-                                  <HiOutlineDotsHorizontal
-                                    color="black"
-                                    size={20}
-                                    className="cursor-pointer"
-                                    onClick={() => {
-                                      getorderDetails(order.orderId);
-                                      alert(order.orderId);
-                                    }}
-                                  />
-                                </p>
-                              </div>
+                              <OrderPrint
+                                key={order.orderId}
+                                order={order}
+                                userDetails={userDetails}
+                              />
                             </div>
                           </div>
                         ))}
