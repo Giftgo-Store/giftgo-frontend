@@ -54,8 +54,10 @@ export default function Coupons() {
       setLoading(false);
       if (resData.length < 1) {
         setCoupons([]);
+        setCreateNewCoupon(true);
       }
       setCoupons(resData);
+
       // console.log(resData);
     } catch (error) {
       console.log(error);
@@ -77,13 +79,12 @@ export default function Coupons() {
         method: "POST",
         body: JSON.stringify(data),
       });
-      console.log(data);
       const resData = await res.json();
       // console.log(resData.data);
       setCouponPercentage("");
       setCouponValue("");
       setCreateNewCoupon(false);
-     setCoupons((prevCoupons:any) => [...prevCoupons, resData]); 
+      setCoupons((prevCoupons: any) => [...prevCoupons, resData]);
       onClose();
     } catch (error) {
       // console.log(error);
@@ -91,8 +92,8 @@ export default function Coupons() {
   };
   // Update the coupon's active state in the local state
   const updateCouponState = (id: string, isActive: boolean) => {
-    setCoupons((prevCoupons:any) =>
-      prevCoupons.map((coupon:any) =>
+    setCoupons((prevCoupons: any) =>
+      prevCoupons.map((coupon: any) =>
         coupon._id === id ? { ...coupon, isActive } : coupon
       )
     );
@@ -231,23 +232,24 @@ export default function Coupons() {
                   <div className="flex flex-col gap-3">
                     <Input
                       isRequired
-                      placeholder="PHSY54"
+                      placeholder="PHSY544510"
                       type="text"
                       size="md"
                       radius="sm"
                       label="Coupon code"
                       labelPlacement="outside"
-                      className=" rounded-lg w-full border-1"
+                      className=" rounded-lg w-full"
                       classNames={{
                         label: "text-base font-semibold",
                         input: "py-2 text-base",
                         inputWrapper: [
-                          "bg-white",
+                          "bg-white  border-1",
                           "data-focus-[within=true]:bg-white",
                           "data-[hover=true]:bg-white",
                           "group-data-[focus=true]:bg-white",
                         ],
                       }}
+                      description={"coupon must be 10 characters long"}
                       value={couponValue}
                       onChange={(e) => {
                         setCouponValue(e.target.value);

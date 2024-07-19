@@ -190,21 +190,7 @@ export function Header() {
               Customers
             </p>
           </NavbarItem>
-          <NavbarItem
-            className={`flex gap-3 justify-normal items-center p-[6px] rounded text-black ${
-              pathname === "/admin/transactions" ? "bg-[#F3F4F8]" : "opacity-60"
-            }  transition-[width] transform ease-in-out  duration-300`}
-            key="transactions"
-            as={Link}
-            href="/admin/transactions"
-          >
-            <FiFileText size={34} />
-            <p
-              className={`flex gap-3 justify-normal items-center p-[6px] rounded text-black text-lg font-semibold `}
-            >
-              Transactions
-            </p>
-          </NavbarItem>
+
           <NavbarItem>
             <p className="px-3 py-1 opacity-60">COUPONS</p>
           </NavbarItem>

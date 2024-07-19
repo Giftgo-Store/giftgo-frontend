@@ -19,8 +19,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {TicketDiscount} from "iconsax-react"
 export default function Nav() {
-  const [showOnlyIcon, setShowOnlyIcon] = useState(false);
+  const [showOnlyIcon, setShowOnlyIcon] = useState<boolean|null>(null);
   const pathname = usePathname();
+
   // console.log(showOnlyIcon);
   // Retrieve the state from local storage when the component mounts
   // Store the state in local storage whenever it changes
@@ -143,24 +144,7 @@ export default function Nav() {
               Customers
             </p>
           </ListboxItem>
-          <ListboxItem
-            className={`${
-              pathname === "/admin/transactions" ? "bg-[#F3F4F8]" : "opacity-60"
-            } ${
-              showOnlyIcon ? "pr-0" : "px-2"
-            } transition-[width] transform ease-in-out duration-300`}
-            startContent={<FiFileText size={34} />}
-            key="transactions"
-            href="/admin/transactions"
-          >
-            <p
-              className={`text-base font-semibold transition-[width] transform ease-in-out block duration-300 ${
-                showOnlyIcon ? "w-[0] px-0" : ""
-              }transition-[width] transform ease-in-out duration-300`}
-            >
-              Transactions
-            </p>
-          </ListboxItem>
+         
         </ListboxSection>
         <ListboxSection
           title={"COUPONS"}
@@ -216,7 +200,7 @@ export default function Nav() {
               showOnlyIcon ? "pr-0" : "px-2"
             } transition-[width] transform ease-in-out duration-300`}
             startContent={
-              <Image src={BoxAdd} alt="box" width={34} height={34} />
+              <Image src={BoxAdd} alt="box" width={34} height={34} priority />
             }
             key="add-categories"
             href="/admin/add-categories"

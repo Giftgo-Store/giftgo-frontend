@@ -15,7 +15,14 @@ import {
   Tabs,
   User,
 } from "@nextui-org/react";
-import { useState, useMemo, useCallback, Suspense, useEffect } from "react";
+import {
+  useState,
+  useMemo,
+  useCallback,
+  Suspense,
+  useEffect,
+  useRef,
+} from "react";
 import { SlArrowDown } from "react-icons/sl";
 import { CiSearch } from "react-icons/ci";
 import { PiPrinterFill } from "react-icons/pi";
@@ -33,6 +40,8 @@ import {
 import { useSession } from "next-auth/react";
 import BASE_URL from "@/app/config/baseurl";
 import { toast } from "react-toastify";
+import { useReactToPrint } from "react-to-print";
+import OrderPrint from "@/app/components/printSlips/orderPrint";
 
 interface users {
   _id: string;
@@ -40,6 +49,13 @@ interface users {
   name: string;
   phone: string;
   orders: string[];
+  address: {
+    address: string;
+    city: string;
+    postal_code: string;
+    state: string;
+    country: string;
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -51,10 +67,10 @@ export interface order {
   total: number;
   status: string;
   profit: number;
-  orderedItems: [
+  items: [
     {
       sku: string;
-      productName: string;
+      name: string;
       price: number;
       originalPrice: number;
       sellingPrice: number;
@@ -64,7 +80,11 @@ export interface order {
     }
   ];
 }
-export default function Workspace({ params }: { params: { id: string } }) {
+export default function CustomerDetails({
+  params,
+}: {
+  params: { id: string };
+}) {
   const [userDetails, setUserDeatails] = useState<users>();
   const [userOrders, setUserOrders] = useState<order[]>([]);
   const [sortOption, setSortOption] = useState<string>("Recent");
@@ -75,6 +95,7 @@ export default function Workspace({ params }: { params: { id: string } }) {
   const [selected, setSelected] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
   const [orders, setOrders] = useState<order[]>([]);
+  const ComponenstToPrint = useRef([]);
   const filters = ["Recent", "Older", "Most products", "Less products"];
   const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
   const tabs = [
@@ -121,11 +142,14 @@ export default function Workspace({ params }: { params: { id: string } }) {
       });
 
       const resData = await res.json();
-      setOrders(resData.data);
-      console.log(resData.data);
+      setOrders(resData.data.orders);
+      // console.log(resData);
       setIsLoading(false);
     } catch (error) {
       // console.log(error);
+      toast.error(
+        "An error has occured, please check your internet connection"
+      );
     }
   };
   const getUserDetails = async () => {
@@ -138,8 +162,12 @@ export default function Workspace({ params }: { params: { id: string } }) {
 
       const resData = await res.json();
       setUserDeatails(resData.data);
+      // console.log(resData);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      toast.error(
+        "An error has occured, please check your internet connection"
+      );
     }
   };
 
@@ -161,11 +189,9 @@ export default function Workspace({ params }: { params: { id: string } }) {
 
       const resData = await res.json();
       setOrders((prevOrders) =>
-        Array.isArray(prevOrders)
-          ? prevOrders.map((order) =>
-              order.orderId === orderId ? { ...order, status: selected } : order
-            )
-          : []
+        prevOrders.map((order) =>
+          order.orderId === orderId ? { ...order, status } : order
+        )
       );
     } catch (error) {}
   };
@@ -177,7 +203,7 @@ export default function Workspace({ params }: { params: { id: string } }) {
 
   // Filter and sort items based on sort option
   const filteredItems = useMemo(() => {
-    let sortedList = orders.slice(); // Create a copy of the original list
+    let sortedList = orders?.slice() || []; // Create a copy of the original list
 
     // Sort the list based on the sortOption
 
@@ -200,16 +226,16 @@ export default function Workspace({ params }: { params: { id: string } }) {
     //filter by most products
     else if (sortOption === "Most products") {
       sortedList.sort((a, b) => {
-        const largeOrder = a.orderedItems.length;
-        const smallOrder = b.orderedItems.length;
+        const largeOrder = a.items.length;
+        const smallOrder = b.items.length;
         return smallOrder - largeOrder;
       });
     }
     //filter by less products
     else if (sortOption === "Less products") {
       sortedList.sort((a, b) => {
-        const largeOrder = a.orderedItems.length;
-        const smallOrder = b.orderedItems.length;
+        const largeOrder = a.items.length;
+        const smallOrder = b.items.length;
         return largeOrder - smallOrder;
       });
     }
@@ -364,7 +390,6 @@ export default function Workspace({ params }: { params: { id: string } }) {
           defaultSelectedKeys={[order.status]}
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
             const status = e.target.value;
-            setSelected(status);
             toast.promise(updateOrderStatus(order.orderId, status), {
               pending: "updating status to " + status,
               success: "status updated to " + status,
@@ -398,7 +423,7 @@ export default function Workspace({ params }: { params: { id: string } }) {
       ${orderData.orderedItems
         .map(
           (item: any) =>
-            `Product: ${item.productName}, Quantity: ${item.quantity}, Validity: ${item.validity} days`
+            `Product: ${item.name}, Quantity: ${item.quantity}, Validity: ${item.validity} days`
         )
         .join("\n")}
       Order Status: ${orderData.orderStatus}\n
@@ -423,10 +448,10 @@ export default function Workspace({ params }: { params: { id: string } }) {
       const resData = await res.json();
       generateDocument(resData.data);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
-
+  
   return (
     <div>
       <div>
@@ -451,7 +476,7 @@ export default function Workspace({ params }: { params: { id: string } }) {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-3 border-x-1 border-[#DBDADE] w-full lg:max-w-[500px] px-5">
+          <div className="flex flex-col gap-3  border-x-1 border-[#DBDADE] w-full lg:max-w-[400px] px-5">
             <p className="text-sm font-medium text-[#8B909A]">
               PERSONAL INFORMATION
             </p>
@@ -465,29 +490,7 @@ export default function Workspace({ params }: { params: { id: string } }) {
                 <Skeleton className="w-[60px] h-[30px]"></Skeleton>
               )}
             </div>
-            {/* <div className="flex justify-start gap-5">
-              <p className="flex-1">Gender</p>
-              <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
-                {" "}
-                {userDetails ? (
-                  <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
-                    {userDetails.phone}
-                  </p>
-                ) : (
-                  <Skeleton className="w-[60px] h-[30px]"></Skeleton>
-                )}
-              </p>
-            </div> */}
-            {/* <div className="flex justify-start gap-5">
-              <p className="flex-1">Date of Birth</p>
-              {userDetails ? (
-                <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
-                  {userDetails.phone}
-                </p>
-              ) : (
-                <Skeleton className="w-[60px] h-[30px]"></Skeleton>
-              )}
-            </div> */}
+
             <div className="flex justify-start gap-5">
               <p className="flex-1">Member Since</p>
               {userDetails ? (
@@ -499,30 +502,61 @@ export default function Workspace({ params }: { params: { id: string } }) {
               )}
             </div>
           </div>
-          {/* <div className="flex flex-col gap-3  w-full px-5 lg:max-w-[300px]">
+          <div className="flex flex-col gap-3  w-full px-5 lg:max-w-[300px]">
             <p className="text-sm font-medium text-[#8B909A]">
-              Shipping Address
+              CUSTOMER ADDRESS
             </p>
-            <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
-              No 2, rayfield axis, jos.
-            </p>
-            <div className="flex justify-between gap-3 max-w-[300px]">
-              <div className="flex flex-col gap-3">
-                <p className="font-bold text-2xl">150</p>
-                <p className="font-medium text-sm text-[#8B909A]">
-                  Total Order
+            <div className="flex justify-start gap-5">
+              <p className="flex-1">Address</p>
+              {userDetails?.address ? (
+                <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
+                  {userDetails.address?.address}
                 </p>
-              </div>
-              <div className="flex flex-col gap-3">
-                <p className="font-bold text-2xl">140</p>
-                <p className="font-medium text-sm text-[#8B909A]">Completed</p>
-              </div>
-              <div className="flex flex-col gap-3">
-                <p className="font-bold text-2xl">10</p>
-                <p className="font-medium text-sm text-[#8B909A]">Canceled</p>
-              </div>
+              ) : (
+                <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+              )}
             </div>
-          </div> */}
+            <div className="flex justify-start gap-5">
+              <p className="flex-1">Postal Code</p>
+              {userDetails?.address ? (
+                <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
+                  {userDetails.address?.postal_code}
+                </p>
+              ) : (
+                <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+              )}
+            </div>
+            <div className="flex justify-start gap-5">
+              <p className="flex-1">City</p>
+              {userDetails?.address ? (
+                <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
+                  {userDetails.address?.city}
+                </p>
+              ) : (
+                <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+              )}
+            </div>
+            <div className="flex justify-start gap-5">
+              <p className="flex-1">State</p>
+              {userDetails?.address ? (
+                <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
+                  {userDetails.address?.state}
+                </p>
+              ) : (
+                <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+              )}
+            </div>
+            <div className="flex justify-start gap-5">
+              <p className="flex-1">Country</p>
+              {userDetails?.address ? (
+                <p className="font-semibold text-sm text-[#23272E] flex-[0.5]">
+                  {userDetails.address?.country}
+                </p>
+              ) : (
+                <Skeleton className="w-[60px] h-[30px]"></Skeleton>
+              )}
+            </div>
+          </div>
         </div>
       </div>
       <div className="pb-12" suppressHydrationWarning={true}>
@@ -700,9 +734,9 @@ export default function Workspace({ params }: { params: { id: string } }) {
                           </p>
                         </div>
                       </div>
-                      {order.orderedItems &&
-                        order.orderedItems.map((product, index) => (
-                          <div key={index}>
+                      {order.items &&
+                        order.items.map((product) => (
+                          <div key={product.sku}>
                             <div
                               key={index}
                               className="flex justify-between border-b pl-2"
@@ -715,7 +749,7 @@ export default function Workspace({ params }: { params: { id: string } }) {
                                 <span>{product.sku}</span>
                               </div>
                               <div className=" flex-1  w-full  flex-grow  text-sm  py-4 px-4 font-semibold">
-                                <span>{product.productName}</span>
+                                <span>{product.name}</span>
                               </div>
                               <div className=" flex-1  w-full  flex-grow  text-sm font-medium py-4 px-4">
                                 <span>
@@ -740,19 +774,11 @@ export default function Workspace({ params }: { params: { id: string } }) {
                                     product.total.toLocaleString()}
                                 </span>
                               </div>
-                              <div className=" flex-1 max-w-[100px]  w-full  flex-grow  text-sm font-medium py-4 px-4">
-                                <p className="flex gap-2">
-                                  <HiOutlineDotsHorizontal
-                                    color="black"
-                                    size={20}
-                                    className="cursor-pointer"
-                                    onClick={() => {
-                                      getorderDetails(order.orderId);
-                                      alert(order.orderId);
-                                    }}
-                                  />
-                                </p>
-                              </div>
+                              <OrderPrint
+                                key={order.orderId}
+                                order={order}
+                                userDetails={userDetails}
+                              />
                             </div>
                           </div>
                         ))}
@@ -775,7 +801,9 @@ export default function Workspace({ params }: { params: { id: string } }) {
                         <div className=" flex-1  w-full flex-grow  text-sm font-medium py-4 px-4">
                           <p className="py-4">₦1000</p>
                           <p className="text-[#EA5455] py-4">₦0</p>
-                          <p className="py-4">₦{order.total}</p>
+                          <p className="py-4">
+                            ₦{(order.total + 1000).toLocaleString()}
+                          </p>
                         </div>
                         <div className=" flex-1 max-w-[100px] w-full flex-grow  text-sm font-medium py-4 px-4"></div>
                       </div>
@@ -834,3 +862,4 @@ export default function Workspace({ params }: { params: { id: string } }) {
     </div>
   );
 }
+CustomerDetails.requireAuth = true;

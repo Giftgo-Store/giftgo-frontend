@@ -305,8 +305,8 @@ export default function Dashboard() {
       label: "STATUS",
     },
     {
-      key: "revenue",
-      label: "REVENUE",
+      key: "price",
+      label: "PRICE",
     },
   ];
 
@@ -447,7 +447,7 @@ export default function Dashboard() {
         }
 
       case "price":
-        return <p className="font-normal">₦{item.price}</p>;
+        return <p className="font-normal">₦{item.price.toLocaleString()}</p>;
       case "revenue":
         return <p className="font-normal">₦{item.revenue}</p>;
       case "customer":
@@ -969,7 +969,7 @@ export default function Dashboard() {
             option={option}
           />
           <div className="flex flex-col gap-2">
-            {!loading ? (
+            {!loading && trending_products ? (
               trending_products.map((product, index) => (
                 <div
                   className="flex justify-between items-center w-full "
@@ -992,7 +992,7 @@ export default function Dashboard() {
                       radius: "none",
                     }}
                   />
-                  <p>₦{product.price}</p>
+                  <p>₦{product.price.toLocaleString()}</p>
                 </div>
               ))
             ) : (

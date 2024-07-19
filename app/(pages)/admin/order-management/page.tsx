@@ -32,6 +32,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import BASE_URL from "@/app/config/baseurl";
 import { ToastContainer, toast } from "react-toastify";
+import OrderPrint from "@/app/components/printSlips/orderPrint";
 
 export interface order {
   _id: string;
@@ -110,6 +111,7 @@ export default function OrderManagement() {
       });
 
       const resData = await res.json();
+      console.log(resData);
       setOrders(resData.orders);
       setIsLoading(false);
     } catch (error) {
@@ -608,19 +610,7 @@ export default function OrderManagement() {
                               ₦{product.total && product.total.toLocaleString()}
                             </span>
                           </div>
-                          <div className=" flex-1 max-w-[100px]  w-full  flex-grow  text-sm font-medium py-4 px-4">
-                            <p className="flex gap-2">
-                              <HiOutlineDotsHorizontal
-                                color="black"
-                                size={20}
-                                className="cursor-pointer"
-                                onClick={() => {
-                                  getorderDetails(order.orderId);
-                                  alert(order.orderId);
-                                }}
-                              />
-                            </p>
-                          </div>
+                         <OrderPrint order={order} userDetails={undefined}/>
                         </div>
                       </div>
                     ))}
@@ -643,7 +633,9 @@ export default function OrderManagement() {
                       <div className=" flex-1  w-full flex-grow  text-sm font-medium py-4 px-4">
                         <p className="py-4">₦1000</p>
                         <p className="text-[#EA5455] py-4">₦0</p>
-                        <p className="py-4">₦{order.total}</p>
+                        <p className="py-4">
+                          ₦{(order.total + 1000).toLocaleString()}
+                        </p>
                       </div>
                       <div className=" flex-1 max-w-[100px] w-full flex-grow  text-sm font-medium py-4 px-4"></div>
                     </div>
