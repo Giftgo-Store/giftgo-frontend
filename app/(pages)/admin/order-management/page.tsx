@@ -618,6 +618,7 @@ export default function OrderManagement() {
                                   getorderDetails(order.orderId);
                                   alert(order.orderId);
                                 }}
+                                
                               />
                             </p>
                           </div>
@@ -643,7 +644,9 @@ export default function OrderManagement() {
                       <div className=" flex-1  w-full flex-grow  text-sm font-medium py-4 px-4">
                         <p className="py-4">₦1000</p>
                         <p className="text-[#EA5455] py-4">₦0</p>
-                        <p className="py-4">₦{order.total}</p>
+                        <p className="py-4">
+                          ₦{(order.total + 1000).toLocaleString()}
+                        </p>
                       </div>
                       <div className=" flex-1 max-w-[100px] w-full flex-grow  text-sm font-medium py-4 px-4"></div>
                     </div>

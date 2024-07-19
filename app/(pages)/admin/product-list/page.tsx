@@ -14,7 +14,7 @@ import { CiSearch } from "react-icons/ci";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { ProductListSkeletonCard } from "@/app/components/loaders/productlistskeletonLoad";
 import { useSession } from "next-auth/react";
-import { redirect,useRouter} from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import BASE_URL from "@/app/config/baseurl";
 interface item {
   _id: string;
@@ -53,22 +53,22 @@ export default function ProductList() {
 
   const fetchProducts = async () => {
     try {
-      const data = await fetch(`${API}/products`, {
+      const data = await fetch(`${API}/products/`, {
         headers: {
+          "Content-Type": "application/json",
           AUTHORIZATION: "Bearer " + token,
         },
         method: "GET",
       });
       const productData = await data.json();
       setLoading(false);
-      // console.log(productData);
       if (productData.data) {
         setItems(productData.data);
       } else if (productData.data === null) {
         setItems([]);
       }
     } catch (error) {
-      //  console.error(error);
+      console.error(error);
     }
   };
 
@@ -134,6 +134,7 @@ export default function ProductList() {
       const updatedPinnedList = [...pinnedList];
       updatedPinnedList.splice(index, 1);
       setPinnedList(updatedPinnedList);
+      savePinnedList(updatedPinnedList);
     } else {
       // Remove from main product list and send a delete request to the server
       try {
@@ -211,6 +212,7 @@ export default function ProductList() {
           filterValue.length < 1 &&
           pinnedList.map((item: item, index: number) => (
             <ProductListCard
+            
               key={item._id}
               avatar={item.images[0]}
               productCategory={item.category.name}
@@ -219,6 +221,7 @@ export default function ProductList() {
               productSold={""}
               productStock={item.stockQuantity}
               productSummary={item.description}
+              isPinned={true}
               DeleteProduct={() => {
                 DeleteProduct(index, item._id, true);
               }}
@@ -238,7 +241,7 @@ export default function ProductList() {
         {!loading ? (
           <div
             className={`flex gap-5  ${
-              paginatedItems.length > 3 ? "justify-between" : "justify-stretch"
+              paginatedItems.length > 3 ? "justify-start" : "justify-stretch"
             } flex-wrap`}
           >
             {paginatedItems.length ? (
@@ -250,8 +253,9 @@ export default function ProductList() {
                   productName={item.productName}
                   productPrice={Number(item.salePrice).toLocaleString()}
                   productSold={""}
-                  productStock={item.stockQuantity}
+                  productStock={item.stockQuantity.toLocaleString()}
                   productSummary={item.description}
+                  isPinned={false}
                   DeleteProduct={() => {
                     DeleteProduct(index, item._id, false);
                   }}
@@ -305,8 +309,8 @@ export default function ProductList() {
         <Pagination
           showControls
           color="success"
-          total={pages}
           initialPage={1}
+          total={pages || 1}
           page={page}
           onChange={(page) => {
             setPage(page);

@@ -25,7 +25,6 @@ import {
   useMemo,
 } from "react";
 import { SlPicture } from "react-icons/sl";
-import { countries } from "@/app/assets/data";
 import BASE_URL from "@/app/config/baseurl";
 import { toast } from "react-toastify";
 interface Form {
@@ -88,7 +87,8 @@ export default function AddProducts() {
   const [sku, setSku] = useState("");
   const [expressShipping, setExpressShipping] = useState<boolean>(false);
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [categoryloading, setCategoryLoading] = useState(true);
   const [isCouponActive, setIsCouponActive] = useState(false);
   const [form, setForm] = useState<Form>({
     USD: "",
@@ -99,6 +99,7 @@ export default function AddProducts() {
     JPY: "",
     NGN: "",
   });
+  const countries = ["USA", "NIGERIA", "TOKYO", "GERMANY"];
   const searchParams = useSearchParams();
   const edit = searchParams?.get("edit");
 
@@ -275,6 +276,7 @@ export default function AddProducts() {
     setstockQuantity("");
     setSku("");
     setExpressShipping(false);
+    setIsCouponActive(false);
     setSelectedImages([]);
     setImagePreviews([]);
     setImageNames([]);
@@ -305,7 +307,7 @@ export default function AddProducts() {
     formdata.append("stockQuantity", stockQuantity);
     formdata.append("expressShipping", expressShipping.toString());
     formdata.append("isCouponActive", isCouponActive.toString());
-    formdata.append("location", location);
+    formdata.append("location", location.toUpperCase());
     setLoading(true);
     try {
       const res = await fetch(`${API}/products/add-product`, {
@@ -317,13 +319,16 @@ export default function AddProducts() {
       });
 
       const productData = await res.json();
-      if (res.ok) {
+
+      if (productData.statusCode === 201) {
         resetForm();
-        setLoading(false);
+      } else {
+        toast.error("An error occured, please try again");
       }
-    } catch (error) {
-      console.error("Error adding product:", error);
       setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      toast.error("An error occured, please try again");
     }
   };
 
@@ -335,11 +340,8 @@ export default function AddProducts() {
       brandName,
       salePrice: form.NGN,
       expressShipping: expressShipping ? "true" : "false",
-      isCouponActive: isCouponActive ? "true" : "false",
       stockQuantity: String(stockQuantity),
       regularPrice: String(regularPrice),
-      category: productCategory,
-      location,
     };
 
     setLoading(true);
@@ -358,9 +360,10 @@ export default function AddProducts() {
         resetForm();
         setLoading(false);
       }
+      console.log(productData);
     } catch (error) {
-      console.error("Error editing product:", error);
       setLoading(false);
+      toast.error("An error occured , please try again");
     }
   };
 
@@ -398,11 +401,12 @@ export default function AddProducts() {
           AUTHORIZATION: "Bearer " + token,
         },
       });
-      setLoading(false);
+      setCategoryLoading(false);
       const resData = await res.json();
       setCategories(resData.data);
     } catch (error) {}
   };
+
   useEffect(() => {
     if (token) {
       getAllCategory();
@@ -419,7 +423,7 @@ export default function AddProducts() {
       // console.log(productData.data);
       return productData.data;
     } catch (error) {
-      console.error("Error fetching product:", error);
+      toast.error("An error occured , please try again");
     }
   };
 
@@ -530,13 +534,13 @@ export default function AddProducts() {
           if (edit) {
             toast.promise(editProducts(), {
               pending: "Editing product information ",
-              success: "Product information editted",
+              success: "Product information edited",
               error: "An error occured , please try again",
             });
           } else {
             toast.promise(addProducts(), {
               pending: "Adding product information ",
-              success: "Product information editted",
+              success: "Product information added",
               error: "An error occured , please try again",
             });
           }
@@ -614,26 +618,34 @@ export default function AddProducts() {
               onValueChange={setExpressShipping}
             ></Switch>
           </div>
-          <div className="flex gap-2 items-center justify-normal">
-            <p className="w-[180px]">Coupon Access</p>
-            <Switch
-              classNames={{
-                base: cn("data-[selected=true]:border-[#DDDDDD]"),
-                wrapper: [
-                  "p-0 h-4 overflow-visible bg-white",
-                  " group-data-[selected=true]:bg-[#DDDDDD] border-1 border-[#DDDDDD]",
-                  "bg-[#e6e6e6] mr-0 w-[45px]",
-                ],
-                thumb: cn(
-                  "border-[#DDDDDD]",
-                  "w-6 h-6 border-2 shadow-lg",
-                  //selected
-                  "group-data-[selected=true]:bg-[#1EB564] bg-white border-[#DDDDDD] border-[2px]"
-                ),
-              }}
-              isSelected={isCouponActive}
-              onValueChange={setIsCouponActive}
-            ></Switch>
+
+          <div>
+            <div className="flex gap-2 items-center justify-normal">
+              <p className="w-[180px]">Coupon Access</p>
+              <Switch
+                classNames={{
+                  base: cn("data-[selected=true]:border-[#DDDDDD]"),
+                  wrapper: [
+                    "p-0 h-4 overflow-visible bg-white",
+                    " group-data-[selected=true]:bg-[#DDDDDD] border-1 border-[#DDDDDD]",
+                    "bg-[#e6e6e6] mr-0 w-[45px]",
+                  ],
+                  thumb: cn(
+                    "border-[#DDDDDD]",
+                    "w-6 h-6 border-2 shadow-lg",
+                    //selected
+                    "group-data-[selected=true]:bg-[#1EB564] bg-white border-[#DDDDDD] border-[2px]"
+                  ),
+                }}
+                isSelected={isCouponActive}
+                onValueChange={setIsCouponActive}
+                isDisabled={edit ? true : false}
+              ></Switch>
+            </div>
+            <p className="text-[#8B909A]">
+              A coupon must have been created to give this product access to a
+              coupon
+            </p>
           </div>
           <div className="flex flex-col gap-3">
             <p>Category</p>
@@ -644,7 +656,8 @@ export default function AddProducts() {
               placeholder="Select category"
               variant="flat"
               aria-label="category"
-              isLoading={loading}
+              isLoading={categoryloading}
+              isDisabled={edit ? true : false}
               classNames={{
                 trigger: [
                   "bg-white text-black",
@@ -742,6 +755,7 @@ export default function AddProducts() {
               <div className="flex w-full flex-col gap-3">
                 <p>Location</p>
                 <Select
+                  isRequired
                   size="md"
                   radius="sm"
                   className="w-full bg-white shadow-none border-1 rounded-lg"
@@ -760,12 +774,12 @@ export default function AddProducts() {
                     setLocation(e.target.value);
                   }}
                   selectedKeys={[location]}
-                  // defaultSelectedKeys={[location]}
+                  isDisabled={edit ? true : false}
                 >
                   {countries &&
-                    countries.map((country: { name: string }) => (
-                      <SelectItem key={country.name.toUpperCase()}>
-                        {country.name}
+                    countries.map((country) => (
+                      <SelectItem key={country.toUpperCase()}>
+                        {country}
                       </SelectItem>
                     ))}
                 </Select>
