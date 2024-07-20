@@ -153,7 +153,7 @@ const LandingHeader = () => {
               closeCheckoutModal={closeCheckoutModal}
             />
             <AiOutlineUser
-              className="w-[25px] text-white h-[25px]"
+              className="w-[25px] text-white h-[25px] cursor-pointer"
               onClick={() => (token ? router.push("/account") : openModal())}
             />
             <Modal showModal={showModal} closeModal={closeModal} />
