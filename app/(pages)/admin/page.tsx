@@ -708,8 +708,81 @@ export default function Dashboard() {
             />
           </div>
         </div>
+      </div>
+      {/* top sellin category section */}
+      <div className="flex lg:flex-row flex-col gap-4 pb-4">
+        <div className="lg:max-w-[50%] w-full flex flex-col gap-4 p-5 bg-white rounded-2xl">
+          <div>
+            <DashboardCardHeader
+              title="Top Selling Category"
+              supportText={`Total of ${revenueStats?.totalCustomers} customers`}
+              option={option}
+            />
+          </div>
+          <div className="relative max-h-[350px] w-fit mx-auto">
+            <div className="w-[220px] h-[220px] rounded-full flex flex-col gap-2 items-center justify-center bg-[#EB6363] text-white">
+              <span className="opacity-[80%]">
+                {topSellingCategories ? (
+                  <span className="opacity-[80%]">
+                    {topSellingCategories[0].categoryName}
+                  </span>
+                ) : (
+                  <Skeleton className="w-[70px] h-[40px]" />
+                )}
+              </span>
+              {topSellingCategories ? (
+                <span className="font-bold text-2xl">
+                  {topSellingCategories[0].totalSales}
+                </span>
+              ) : (
+                <Skeleton className="w-[100px] h-[30px]" />
+              )}
+              <span className="opacity-[80%]">Sold</span>
+            </div>
+            <div className="w-[200px] h-[200px] rounded-full flex flex-col gap-2 items-center justify-center bg-[#FEEFD3] text-black -top-20 relative left-28">
+              {topSellingCategories ? (
+                <span className="opacity-[80%]">
+                  {topSellingCategories[1].categoryName}
+                </span>
+              ) : (
+                <Skeleton className="w-[70px] h-[40px]" />
+              )}
+
+              <span className="font-bold text-2xl">
+                {topSellingCategories ? (
+                  <span className="font-bold text-2xl">
+                    {topSellingCategories[1].totalSales}
+                  </span>
+                ) : (
+                  <Skeleton className="w-[100px] h-[30px]" />
+                )}
+              </span>
+              <span className="opacity-[80%]">Sold</span>
+            </div>
+            <div className="w-[160px] h-[160px] rounded-full flex flex-col gap-2 items-center justify-center bg-[#1EB564] text-white relative z-10 -top-64 -left-8">
+              {topSellingCategories ? (
+                <span className="opacity-[80%]">
+                  {topSellingCategories[2].categoryName}
+                </span>
+              ) : (
+                <Skeleton className="w-[70px] h-[40px]" />
+              )}
+
+              <span className="font-bold text-2xl">
+                {topSellingCategories ? (
+                  <span className="font-bold text-2xl">
+                    {topSellingCategories[2].totalSales}
+                  </span>
+                ) : (
+                  <Skeleton className="w-[100px] h-[30px]" />
+                )}
+              </span>
+              <span className="opacity-[80%]">Sold</span>
+            </div>
+          </div>
+        </div>
         {/* user tracker */}
-        <div className="lg:max-w-[40%] w-full p-5 bg-white rounded-2xl min-h-[50vh] ">
+        <div className="lg:max-w-[50%] w-full p-5 bg-white rounded-2xl min-h-[50vh] ">
           <div className="flex flex-col gap-2 py-3">
             <p className="font-semibold text-lg text-[#23272E]">
               Users in last 30 minutes
@@ -800,122 +873,6 @@ export default function Dashboard() {
               )}
             </div>
           </div>
-        </div>
-      </div>
-      {/* top sellin category section */}
-      <div className="flex lg:flex-row flex-col gap-4 pb-4">
-        <div className="lg:max-w-[40%] w-full flex flex-col gap-4 p-5 bg-white rounded-2xl">
-          <div>
-            <DashboardCardHeader
-              title="Top Selling Category"
-              supportText={`Total of ${revenueStats?.totalCustomers} customers`}
-              option={option}
-            />
-          </div>
-          <div className="relative max-h-[350px] w-fit mx-auto">
-            <div className="w-[220px] h-[220px] rounded-full flex flex-col gap-2 items-center justify-center bg-[#EB6363] text-white">
-              <span className="opacity-[80%]">
-                {topSellingCategories ? (
-                  <span className="opacity-[80%]">
-                    {topSellingCategories[0].categoryName}
-                  </span>
-                ) : (
-                  <Skeleton className="w-[70px] h-[40px]" />
-                )}
-              </span>
-              {topSellingCategories ? (
-                <span className="font-bold text-2xl">
-                  {topSellingCategories[0].totalSales}
-                </span>
-              ) : (
-                <Skeleton className="w-[100px] h-[30px]" />
-              )}
-              <span className="opacity-[80%]">Sold</span>
-            </div>
-            <div className="w-[200px] h-[200px] rounded-full flex flex-col gap-2 items-center justify-center bg-[#FEEFD3] text-black -top-20 relative left-28">
-              {topSellingCategories ? (
-                <span className="opacity-[80%]">
-                  {topSellingCategories[1].categoryName}
-                </span>
-              ) : (
-                <Skeleton className="w-[70px] h-[40px]" />
-              )}
-
-              <span className="font-bold text-2xl">
-                {topSellingCategories ? (
-                  <span className="font-bold text-2xl">
-                    {topSellingCategories[1].totalSales}
-                  </span>
-                ) : (
-                  <Skeleton className="w-[100px] h-[30px]" />
-                )}
-              </span>
-              <span className="opacity-[80%]">Sold</span>
-            </div>
-            <div className="w-[160px] h-[160px] rounded-full flex flex-col gap-2 items-center justify-center bg-[#1EB564] text-white relative z-10 -top-64 -left-8">
-              {topSellingCategories ? (
-                <span className="opacity-[80%]">
-                  {topSellingCategories[2].categoryName}
-                </span>
-              ) : (
-                <Skeleton className="w-[70px] h-[40px]" />
-              )}
-
-              <span className="font-bold text-2xl">
-                {topSellingCategories ? (
-                  <span className="font-bold text-2xl">
-                    {topSellingCategories[2].totalSales}
-                  </span>
-                ) : (
-                  <Skeleton className="w-[100px] h-[30px]" />
-                )}
-              </span>
-              <span className="opacity-[80%]">Sold</span>
-            </div>
-          </div>
-        </div>
-        <div className="w-full p-5 bg-white rounded-2xl">
-          <Table
-            shadow="none"
-            aria-label="last transactions"
-            topContent={tableTopContent}
-            classNames={{
-              th: [
-                "border-divider",
-                "text-[#8B909A]",
-                "!rounded-none",
-                "first:rounded-r-none",
-                "last:rounded-l-none",
-                "bg-[#F8F9FA]",
-                "border-b-[#DBDADE]",
-                "border-b-2",
-                "mx-auto",
-              ],
-              thead: ["text-default-500"],
-              table: "min-h-[270px]",
-            }}
-          >
-            <TableHeader columns={columns}>
-              {(column) => (
-                <TableColumn key={column.key}>{column.label}</TableColumn>
-              )}
-            </TableHeader>
-            <TableBody
-              items={rows}
-              isLoading={loading}
-              loadingContent={<Spinner label="Loading..." color="default" />}
-              className="min-h-[450px]"
-              emptyContent={!loading && "There is no data"}
-            >
-              {(item) => (
-                <TableRow key={item.total}>
-                  {(columnKey) => (
-                    <TableCell>{renderCell(item, columnKey)}</TableCell>
-                  )}
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
         </div>
       </div>
       {/* best selling product section */}
