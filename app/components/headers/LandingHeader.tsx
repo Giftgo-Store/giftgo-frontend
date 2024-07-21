@@ -146,7 +146,7 @@ const LandingHeader = () => {
               />
               <p className="absolute bg-white h-4 w-4 rounded-full text-xs flex justify-center items-center font-semibold top-[-4px] right-[-10px]">
                 {cartItems.length}
-              </p>
+              </p> 
             </div>
             <CheckoutModal
               showCheckoutModal={showCheckoutModal}
