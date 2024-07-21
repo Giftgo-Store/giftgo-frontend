@@ -5,6 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { isTokenExpired } from "@/app/providers/jwt";
 
 type ChildProps = {
   children: React.ReactNode;
@@ -18,6 +20,16 @@ const Account = ({ children }: ChildProps) => {
     Cookies.remove("token");
     router.push("/");
   };
+
+    useEffect(() => {
+      const token = Cookies.get("token");
+      if (!token || token === "undefined") {
+        router.push("/auth/sign-in");
+      } else if (isTokenExpired(token)) {
+        Cookies.remove("bearerToken");
+        router.push("/auth/sign-in");
+      }
+    }, [router]);
 
   return (
     <>

@@ -146,14 +146,14 @@ const LandingHeader = () => {
               />
               <p className="absolute bg-white h-4 w-4 rounded-full text-xs flex justify-center items-center font-semibold top-[-4px] right-[-10px]">
                 {cartItems.length}
-              </p>
+              </p> 
             </div>
             <CheckoutModal
               showCheckoutModal={showCheckoutModal}
               closeCheckoutModal={closeCheckoutModal}
             />
             <AiOutlineUser
-              className="w-[25px] text-white h-[25px]"
+              className="w-[25px] text-white h-[25px] cursor-pointer"
               onClick={() => (token ? router.push("/account") : openModal())}
             />
             <Modal showModal={showModal} closeModal={closeModal} />

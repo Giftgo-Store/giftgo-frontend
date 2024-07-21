@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import Image from "next/image";
@@ -59,7 +60,7 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource",
+          "Error fetching resource"
           // error?.response?.data || error?.message
         );
       } finally {
@@ -82,7 +83,7 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource",
+          "Error fetching resource"
           // error?.response?.data || error?.message
         );
       } finally {
@@ -110,6 +111,8 @@ const Page = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [coupon, setCoupon] = useState("");
+  const [couponInfo, setCouponInfo] = useState<any>("");
+  const [couponValid, setCouponValid] = useState(false);
 
   useEffect(() => {
     if (user && user.address) {
@@ -120,6 +123,49 @@ const Page = () => {
       setZipCode(user.address.postal_code);
     }
   }, [user]);
+
+  useEffect(() => {
+    const fetchCoupon = async () => {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/api/v1/coupons/${coupon}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        // Handle successful response, e.g., save token, redirect, etc.
+        setCouponInfo(response.data);
+        if (response.data.isActive === 'true') {
+          setCouponValid(true);
+          toast({
+            status: "success",
+            description: "Valid coupon",
+          });
+          return;
+        } else {
+          toast({
+            status: "error",
+            description: "Invalid coupon",
+          });
+        }
+      } catch (error) {
+        console.error(
+          //@ts-ignore
+          "Error fetching resource"
+          // error?.response?.data || error?.message
+        );
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+    if (coupon.length > 6) {
+      fetchCoupon();
+    }
+  }, [coupon]);
+
+  console.log(couponInfo);
 
   console.log(user && user.address && user.address.address);
 
@@ -139,7 +185,7 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource",
+          "Error fetching resource"
           // error?.response?.data || error?.message
         );
       } finally {
@@ -168,7 +214,7 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource",
+          "Error fetching resource"
           // error?.response?.data || error?.message
         );
       } finally {
@@ -185,12 +231,12 @@ const Page = () => {
     cartItems &&
     cartItems &&
     cartItems.map((item: any) => ({
-      productId: item.product._id,
+      productId: item.product && item.product._id,
       quantity: item.quantity,
-      price: item.product.salePrice,
+      price: item.product && item.product.salePrice,
       lifetime: false,
       validity: 30,
-      productName: item.product.productName,
+      productName: item.product && item.product.productName,
       licenses: [],
     }));
 
@@ -257,8 +303,25 @@ const Page = () => {
   };
 
   const total = cartItems.map(
-    (item: any) => Number(item.quantity) * Number(item.product.salePrice)
+    (item: any) =>
+      Number(item.quantity) * Number(item.product && item.product.salePrice)
   );
+
+  const couponProducts = cartItems.filter(
+    (item: any) => item.product && item.product.isCouponActive === 'true'
+  );
+
+  console.log(couponProducts)
+
+
+  const totalDiscount = couponProducts.reduce((acc: number, item: any) => {
+    const price = Number(item.product?.salePrice) || 0; // Ensure price is a valid number
+    const discountPercentage = couponInfo?.discountPercentage || 0; // Default to 0 if undefined
+    console.log(discountPercentage, price)
+    return acc + (item.quantity * price * discountPercentage) / 100;
+  }, 0);
+
+  console.log(totalDiscount);
 
   function formatNumberWithCommas(amount: number): string {
     return new Intl.NumberFormat("en-US").format(amount);
@@ -267,11 +330,10 @@ const Page = () => {
   const componentProps = {
     reference: new Date().getTime().toString(),
     email: user && user.email,
-    amount:
-      total.reduce(
-        (accumulator: any, currentValue: any) => accumulator + currentValue,
-        0
-      ) * 100,
+    amount: (total.reduce(
+          (accumulator: any, currentValue: any) => accumulator + currentValue,
+          0
+        ) - totalDiscount) * 100,
     metadata: {
       name: user && user?.name,
       custom_fields: [
@@ -421,7 +483,8 @@ const Page = () => {
                   >
                     {user && user.address ? user.address.country : "Select"}
                   </option>
-                  {countries.length > 0 &&
+                  {countries &&
+                    countries.length > 0 &&
                     countries.map((count: any, i: any) => {
                       return (
                         <option key={i} value={count.name}>
@@ -450,7 +513,8 @@ const Page = () => {
                   >
                     {user && user.address ? user.address.state : "Select"}
                   </option>
-                  {selectedState.length > 0 &&
+                  {selectedState &&
+                    selectedState.length > 0 &&
                     selectedState[0] &&
                     selectedState[0].states &&
                     selectedState[0].states.map((state: any, i: any) => {
@@ -481,7 +545,8 @@ const Page = () => {
                   >
                     {user && user.address ? user.address.city : "Select"}
                   </option>
-                  {selectedCity.length > 0 &&
+                  {selectedCity &&
+                    selectedCity.length > 0 &&
                     selectedCity[0] &&
                     selectedCity[0].cities &&
                     selectedCity[0].cities.map((city: any, i: any) => {
@@ -637,7 +702,7 @@ const Page = () => {
                     className="flex justify-between w-full items-center gap-4"
                   >
                     <Image
-                      src={item && item?.product?.images[0]}
+                      src={item && item?.product && item?.product?.images[0]}
                       alt=""
                       width={72}
                       height={72}
@@ -645,16 +710,19 @@ const Page = () => {
                     />
                     <div className="">
                       <p className="text-[14px] font-[400]">
-                        {item && item?.product?.brandName}{" "}
-                        {item && item?.product?.productName}{" "}
-                        {item && item?.product?.description.split(0, 20)}...
+                        {item && item?.product && item?.product?.brandName}{" "}
+                        {item && item?.product && item?.product?.productName}{" "}
+                        {item &&
+                          item?.product &&
+                          item?.product?.description &&
+                          item?.product?.description.slice(0, 25)}...
                       </p>
                       <p className="text-[14px] font-[400]">
                         {item.quantity} x{" "}
                         <span className="font-[700] text-[14px]">
                           ₦
                           {formatNumberWithCommas(
-                            item && item?.product.salePrice
+                            item && item?.product && item?.product.salePrice
                           )}
                         </span>
                       </p>
@@ -678,21 +746,19 @@ const Page = () => {
                 )}
               </p>
             </div>
-            <div className="flex justify-between items-center w-full">
-              <p className="text-[#5F6C72] text-[14px]">
-                Discount <span className="text-primary">-10%</span>
-              </p>
-              <p className="text-primary text-[14px] font-[700]">
-                -₦{" "}
-                {formatNumberWithCommas(
-                  total.reduce(
-                    (accumulator: any, currentValue: any) =>
-                      accumulator + currentValue,
-                    0
-                  )
-                )}
-              </p>
-            </div>
+            {couponValid && (
+              <div className="flex justify-between items-center w-full">
+                <p className="text-[#5F6C72] text-[14px]">
+                  Discount{" "}
+                  <span className="text-primary">
+                    -{couponInfo?.discountPercentage.toString()}%
+                  </span>
+                </p>
+                <p className="text-primary text-[14px] font-[700]">
+                  -₦ {formatNumberWithCommas(totalDiscount)}
+                </p>
+              </div>
+            )}
             <div className="flex justify-between items-center w-full">
               <p className="text-[#5F6C72] text-[14px]">Shipping</p>
               <p className="text-[#191C1F] text-[14px] font-[700]">Free</p>
@@ -710,24 +776,26 @@ const Page = () => {
                   (accumulator: any, currentValue: any) =>
                     accumulator + currentValue,
                   0
-                )
+                ) - totalDiscount
               )}
             </p>
           </div>
 
-          <div className="flex justify-between flex-col items-start w-full px-5 pt-[24px] gap-2">
-            {" "}
-            <label htmlFor="username" className="text-[#191C1F] text-[14px]">
-              Enter Coupon <span className="text-[#929FA5]">(Optional)</span>
-            </label>
-            <input
-              type="tel"
-              className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none"
-              placeholder="Coupon Code"
-              value={coupon}
-              onChange={(e) => setCoupon(e.target.value)}
-            />
-          </div>
+          {!couponValid && (
+            <div className="flex justify-between flex-col items-start w-full px-5 pt-[24px] gap-2">
+              {" "}
+              <label htmlFor="username" className="text-[#191C1F] text-[14px]">
+                Enter Coupon <span className="text-[#929FA5]">(Optional)</span>
+              </label>
+              <input
+                type="tel"
+                className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none"
+                placeholder="Coupon Code"
+                value={coupon}
+                onChange={(e) => setCoupon(e.target.value)}
+              />
+            </div>
+          )}
 
           <div className="flex justify-center items-center my-6">
             <button
