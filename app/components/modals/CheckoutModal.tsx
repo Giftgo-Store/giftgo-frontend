@@ -97,7 +97,7 @@ const CheckoutModal: React.FC<ModalProps> = ({
   };
 
   const total: any = cartItems.map(
-    (item: any) => Number(item.quantity) * Number(item.product.salePrice)
+    (item: any) => Number(item.quantity) * Number(item.product && item.product.salePrice)
   );
 
   function formatNumberWithCommas(amount: number): string {
@@ -153,7 +153,7 @@ const CheckoutModal: React.FC<ModalProps> = ({
                           <span className="font-[700] text-[14px]">
                             ₦
                             {formatNumberWithCommas(
-                              item && item?.product.salePrice
+                              item && item?.product && item?.product.salePrice
                             )}
                           </span>
                         </p>

@@ -7,6 +7,7 @@ import axios from "axios";
 import BASE_URL from "../../config/baseurl";
 import Cookie from "js-cookie";
 import { useAppToast } from "@/app/providers/useAppToast";
+import Link from "next/link";
 
 interface ModalProps {
   showModal: boolean;
@@ -50,6 +51,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       });
       return;
     }
+    setIsSigningIn(true)
     try {
       const response = await axios.post(
         `${BASE_URL}/api/v1/auth/log-in`,
@@ -85,6 +87,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       });
       return;
     }
+    setIsSigningUp(true)
     try {
       const response = await axios.post(
         `${BASE_URL}/api/v1/auth/sign-up`,
@@ -100,7 +103,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
     } catch (error) {
       // console.error("Sign Up Error", error.response?.data || error.message);
     } finally {
-      setIsSigningIn(false);
+      setIsSigningUp(false);
     }
   };
 
@@ -157,10 +160,12 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                 />
               </div>
               <div className="mb-6">
-                <label className="text-sm font-medium text-[#191C1F] flex justify-between items-center">
-                  Password
-                  <button className="text-sm">Forgot Password?</button>
-                </label>
+                <div className=" flex justify-between items-center w-full">
+                  <label className="text-sm font-medium text-[#191C1F] flex justify-between items-center">
+                    Password
+                  </label>
+                  <Link href={'/forgot-password'} onClick={() => closeModal()} className="text-sm">Forgot Password?</Link>
+                </div>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
