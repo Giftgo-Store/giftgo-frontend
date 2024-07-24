@@ -2,13 +2,26 @@
 import {
   Accordion,
   AccordionItem,
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
   Pagination,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Select,
   SelectItem,
   Spinner,
   Tab,
   Tabs,
+  useDisclosure,
 } from "@nextui-org/react";
 import {
   useState,
@@ -65,6 +78,12 @@ export default function OrderManagement() {
   const [selected, setSelected] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
   const [orders, setOrders] = useState<order[]>([]);
+  const [myOrderId, setMyOrderId] = useState("");
+  const [orderStatus, setOrderStatus] = useState("");
+  const [courierService, setCourierService] = useState("");
+  const [trackingLink, setTrackingLink] = useState("");
+  const [trackingNumber, setTrackingNumber] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const filters = ["Recent", "Older", "Most products", "Less products"];
   const rowsPerPageOptions = ["10", "20", "30", "40", "50"];
   const tabs = [
@@ -97,11 +116,12 @@ export default function OrderManagement() {
     },
   });
 
+  //get admin session
   const session: any = useSession();
   const token = session?.data?.token;
   const API = BASE_URL + "/api/v1";
 
-  // fetchdata
+  // fetch all orders
   const getOrders = async () => {
     try {
       const res = await fetch(`${API}/orders/transaction/details`, {
@@ -111,7 +131,7 @@ export default function OrderManagement() {
       });
 
       const resData = await res.json();
-      console.log(resData);
+      // console.log(resData);
       setOrders(resData.orders);
       setIsLoading(false);
     } catch (error) {
@@ -136,6 +156,7 @@ export default function OrderManagement() {
       });
 
       const resData = await res.json();
+      //update status
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order.orderId === orderId ? { ...order, status } : order
@@ -143,8 +164,43 @@ export default function OrderManagement() {
       );
     } catch (error) {}
   };
+  //update shipping information
+  const updateShippingInfo = async () => {
+    const shippindData = {
+      orderStatus,
+      courierService,
+      trackingLink,
+      trackingNumber: Number(trackingNumber),
+    };
+    try {
+      const res = await fetch(
+        `${API}/orders/add-status-and-link/${myOrderId}`,
+        {
+          headers: {
+            AUTHORIZATION: "Bearer " + token,
+            "Content-Type": "application/json",
+          },
+          method: "PUT",
+          body: JSON.stringify(shippindData),
+        }
+      );
+
+      const resData = await res.json();
+    
+      if (res.ok) {
+        setTrackingLink("");
+        setTrackingNumber("");
+        setCourierService("");
+        setOrderStatus("");
+        onClose();
+      }
+    } catch (error) {
+      // console.log(error);
+    }
+  };
 
   useEffect(() => {
+    //run fetch all orders
     getOrders();
   }, []);
 
@@ -355,54 +411,8 @@ export default function OrderManagement() {
     },
     [statusFilterValue, filteredItems, selected]
   );
-
-  //generate document
-  const generateDocument = (orderData: any) => {
-    const documentContent = `
-      Order ID: ${orderData.orderId}\n
-      User ID: ${orderData.userId}\n
-      Customer Address: ${orderData.customerAddress.address}, ${
-      orderData.customerAddress.city
-    }, ${orderData.customerAddress.state}, ${
-      orderData.customerAddress.country
-    }, ${orderData.customerAddress.postal_code}\n
-      Customer Phone Number: ${orderData.customerPhoneNumber}\n
-      Ordered Items:\n
-      ${orderData.orderedItems
-        .map(
-          (item: any) =>
-            `Product: ${item.productName}, Quantity: ${item.quantity}, Validity: ${item.validity} days`
-        )
-        .join("\n")}
-      Order Status: ${orderData.orderStatus}\n
-      Created At: ${new Date(orderData.createdAt).toLocaleString()}\n
-      Updated At: ${new Date(orderData.updatedAt).toLocaleString()}
-    `;
-
-    const blob = new Blob([documentContent], {
-      type: "text/plain;charset=utf-8",
-    });
-    // saves(blob, `Order_${orderData.orderId}.txt`);
-  };
-  const getorderDetails = async (id: string) => {
-    try {
-      const res = await fetch(`${API}/orders/order/${id}`, {
-        headers: {
-          AUTHORIZATION: "Bearer " + token,
-        },
-      });
-
-      const resData = await res.json();
-      generateDocument(resData.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <div className="pb-12" suppressHydrationWarning={true}>
-      {/* Same as */}
-
       <div className="w-full overflow-x-auto py-2">
         <Suspense fallback={<TabFallback />}>{MyTabs()}</Suspense>
       </div>
@@ -415,7 +425,7 @@ export default function OrderManagement() {
           aria-label="search"
           className="max-w-[300px] w-full"
           classNames={{
-            label: "text-lg",
+            label: "text-base",
             input: "py-2 text-base",
             inputWrapper: [
               "bg-white",
@@ -476,9 +486,10 @@ export default function OrderManagement() {
           <div className=" flex-1 min-w-[150px] w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
             <span>STATUS</span>
           </div>
-          <div className=" flex-1 min-w-[150px] w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
-            <span className="hidden">dropdown</span>
+          <div className=" flex-1 flex justify-center min-w-[150px] w-full flex-grow text-[#8B909A] text-sm font-medium py-2 px-4">
+            <span className="text-center">ACTIONS</span>
           </div>
+
           <div className="text-[#8B909A] text-sm font-medium w-[28px]">
             <div className="opacity-0">
               {" "}
@@ -536,8 +547,36 @@ export default function OrderManagement() {
                       <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 lg:px-4 ">
                         {MySelect(order)}
                       </div>
-                      <div className=" flex-1 min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-4">
-                        <span className="hidden">dropdown</span>
+                      <div className=" flex-1 flex justify-center min-w-[150px] w-full flex-grow  text-sm font-medium py-2 px-0 lg:px-4 ">
+                        <div className="relative z-[300]">
+                          <Dropdown>
+                            <DropdownTrigger>
+                              <Button className="bg-transparent" isIconOnly>
+                                <HiOutlineDotsHorizontal size={20} />
+                              </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu aria-label="Static Actions">
+                              <DropdownItem
+                                key="Update"
+                                onClick={() => {
+                                  setMyOrderId(order.orderId);
+                                  setOrderStatus(order.status);
+                                  onOpen();
+                                }}
+                              >
+                                Update shipping information
+                              </DropdownItem>
+
+                              <DropdownItem
+                                key="delete"
+                                className="text-danger"
+                                color="danger"
+                              >
+                                Delete shipping information
+                              </DropdownItem>
+                            </DropdownMenu>
+                          </Dropdown>
+                        </div>
                       </div>
                     </div>
                   }
@@ -610,7 +649,7 @@ export default function OrderManagement() {
                               ₦{product.total && product.total.toLocaleString()}
                             </span>
                           </div>
-                         <OrderPrint order={order} userDetails={undefined}/>
+                          <OrderPrint order={order} userDetails={undefined} />
                         </div>
                       </div>
                     ))}
@@ -690,6 +729,129 @@ export default function OrderManagement() {
           }}
         />
       </div>
+      <Modal
+        size={"lg"}
+        isOpen={isOpen}
+        onClose={() => {
+          onClose();
+        }}
+        placement="center"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1 text-lg text-center pt-6">
+                Provide shipping information
+              </ModalHeader>
+              <ModalBody>
+                <div className="flex justify-center items-center flex-col   p-4 py-5 pt-0">
+                  <div className="w-full h-full">
+                    <form
+                      className="flex flex-col gap-6"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        toast.promise(updateShippingInfo(), {
+                          pending: "updating shipping information",
+                          success: "shipping information updated",
+                          error: "an error occured , please try again",
+                        });
+                      }}
+                    >
+                      <Input
+                        placeholder="Enter the courier service here..."
+                        label="Courier service"
+                        labelPlacement="outside"
+                        size="md"
+                        radius="md"
+                        aria-label="search"
+                        className=" w-full border-1 rounded-md"
+                        classNames={{
+                          label: "text-base",
+                          input: "py-2 text-base",
+                          inputWrapper: [
+                            "bg-white",
+                            "data-focus-[within=true]:bg-white",
+                            "data-[hover=true]:bg-white",
+                            "group-data-[focus=true]:bg-white",
+                          ],
+                        }}
+                        value={courierService}
+                        onChange={(e) => {
+                          setCourierService(e.target.value);
+                        }}
+                      ></Input>
+                      <Input
+                        placeholder="Enter the tracking link..."
+                        label="Tracking link"
+                        labelPlacement="outside"
+                        size="md"
+                        radius="md"
+                        aria-label="search"
+                        className=" w-full border-1 rounded-md"
+                        classNames={{
+                          label: "text-base",
+                          input: "py-2 text-base",
+                          inputWrapper: [
+                            "bg-white",
+                            "data-focus-[within=true]:bg-white",
+                            "data-[hover=true]:bg-white",
+                            "group-data-[focus=true]:bg-white",
+                          ],
+                        }}
+                        value={trackingLink}
+                        onChange={(e) => {
+                          setTrackingLink(e.target.value);
+                        }}
+                      ></Input>
+                      <Input
+                        placeholder="Enter the tracking number here..."
+                        label="Tracking number"
+                        labelPlacement="outside"
+                        size="md"
+                        radius="md"
+                        type="number"
+                        aria-label="search"
+                        className=" w-full border-1 rounded-md"
+                        classNames={{
+                          label: "text-base",
+                          input: "py-2 text-base",
+                          inputWrapper: [
+                            "bg-white",
+                            "data-focus-[within=true]:bg-white",
+                            "data-[hover=true]:bg-white",
+                            "group-data-[focus=true]:bg-white",
+                          ],
+                        }}
+                        value={trackingNumber}
+                        onChange={(e) => {
+                          setTrackingNumber(e.target.value);
+                        }}
+                      ></Input>
+
+                      <div className="flex gap-3 justify-between">
+                        <Button
+                          className="bg-transparent text-[#8B909A] text-sm w-full border-1"
+                          onPress={() => {
+                            onClose();
+                          }}
+                        >
+                          CANCEL
+                        </Button>{" "}
+                        <Button
+                          className="bg-[#1EB564] text-white text-sm w-full"
+                          type="submit"
+                        >
+                          CHANGE STATUS
+                        </Button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 }
