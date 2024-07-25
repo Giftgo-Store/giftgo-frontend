@@ -17,6 +17,8 @@ const History = () => {
   const [ratedProduct, setRatedProduct] = useState("");
   const [rate, setRate] = useState("");
   const [comment, setComment] = useState("")
+   const [currentPage, setCurrentPage] = useState(1);
+   const itemsPerPage = 10;
 
   const handleShow = () => {
     setShow(true);
@@ -184,6 +186,21 @@ const History = () => {
     return new Intl.NumberFormat("en-US").format(amount);
   }
 
+    const totalItems = order && order.length || 0;
+
+   const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+   const startIndex = (currentPage - 1) * itemsPerPage;
+   const currentItems = order && order.reverse().slice(
+     startIndex,
+     startIndex + itemsPerPage
+   );
+
+   const handlePageClick = (page: number) => {
+     setCurrentPage(page);
+   };
+
+
   return (
     <>
       {showDetails ? (
@@ -235,7 +252,7 @@ const History = () => {
                       <tbody className="mt-3">
                         {order &&
                           order.length > 0 &&
-                          order.map((order: any, i: any) => {
+                          currentItems.map((order: any, i: any) => {
                             return (
                               <tr
                                 className="border-b transition duration-300 ease-in-out hover:bg-[#F2F4F5] text-[14px]"
@@ -295,6 +312,51 @@ const History = () => {
                           })}
                       </tbody>
                     </table>
+
+                    <div className="flex items-center justify-center mt-[1em] md:mt-[4em]">
+                      <div className="font-bold flex items-center gap-4 ">
+                        <Image
+                          src="/arrow1.png"
+                          alt=""
+                          width={40}
+                          height={40}
+                          className="lg:mr-[12px] cursor-pointer"
+                          onClick={() =>
+                            setCurrentPage((prev) => Math.max(prev - 1, 1))
+                          }
+                        />
+
+                        <div className="flex gap-2">
+                          {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                              key={index + 1}
+                              className={`shadow-sm ${
+                                currentPage === index + 1
+                                  ? "w-[40px] text-white text-[14px] leading-[20px] h-[40px] bg-primary rounded-full border-[#E4E7E9] border-[1px] flex justify-center text-center items-center"
+                                  : "w-[40px] text-[#191C1F] text-[14px] leading-[20px] h-[40px] bg-white rounded-full border-[#E4E7E9] border-[1px] flex justify-center text-center items-center"
+                              }`}
+                              onClick={() => handlePageClick(index + 1)}
+                            >
+                              {index + 1}
+                            </button>
+                          ))}
+                        </div>
+
+                        <Image
+                          src="/arrow2.png"
+                          alt=""
+                          width={40}
+                          height={40}
+                          className="lg:ml-[12px] cursor-pointer"
+                          onClick={() =>
+                            setCurrentPage((prev) =>
+                              Math.min(prev + 1, totalPages)
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+{/* 
                     <div className="flex justify-center items-center px-10 py-6">
                       <div className="flex items-center gap-2">
                         <div className="flex justify-between items-center gap-2">
@@ -329,7 +391,7 @@ const History = () => {
                           />
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
