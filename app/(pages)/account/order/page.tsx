@@ -15,7 +15,6 @@ const Order = () => {
   const [single, setSingle] = useState<any>([]);
   const [id, setId] = useState<any>("");
 
-  const location = Cookies.get("location");
   const handleFetchOrder = async () => {
     if (!id) {
       toast({
@@ -26,7 +25,7 @@ const Order = () => {
     }
     try {
       const response = await axios.get(
-        `${BASE_URL}/api/v1/orders/track/track?orderId=${id}`,
+        `${BASE_URL}/api/v1/orders/track?orderId=${id}`,
         {
           headers: {
             Authorization: `Bearer ${Cookies.get("token")}`,
@@ -59,18 +58,6 @@ const Order = () => {
     setShowDetails(!showDetails);
   };
 
-  const progress =
-    single.status === "pending"
-      ? 5
-      : single.status === "processing"
-      ? 30
-      : single.status === "shipped"
-      ? 70
-      : single.status === "delivered" ||
-        single.status === "picked" ||
-        single.status === "confirmed"
-      ? 100
-      : 0;
 
   return (
     <>

@@ -250,9 +250,7 @@ const page = () => {
               Fastest Delivery Available
             </h2>
             <Link
-              href={`/category/${params && params.category}/category-detail/${
-                params && params.category
-              }`}
+              href={`/category/${params && params.category}/all`}
               className="hidden lg:flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2"
             >
               Browse All Products

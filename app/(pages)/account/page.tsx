@@ -62,14 +62,14 @@ const Account = () => {
         </h1>
         <p className="text-[14px] leading-[20px] font-[400]">
           From your account dashboard. you can easily check & view your{" "}
-          <span className="text-primary font-[500]">Recent Orders</span>, manage
+          <span className="text-primary font-[500]"><Link href={'/account/order'}>Recent Orders</Link></span>, manage
           your{" "}
           <span className="text-primary font-[500]">
-            Shipping and Billing Addresses
+            <Link href={'/account/settings'}>Shipping and Billing Addresses</Link>
           </span>{" "}
           and edit your{" "}
-          <span className="text-primary font-[500]">Password</span> and{" "}
-          <span className="text-primary font-[500]">Account Details.</span>
+          <span className="text-primary font-[500]"><Link href={'/account/settings'}>Password</Link></span> and{" "}
+          <span className="text-primary font-[500]"><Link href={'/account/settings'}>Account Details.</Link></span>
         </p>
       </div>
 
