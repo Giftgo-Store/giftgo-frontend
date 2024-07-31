@@ -25,18 +25,25 @@ const Order = () => {
     }
     try {
       const response = await axios.get(
-        `${BASE_URL}/api/v1/orders/track?orderId=${id}`,
+        `${BASE_URL}/api/v1/orders/track/order/${id}`,
         {
           headers: {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
         }
       );
-      setSingle(response.data.data);
-      setShowDetails(false);
+      if(response.data.status === 200 || response.data.status === 201){
+        setSingle(response.data.data);
+        setShowDetails(false);
+        toast({
+          status: "success",
+          description: response.data.message || "Success",
+        });
+        return
+      }
       toast({
-        status: "success",
-        description: response.data.message || "Success",
+        status: "error",
+        description: response.data.message || "Order not found",
       });
     } catch (error) {
       toast({

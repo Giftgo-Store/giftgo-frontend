@@ -117,6 +117,13 @@ const Page = () => {
       setShowLogin(true);
       return;
     }
+    if (quantity > product?.stockQuantity){
+      toast({
+        status: "error",
+        description: `Not enough stock. Only ${product.stockQuantity} stocks are available at the moment.`,
+      });
+      return;
+    }
     try {
       const response = await axios.post(
         `${BASE_URL}/api/v1/cart/add`,

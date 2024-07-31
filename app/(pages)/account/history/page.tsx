@@ -107,12 +107,7 @@ const History = () => {
         setUser(response.data.data);
        
       } catch (error) {
-        toast({
-          status: "error",
-          description:
-            //@ts-expect-error
-            error?.response?.data || error?.message || "an error occurred ",
-        });
+        console.log(error)
       } finally {
         // Any cleanup or final actions
       }
@@ -121,7 +116,7 @@ const History = () => {
   }, [toast]);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchOrder = async () => {
       try {
         const response = await axios.get(
           `${BASE_URL}/api/v1/orders/order/all`,
@@ -135,17 +130,13 @@ const History = () => {
         setOrder(response.data.data);
        
       } catch (error) {
-        toast({
-          status: "error",
-          description:
-            //@ts-expect-error
-            error?.response?.data || error?.message || "an error occurred ",
-        });
+                console.log(error);
+
       } finally {
         // Any cleanup or final actions
       }
     };
-    fetchUser();
+    fetchOrder();
   }, [toast]);
 
   function formatDateString(dateString: string): string {
@@ -179,7 +170,7 @@ const History = () => {
     single &&
     single.orderedItems &&
     single.orderedItems.map(
-      (item: any) => Number(item.quantity) * Number(item && item.salePrice)
+      (item: any) => Number(item && item.salePrice)
     );
 
   function formatNumberWithCommas(amount: number): string {
@@ -284,7 +275,6 @@ const History = () => {
                                     order.orderedItems
                                       .map(
                                         (item: any) =>
-                                          Number(item.quantity) *
                                           Number(item && item.salePrice)
                                       )
                                       .reduce(
@@ -537,7 +527,7 @@ const History = () => {
                                 <td className="text-[14px] font-[600] text-[#475156] px-2 lg:px-6 py-4">
                                   ₦
                                   {formatNumberWithCommas(
-                                    item.salePrice * item.quantity
+                                    item.salePrice
                                   )}
                                 </td>
                               </tr>
