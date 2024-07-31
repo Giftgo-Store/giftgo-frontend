@@ -24,12 +24,7 @@ const Account = () => {
         // Handle successful response, e.g., save token, redirect, etc.
         setUser(response.data.data);
       } catch (error) {
-        toast({
-          status: "error",
-          description:
-            //@ts-expect-error
-            error?.response?.data || error?.message || "an error occurred ",
-        });
+        console.log(error)
       } finally {
         // Any cleanup or final actions
       }

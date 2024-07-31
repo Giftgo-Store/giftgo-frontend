@@ -5,8 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { isTokenExpired } from "@/app/providers/jwt";
+import Modal from "../../components/modals/LoginModal";
 
 type ChildProps = {
   children: React.ReactNode;
@@ -15,7 +16,9 @@ type ChildProps = {
 const Account = ({ children }: ChildProps) => {
   const router = useRouter();
   const pathname = usePathname();
-
+  const [showModal, setShowModal] = useState(false);
+  const openModal = () => setShowModal(true);
+  const closeModal = () => setShowModal(false);
   const handleLogout = () => {
     Cookies.remove("token");
     router.push("/");
@@ -24,22 +27,29 @@ const Account = ({ children }: ChildProps) => {
     useEffect(() => {
       const token = Cookies.get("token");
       if (!token || token === "undefined") {
-        router.push("/auth/sign-in");
+        router.push("/");
+        openModal()
       } else if (isTokenExpired(token)) {
-        Cookies.remove("bearerToken");
-        router.push("/auth/sign-in");
+        Cookies.remove("token");
+        router.push("/");
+        openModal()
       }
     }, [router]);
 
   return (
     <>
+      <Modal showModal={showModal} closeModal={closeModal} />
+
       <div className="py-[20px] px-[4%] lg:px-[8%] bg-secondary text-center mb-[56px]">
         {" "}
         <h2 className="font-[600] leading-[32px] text-[28px] text-[#191C1F] pb-1">
           My Account
         </h2>
         <p className="text-[#475156] text-[18px] font-[500]">
-          <span onClick={() => router.push('/')} className="cursor-pointer">Home</span> / <span className="cursor-pointer">My account</span>
+          <span onClick={() => router.push("/")} className="cursor-pointer">
+            Home
+          </span>{" "}
+          / <span className="cursor-pointer">My account</span>
         </p>
       </div>
 
