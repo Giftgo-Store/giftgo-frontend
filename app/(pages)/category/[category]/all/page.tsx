@@ -24,6 +24,7 @@ const Page = () => {
   const [product, setProduct] = useState<any>([]);
 
   const location = Cookies.get("location");
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
