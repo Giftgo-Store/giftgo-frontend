@@ -126,7 +126,7 @@ export default function AddCategories() {
           size="md"
           radius="sm"
           aria-label="search"
-          className="max-w-[300px] w-full shadow-sm"
+          className="max-w-[300px] w-full shadow-none"
           classNames={{
             label: "text-lg",
             input: "py-2 text-base",

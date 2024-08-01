@@ -395,7 +395,7 @@ export default function CustomerDetails({
           radius="none"
           size="sm"
           classNames={{
-            trigger: [statusColor(order.status)],
+            trigger: [statusColor(order.status), "shadow-none"],
             value: [
               `group-data-[has-value=true]:${statusColor(order.status)}`,
               statusColor(order.status),

@@ -186,7 +186,7 @@ export default function OrderManagement() {
       );
 
       const resData = await res.json();
-    
+
       if (res.ok) {
         setTrackingLink("");
         setTrackingNumber("");
@@ -382,7 +382,7 @@ export default function OrderManagement() {
           radius="none"
           size="sm"
           classNames={{
-            trigger: [statusColor(order.status)],
+            trigger: [statusColor(order.status),"shadow-none"],
             value: [
               `group-data-[has-value=true]:${statusColor(order.status)}`,
               statusColor(order.status),
