@@ -99,7 +99,6 @@ export default function Dashboard() {
       const leastSold = b.totalOrders;
       return leastSold - mostSold;
     }) || [];
-  console.log(bestSellingProducts);
   const sesssion = useSession({
     required: true,
     onUnauthenticated() {
