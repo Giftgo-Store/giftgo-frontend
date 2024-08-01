@@ -15,7 +15,6 @@ const Order = () => {
   const [single, setSingle] = useState<any>([]);
   const [id, setId] = useState<any>("");
 
-  const location = Cookies.get("location");
   const handleFetchOrder = async () => {
     if (!id) {
       toast({
@@ -26,18 +25,25 @@ const Order = () => {
     }
     try {
       const response = await axios.get(
-        `${BASE_URL}/api/v1/orders/track/track?orderId=${id}`,
+        `${BASE_URL}/api/v1/orders/track/order/${id}`,
         {
           headers: {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
         }
       );
-      setSingle(response.data.data);
-      setShowDetails(false);
+      if(response.data.status === 200 || response.data.status === 201){
+        setSingle(response.data.data);
+        setShowDetails(false);
+        toast({
+          status: "success",
+          description: response.data.message || "Success",
+        });
+        return
+      }
       toast({
-        status: "success",
-        description: response.data.message || "Success",
+        status: "error",
+        description: response.data.message || "Order not found",
       });
     } catch (error) {
       toast({
@@ -59,18 +65,6 @@ const Order = () => {
     setShowDetails(!showDetails);
   };
 
-  const progress =
-    single.status === "pending"
-      ? 5
-      : single.status === "processing"
-      ? 30
-      : single.status === "shipped"
-      ? 70
-      : single.status === "delivered" ||
-        single.status === "picked" ||
-        single.status === "confirmed"
-      ? 100
-      : 0;
 
   return (
     <>
