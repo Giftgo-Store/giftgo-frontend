@@ -87,7 +87,11 @@ export default function ProductListCard({
                     Edit product
                   </DropdownItem>
 
-                  <DropdownItem key="Pin products" onClick={PinProduct}>
+                  <DropdownItem
+                    key="Pin products"
+                    onClick={PinProduct}
+                    className={`${isPinned && "hidden"}`}
+                  >
                     {!isPinned && "Pin product"}
                   </DropdownItem>
 
