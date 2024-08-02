@@ -19,10 +19,11 @@ const Order = () => {
     if (!id) {
       toast({
         status: "error",
-        description: "please enter your tracking ID",
+        description: "Please enter your tracking ID",
       });
       return;
     }
+
     try {
       const response = await axios.get(
         `${BASE_URL}/api/v1/orders/track/order/${id}`,
@@ -32,25 +33,58 @@ const Order = () => {
           },
         }
       );
-      if(response.data.status === 200 || response.data.status === 201){
+
+      if (response.status === 200 || response.status === 201) {
         setSingle(response.data.data);
         setShowDetails(false);
         toast({
           status: "success",
           description: response.data.message || "Success",
         });
-        return
+      } else {
+        toast({
+          status: "error",
+          description: response.data.message || "Order not found",
+        });
       }
-      toast({
-        status: "error",
-        description: response.data.message || "Order not found",
-      });
     } catch (error) {
+      let errorMessage = "An error occurred. Please try again.";
+
+      if (axios.isAxiosError(error)) {
+        // Axios-specific error handling
+        if (error.response) {
+          switch (error.response.status) {
+            case 400:
+              errorMessage = "Bad request. Please check your input.";
+              break;
+            case 401:
+              errorMessage = "Unauthorized. Please log in again.";
+              break;
+            case 404:
+              errorMessage = "Order not found. Please check the tracking ID.";
+              break;
+            case 500:
+              errorMessage = "Server error. Please try again later.";
+              break;
+            default:
+              errorMessage =
+                error.response.data?.message || "An unexpected error occurred.";
+          }
+        } else if (error.request) {
+          errorMessage =
+            "No response from the server. Please check your network.";
+        } else {
+          errorMessage =
+            error.message || "An error occurred. Please try again.";
+        }
+      } else {
+        // Generic error handling
+        errorMessage = (error as Error).message || errorMessage;
+      }
+
       toast({
         status: "error",
-        description:
-          //@ts-expect-error
-          error?.response?.data || error?.message || "an error occurred ",
+        description: errorMessage,
       });
     } finally {
       // Any cleanup or final actions
@@ -64,7 +98,6 @@ const Order = () => {
   const handleHideDetails = () => {
     setShowDetails(!showDetails);
   };
-
 
   return (
     <>
