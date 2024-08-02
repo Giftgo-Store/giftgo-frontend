@@ -25,7 +25,6 @@ const Page = () => {
   const closeModal = () => setShowModal(false);
 
   const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
-  console.log(publicKey)
 
 
   const handleValidChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
