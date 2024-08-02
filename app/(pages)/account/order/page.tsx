@@ -14,45 +14,87 @@ const Order = () => {
   const [showDetails, setShowDetails] = useState(true);
   const [single, setSingle] = useState<any>([]);
   const [id, setId] = useState<any>("");
-
-  const handleFetchOrder = async () => {
+  const [loading, setLoading] = useState(false);
+  const handleFetchOrder = async (e: any) => {
+    e.preventDefault();
     if (!id) {
       toast({
         status: "error",
-        description: "please enter your tracking ID",
+        description: "Please enter your tracking ID",
       });
       return;
     }
+    setLoading(true);
+
     try {
       const response = await axios.get(
-        `${BASE_URL}/api/v1/orders/track/order/${id}`,
+        `${BASE_URL}/api/v1/orders/track/${id}`,
         {
           headers: {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
         }
       );
-      if(response.data.status === 200 || response.data.status === 201){
+      if (response.data.statusCode === 200 || response.data.statusCode === 201) {
+
         setSingle(response.data.data);
         setShowDetails(false);
         toast({
           status: "success",
           description: response.data.message || "Success",
         });
-        return
+
+      } else {
+        toast({
+          status: "error",
+          description: response.data.message || "Order not found",
+        });
       }
-      toast({
-        status: "error",
-        description: response.data.message || "Order not found",
-      });
     } catch (error) {
+      let errorMessage = "An error occurred. Please try again.";
+
+      if (axios.isAxiosError(error)) {
+        // Axios-specific error handling
+        if (error.response) {
+          switch (error.response.status) {
+            case 400:
+              errorMessage = "Bad request. Please check your input.";
+              break;
+            case 401:
+              errorMessage = "Unauthorized. Please log in again.";
+              break;
+            case 404:
+              errorMessage = "Order not found. Please check the tracking ID.";
+              break;
+            case 500:
+              errorMessage = "Server error. Please try again later.";
+              break;
+            default:
+              errorMessage =
+                error.response.data?.message || "An unexpected error occurred.";
+          }
+        } else if (error.request) {
+          errorMessage =
+            "No response from the server. Please check your network.";
+        } else {
+          errorMessage =
+            error.message || "An error occurred. Please try again.";
+        }
+      } else {
+        // Generic error handling
+        errorMessage = (error as Error).message || errorMessage;
+      }
+
       toast({
         status: "error",
         description:
           //@ts-expect-error
-          error?.response?.data || error?.message || "an error occurred ",
+          error?.response?.data.message || error?.message ||
+          "an error occurred ",
+
       });
     } finally {
+      setLoading(false);
       // Any cleanup or final actions
     }
   };
@@ -64,7 +106,6 @@ const Order = () => {
   const handleHideDetails = () => {
     setShowDetails(!showDetails);
   };
-
 
   return (
     <>
@@ -80,7 +121,7 @@ const Order = () => {
             confirmation email that was sent to you.
           </p>
 
-          <form action="">
+          <form action="" onSubmit={(e) => handleFetchOrder(e)}>
             <fieldset className="flex flex-col items-start gap-2">
               <label
                 htmlFor=""
@@ -131,10 +172,35 @@ const Order = () => {
 
           <div className="flex w-full justify-center items-center">
             <button
-              className="py-[14px] px-[24px] rounded-[2px] bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2"
-              onClick={handleFetchOrder}
+              className="py-[14px] px-[24px] rounded-[2px] bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2 min-w-[150px]"
+              onClick={(e) => handleFetchOrder(e)}
             >
-              TRACK ORDER <FaArrowRight className="w-5 h-5" />
+              {loading ? (
+                <svg
+                  className="animate-spin h-5 w-5 mr-3 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  ></path>
+                </svg>
+              ) : (
+                <>
+                  TRACK ORDER <FaArrowRight className="w-5 h-5" />
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -153,7 +219,7 @@ const Order = () => {
             </div>
           </div>
 
-          <div className="border-[#FF8D08] border-[3px] px-[18px] py-[32px] w-[60%] rounded-[15px] bg-[white]">
+          <div className="border-[#FF8D08] border-[3px] px-[18px] py-[32px] lg:w-[60%] rounded-[15px] bg-[white]">
             <div className="flex justify-start items-center gap-[26px] pb-[18px]">
               <div className="bg-[#FFEADA] flex justify-center items-center h-[70px] w-[70px] rounded-full">
                 <Image src="/truck.svg" alt="" width={40} height={30} />
@@ -161,9 +227,17 @@ const Order = () => {
               <div className="flex flex-col items-start gap-2">
                 <div className="flex justify-start gap-3 items-center">
                   <p className="text-[24px] font-[600] leading-[30px]">
-                    TRK35E279H
+                    {single.trackingNumber}
                   </p>
                   <svg
+                    onClick={() => {
+                      navigator.clipboard.writeText(single.trackingNumber);
+                      toast({
+                        status: "success",
+                        description: "Tracking ID copied successfully",
+                      });
+                    }}
+                    className="cursor-pointer"
                     width="22"
                     height="22"
                     viewBox="0 0 22 22"
@@ -182,7 +256,11 @@ const Order = () => {
                 </div>
 
                 <p className="text-[15px] text-[#787C82]">
-                  Courier: <span className="text-[#000000]"> FedX</span>
+                  Courier:{" "}
+                  <span className="text-[#000000]">
+                    {" "}
+                    {single.courierService}
+                  </span>
                 </p>
               </div>
             </div>
@@ -212,7 +290,7 @@ const Order = () => {
               <p className="text-[14px] font-[400] text-[#70706E]">
                 Copy the code and track it at{" "}
                 <span className="text-[#FFB157]">
-                  <Link href={"https://google.com"}>www.fedex.com</Link>
+                  <Link href={single.trackingLink}>{single.trackingLink}</Link>
                 </span>
               </p>
             </div>

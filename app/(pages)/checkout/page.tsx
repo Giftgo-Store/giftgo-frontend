@@ -25,7 +25,6 @@ const Page = () => {
   const closeModal = () => setShowModal(false);
 
   const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
-  console.log(publicKey)
 
 
   const handleValidChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -285,7 +284,7 @@ const Page = () => {
           status: "error",
           description:
             //@ts-expect-error
-            error?.response?.data || "an error occurred ",
+            error?.response?.data.message || "an error occurred ",
         });
         alert("error");
       } finally {
@@ -296,7 +295,7 @@ const Page = () => {
         status: "error",
         description:
           //@ts-expect-error
-          error?.response?.data || error?.message || "an error occurred ",
+          error?.response?.data.message || error?.message || "an error occurred ",
       });
       alert("error");
     } finally {

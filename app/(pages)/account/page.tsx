@@ -12,6 +12,7 @@ import { RxAvatar } from "react-icons/rx";
 const Account = () => {
   const toast = useAppToast();
   const [user, setUser] = useState<any>([]);
+  
   useEffect(() => {
     const fetchUser = async () => {
       try {

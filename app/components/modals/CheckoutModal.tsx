@@ -76,7 +76,7 @@ const CheckoutModal: React.FC<ModalProps> = ({
           status: "error",
           description:
             //@ts-expect-error
-            error?.response?.data || error?.message || "an error occurred ",
+            error?.response?.data.message || error?.message || "an error occurred ",
         });
       } finally {
         // Any cleanup or final actions
