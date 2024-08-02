@@ -17,7 +17,8 @@ import BoxAdd from "../../../public/box-add.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {TicketDiscount} from "iconsax-react"
+import { TicketDiscount } from "iconsax-react"
+import { MdOutlineAddLocationAlt } from "react-icons/md";
 export default function Nav() {
   const [showOnlyIcon, setShowOnlyIcon] = useState<boolean|null>(null);
   const pathname = usePathname();
@@ -144,7 +145,6 @@ export default function Nav() {
               Customers
             </p>
           </ListboxItem>
-         
         </ListboxSection>
         <ListboxSection
           title={"COUPONS"}
@@ -211,6 +211,24 @@ export default function Nav() {
               }transition-[width] transform ease-in-out duration-300`}
             >
               Add Categories
+            </p>
+          </ListboxItem>
+          <ListboxItem
+            className={`${
+              pathname === "/admin/add-location" ? "bg-[#F3F4F8]" : "opacity-60"
+            } ${
+              showOnlyIcon ? "pr-0" : "px-2"
+            } transition-[width] transform ease-in-out duration-300`}
+            startContent={<MdOutlineAddLocationAlt size={34}/>}
+            key="add-categories"
+            href="/admin/add-location"
+          >
+            <p
+              className={`text-base font-semibold transition-[width] transform ease-in-out block duration-300 ${
+                showOnlyIcon ? "w-[0] px-0" : ""
+              }transition-[width] transform ease-in-out duration-300`}
+            >
+              Add Locations
             </p>
           </ListboxItem>
           <ListboxItem

@@ -625,7 +625,7 @@ export default function Dashboard() {
           <DashboardCard
             customstyle="min-w-[270px] lg:max-w-[unset]"
             title={"Total Orders"}
-            amount={totalOrders && formatNumber(totalOrders)}
+            amount={formatNumber(totalOrders)}
             profit={true}
             percentage={6}
           ></DashboardCard>
@@ -723,7 +723,7 @@ export default function Dashboard() {
               <span className="opacity-[80%]">
                 {topSellingCategories ? (
                   <span className="opacity-[80%]">
-                    {topSellingCategories[0].categoryName}
+                    {topSellingCategories[0]?.categoryName}
                   </span>
                 ) : (
                   <Skeleton className="w-[70px] h-[40px]" />
@@ -731,7 +731,7 @@ export default function Dashboard() {
               </span>
               {topSellingCategories ? (
                 <span className="font-bold text-2xl">
-                  {topSellingCategories[0].totalSales}
+                  {topSellingCategories[0]?.totalSales}
                 </span>
               ) : (
                 <Skeleton className="w-[100px] h-[30px]" />
@@ -741,7 +741,7 @@ export default function Dashboard() {
             <div className="w-[200px] h-[200px] rounded-full flex flex-col gap-2 items-center justify-center bg-[#FEEFD3] text-black -top-20 relative left-28">
               {topSellingCategories ? (
                 <span className="opacity-[80%]">
-                  {topSellingCategories[1].categoryName}
+                  {topSellingCategories[1]?.categoryName}
                 </span>
               ) : (
                 <Skeleton className="w-[70px] h-[40px]" />
@@ -750,7 +750,7 @@ export default function Dashboard() {
               <span className="font-bold text-2xl">
                 {topSellingCategories ? (
                   <span className="font-bold text-2xl">
-                    {topSellingCategories[1].totalSales}
+                    {topSellingCategories[1]?.totalSales}
                   </span>
                 ) : (
                   <Skeleton className="w-[100px] h-[30px]" />
@@ -761,7 +761,7 @@ export default function Dashboard() {
             <div className="w-[160px] h-[160px] rounded-full flex flex-col gap-2 items-center justify-center bg-[#1EB564] text-white relative z-10 -top-64 -left-8">
               {topSellingCategories ? (
                 <span className="opacity-[80%]">
-                  {topSellingCategories[2].categoryName}
+                  {topSellingCategories[2]?.categoryName}
                 </span>
               ) : (
                 <Skeleton className="w-[70px] h-[40px]" />
@@ -770,7 +770,7 @@ export default function Dashboard() {
               <span className="font-bold text-2xl">
                 {topSellingCategories ? (
                   <span className="font-bold text-2xl">
-                    {topSellingCategories[2].totalSales}
+                    {topSellingCategories[2]?.totalSales}
                   </span>
                 ) : (
                   <Skeleton className="w-[100px] h-[30px]" />
@@ -973,7 +973,7 @@ export default function Dashboard() {
                 </p>
                 {revenueStats ? (
                   <span className="font-bold text-[2.0rem] leading-[2.0rem]">
-                    {formatNumber(revenueStats?.totalOrders)}
+                    {revenueStats?formatNumber(revenueStats?.totalOrders):"0"}
                   </span>
                 ) : (
                   <Skeleton className="w-[60px] h-[30px]"></Skeleton>

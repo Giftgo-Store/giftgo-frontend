@@ -22,7 +22,7 @@ interface cardprops {
   productSummary: string;
   productStock: string | number;
   productSold: string | number;
-  isPinned:boolean
+  isPinned: boolean;
 }
 export default function ProductListCard({
   avatar,
@@ -86,15 +86,17 @@ export default function ProductListCard({
                   <DropdownItem key="Edit products" onClick={EditProduct}>
                     Edit product
                   </DropdownItem>
+
                   <DropdownItem key="Pin products" onClick={PinProduct}>
-                    Pin product
+                    {!isPinned && "Pin product"}
                   </DropdownItem>
+
                   <DropdownItem
                     className="text-danger"
                     key="Delete Product"
                     onClick={DeleteProduct}
                   >
-                    {isPinned?"Unpin Product":"Delete Product"}
+                    {isPinned ? "Unpin Product" : "Delete Product"}
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
