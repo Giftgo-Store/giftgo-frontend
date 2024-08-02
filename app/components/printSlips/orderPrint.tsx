@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import { DeliverySlip } from "./deliverySlip";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { PiPrinterFill } from "react-icons/pi";
 
 const OrderPrint = ({
   order,
@@ -21,7 +22,7 @@ const OrderPrint = ({
     <div className=" flex-1 max-w-[100px]  w-full  flex-grow  text-sm font-medium py-4 px-4">
       <button onClick={handlePrint}>
         <p className="flex gap-2">
-          <HiOutlineDotsHorizontal
+          <PiPrinterFill
             color="black"
             size={20}
             className="cursor-pointer"

@@ -241,7 +241,7 @@ export default function ProductList() {
         {!loading ? (
           <div
             className={`flex gap-5  ${
-              paginatedItems.length > 3 ? "justify-start" : "justify-stretch"
+              paginatedItems.length > 3 ? "justify-between" : "justify-stretch"
             } flex-wrap`}
           >
             {paginatedItems.length ? (

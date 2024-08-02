@@ -5,7 +5,7 @@ import Image from "next/image";
 import Cookies from "js-cookie";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useAppToast } from "@/app/providers/useAppToast";
 
@@ -16,9 +16,9 @@ const History = () => {
   const [single, setSingle] = useState<any>([]);
   const [ratedProduct, setRatedProduct] = useState("");
   const [rate, setRate] = useState("");
-  const [comment, setComment] = useState("")
-   const [currentPage, setCurrentPage] = useState(1);
-   const itemsPerPage = 10;
+  const [comment, setComment] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const handleShow = () => {
     setShow(true);
@@ -57,20 +57,23 @@ const History = () => {
     setShowDetails(true);
   };
 
-    const handleReview = async (e: { preventDefault: () => void }) => {
-      e.preventDefault()
-      if(rate.length < 1 || comment.length < 1 || ratedProduct.length < 1){
-        toast({
-          status: "error",
-          description: "Please select a product, rate and write a comment",
-        });
-        return;
-      }
-      try {
-        const response = await axios.post(`${BASE_URL}/api/v1/products/${ratedProduct}/reviews`,{
-          'rating': Number(rate),
-          comment
-        }, {
+  const handleReview = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    if (rate.length < 1 || comment.length < 1 || ratedProduct.length < 1) {
+      toast({
+        status: "error",
+        description: "Please select a product, rate and write a comment",
+      });
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/api/v1/products/${ratedProduct}/reviews`,
+        {
+          rating: Number(rate),
+          comment,
+        },
+        {
           headers: {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
@@ -93,6 +96,7 @@ const History = () => {
       }
     };
 
+
   const [user, setUser] = useState<any>([]);
   const [order, setOrder] = useState<any>([]);
 
@@ -105,9 +109,8 @@ const History = () => {
           },
         });
         setUser(response.data.data);
-       
       } catch (error) {
-        console.log(error)
+        console.log(error);
       } finally {
         // Any cleanup or final actions
       }
@@ -127,11 +130,9 @@ const History = () => {
           }
         );
         // Handle successful response, e.g., save token, redirect, etc.
-        setOrder(response.data.data);
-       
+        setOrder(response.data.data.reverse());
       } catch (error) {
-                console.log(error);
-
+        console.log(error);
       } finally {
         // Any cleanup or final actions
       }
@@ -169,28 +170,24 @@ const History = () => {
   const total =
     single &&
     single.orderedItems &&
-    single.orderedItems.map(
-      (item: any) => Number(item && item.salePrice)
-    );
+    single.orderedItems.map((item: any) => Number(item && item.salePrice));
 
   function formatNumberWithCommas(amount: number): string {
     return new Intl.NumberFormat("en-US").format(amount);
   }
 
-    const totalItems = order && order.length || 0;
+  const totalItems = (order && order.length) || 0;
 
-   const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-   const startIndex = (currentPage - 1) * itemsPerPage;
-   const currentItems = order && order.reverse().slice(
-     startIndex,
-     startIndex + itemsPerPage
-   );
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentItems = useMemo(() => {
+    return order.slice(startIndex, startIndex + itemsPerPage);
+  }, [order, startIndex, itemsPerPage]);
 
-   const handlePageClick = (page: number) => {
-     setCurrentPage(page);
-   };
-
+  const handlePageClick = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <>
@@ -273,9 +270,8 @@ const History = () => {
                                   ₦
                                   {formatNumberWithCommas(
                                     order.orderedItems
-                                      .map(
-                                        (item: any) =>
-                                          Number(item && item.salePrice)
+                                      .map((item: any) =>
+                                        Number(item && item.salePrice)
                                       )
                                       .reduce(
                                         (accumulator: any, currentValue: any) =>
@@ -346,7 +342,7 @@ const History = () => {
                         />
                       </div>
                     </div>
-{/* 
+                    {/* 
                     <div className="flex justify-center items-center px-10 py-6">
                       <div className="flex items-center gap-2">
                         <div className="flex justify-between items-center gap-2">
@@ -525,10 +521,7 @@ const History = () => {
                                   </p>
                                 </td>
                                 <td className="text-[14px] font-[600] text-[#475156] px-2 lg:px-6 py-4">
-                                  ₦
-                                  {formatNumberWithCommas(
-                                    item.salePrice
-                                  )}
+                                  ₦{formatNumberWithCommas(item.salePrice)}
                                 </td>
                               </tr>
                             );
