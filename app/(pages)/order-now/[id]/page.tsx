@@ -27,7 +27,7 @@ const Page = () => {
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
 
-  const publicKey = "pk_test_3cf1ae93942019f48265e9d451b0a3b3f89537ef";
+  const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
 
   const handleValidChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -253,7 +253,7 @@ const Page = () => {
         },
       ],
     },
-    publicKey,
+    publicKey: publicKey ? publicKey : "",
     text: "PLACE ORDER",
     onClose: () => {
       alert("Payment not successful!");

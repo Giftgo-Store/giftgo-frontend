@@ -24,17 +24,18 @@ const Account = ({ children }: ChildProps) => {
     router.push("/");
   };
 
-    useEffect(() => {
-      const token = Cookies.get("token");
-      if (!token || token === "undefined") {
-        router.push("/");
-        openModal()
-      } else if (isTokenExpired(token)) {
-        Cookies.remove("token");
-        router.push("/");
-        openModal()
-      }
-    }, [router]);
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (!token || token === "undefined") {
+      Cookies.remove("token");
+      router.push("/");
+      openModal();
+    } else if (isTokenExpired(token)) {
+      Cookies.remove("token");
+      router.push("/");
+      openModal();
+    }
+  }, [router]);
 
   return (
     <>

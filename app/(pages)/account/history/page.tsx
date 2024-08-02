@@ -45,7 +45,7 @@ const History = () => {
         status: "error",
         description:
           //@ts-expect-error
-          error?.response?.data || error?.message || "an error occurred ",
+          error?.response?.data.message || error?.message || "an error occurred ",
       });
     } finally {
       // Any cleanup or final actions
@@ -77,25 +77,25 @@ const History = () => {
           headers: {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
-        }
-      );
-      toast({
-        status: "success",
-        description: response.data.message || "Success",
-      });
-      setComment("");
-      setRate("");
-    } catch (error) {
-      toast({
-        status: "error",
-        description:
-          //@ts-expect-error
-          error?.response?.data || error?.message || "an error occurred ",
-      });
-    } finally {
-      // Any cleanup or final actions
-    }
-  };
+        });
+        toast({
+          status: "success",
+          description: response.data.message || "Success",
+        });
+        setComment('')
+        setRate('')
+      } catch (error) {
+        toast({
+          status: "error",
+          description:
+            //@ts-expect-error
+            error?.response?.data.message || error?.message || "an error occurred ",
+        });
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+
 
   const [user, setUser] = useState<any>([]);
   const [order, setOrder] = useState<any>([]);
