@@ -84,6 +84,7 @@ export default function Coupons() {
       setCouponPercentage("");
       setCouponValue("");
       setCreateNewCoupon(false);
+      setCoupons([]);
       setCoupons((prevCoupons: any) => [...prevCoupons, resData]);
       onClose();
     } catch (error) {
