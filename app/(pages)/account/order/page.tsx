@@ -69,6 +69,8 @@ const Order = () => {
     setShowDetails(!showDetails);
   };
 
+  console.log(single)
+
   return (
     <>
       {showDetails ? (
@@ -189,7 +191,7 @@ const Order = () => {
               <div className="flex flex-col items-start gap-2">
                 <div className="flex justify-start gap-3 items-center">
                   <p className="text-[24px] font-[600] leading-[30px]">
-                    {single.trackingNumber}
+                    {single.trackingNumber ? single.trackingNumber : "Not Available"}
                   </p>
                   <svg
                     onClick={() => {
@@ -221,7 +223,7 @@ const Order = () => {
                   Courier:{" "}
                   <span className="text-[#000000]">
                     {" "}
-                    {single.courierService}
+                    {single.courierService ? single.courierService : "Not Available"}
                   </span>
                 </p>
               </div>
@@ -252,7 +254,9 @@ const Order = () => {
               <p className="text-[14px] font-[400] text-[#70706E]">
                 Copy the code and track it at{" "}
                 <span className="text-[#FFB157]">
-                  <Link href={single.trackingLink}>{single.trackingLink}</Link>
+                  <Link href={single.trackingLink ? single.trackingLink : "/"}>
+                    {single.trackingLink}
+                  </Link>
                 </span>
               </p>
             </div>

@@ -47,7 +47,7 @@ const Page = () => {
     };
 
     fetchData();
-  }, [location, params && params.category, toast]);
+  }, [location, params && params.category]);
 
   return (
     <>

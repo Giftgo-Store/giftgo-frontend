@@ -33,8 +33,12 @@ const ForgotPassword = () => {
         description: response.data.message || "Success",
       });
       router.push("/reset-password");
-    } catch (error) {
-      // console.error("Sign In Error", error.response?.data || error.message);
+    } catch (error: any) {
+      toast({
+        status: "error",
+        description: error.response.data.message,
+      });
+      // console.error("Sign In Error", error.response?.data.message);
     } finally {
       setIsSending(false);
     }

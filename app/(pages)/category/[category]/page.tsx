@@ -32,9 +32,37 @@ const page = () => {
   const toast = useAppToast();
   const params = useParams();
   console.log(params?.category);
-  const [locate, setLocate] = useState<any>([]);
   const [category, setCategory] = useState([]);
   const [product, setProduct] = useState<any>([]);
+      const [revPerPage, setRevPerPage] = useState(1);
+
+      useEffect(() => {
+        const handleResize = () => {
+          if (window.innerWidth < 1000) {
+            setRevPerPage(1);
+          }
+        };
+        console.log(revPerPage, window.innerWidth);
+        window.addEventListener("resize", handleResize);
+        return () => {
+          window.removeEventListener("resize", handleResize);
+        };
+      }, [revPerPage]);
+
+      useEffect(() => {
+        const handleResize = () => {
+          if (window.innerWidth > 1200) {
+            setRevPerPage(4);
+          }
+        };
+        console.log(revPerPage, window.innerWidth);
+
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+          window.removeEventListener("resize", handleResize);
+        };
+      }, [revPerPage]);
 
   const location = Cookies.get("location");
   useEffect(() => {
@@ -113,7 +141,7 @@ const page = () => {
           <Swiper
             modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
             spaceBetween={80}
-            slidesPerView={4}
+            slidesPerView={revPerPage}
             // scrollbar={{ draggable: true }}
             autoplay={{
               delay: 5000,

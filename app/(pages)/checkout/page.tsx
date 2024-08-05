@@ -20,7 +20,7 @@ const Page = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-
+const [loading, setLoading] = useState(false)
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
 
@@ -58,7 +58,12 @@ const Page = () => {
         });
         // Handle successful response, e.g., save token, redirect, etc.
         setCartItems(response.data.data);
-      } catch (error) {
+      } catch (error: any) {
+              if (error?.response?.status === 401) {
+                Cookies.remove("token");
+                router.push("/");
+                return;
+              }
         console.error(
           //@ts-ignore
           "Error fetching resource"
@@ -242,6 +247,7 @@ const Page = () => {
     }));
 
   const handlePlaceOrder = async () => {
+    setLoading(true);
     try {
       const response = await axios.post(
         `${BASE_URL}/api/v1/orders/make-order`,
@@ -299,6 +305,7 @@ const Page = () => {
       });
       alert("error");
     } finally {
+      setLoading(false)
       // Any cleanup or final actions
     }
   };
@@ -716,7 +723,8 @@ const Page = () => {
                         {item &&
                           item?.product &&
                           item?.product?.description &&
-                          item?.product?.description.slice(0, 25)}...
+                          item?.product?.description.slice(0, 25)}
+                        ...
                       </p>
                       <p className="text-[14px] font-[400]">
                         {item.quantity} x{" "}
@@ -805,6 +813,28 @@ const Page = () => {
               className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary rounded-[3px] font-[700] disabled:bg-primary/50 disabled:cursor-not-allowed"
               disabled={!isFormValid}
             >
+              {loading && (
+              <svg
+                className="animate-spin h-5 w-5 mr-3 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                ></path>
+              </svg>
+              )}
               {isFormValid && (
                 <PaystackButton
                   {...componentProps}
