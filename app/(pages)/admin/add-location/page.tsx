@@ -20,22 +20,23 @@ import { SlPicture } from "react-icons/sl";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
+import { HiOutlineTrash } from "react-icons/hi";
 import BASE_URL from "@/app/config/baseurl";
 import { toast } from "react-toastify";
-import { HiOutlineTrash } from "react-icons/hi";
-interface Category {
+
+interface location {
   _id: string;
-  name: string;
+  location: string;
   image: string;
 }
 
-export default function AddCategories() {
+export default function AddLocation() {
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
-  const [categoryName, setCategoryName] = useState("");
+  const [locationName, setLocationName] = useState("");
   const [selectedImage, setSelectedImage] = useState<any>("");
   const [imagePreview, setImagePreview] = useState("");
-  const [allCategories, setAllCategories] = useState<Category[]>([]);
+  const [allLocations, setAllLocations] = useState<location[]>([]);
   const [loading, setLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -65,11 +66,11 @@ export default function AddCategories() {
     }
   };
 
-  const getAllCategory = async () => {
+  const getAllLocations = async () => {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API}/category/all-categories`, {
+      const res = await fetch(`${API}/location/`, {
         headers: {
           AUTHORIZATION: "Bearer " + token,
         },
@@ -77,19 +78,35 @@ export default function AddCategories() {
 
       const resData = await res.json();
       setLoading(false);
-      setAllCategories(resData.data);
+      setAllLocations(resData.data);
     } catch (error) {
       // console.log(error);
     }
   };
-
-  const addCategory = async () => {
+  const deleteLocation = async (_id: string) => {
+    try {
+      const res = await fetch(`${API}/location/${_id}`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setAllLocations((prevlocations) =>
+          prevlocations.filter((location) => location._id !== _id)
+        );
+      }
+    } catch (error) {
+      // console.log(error);
+    }
+  };
+  const addLocation = async () => {
     const data = new FormData();
     data.append("image", selectedImage as unknown as Blob);
-    data.append("name", categoryName);
+    data.append("location", locationName);
 
     try {
-      const res = await fetch(`${API}/category/add-category`, {
+      const res = await fetch(`${API}/location/add-location`, {
         headers: {
           AUTHORIZATION: "Bearer " + token,
         },
@@ -97,49 +114,31 @@ export default function AddCategories() {
         body: data,
       });
 
-      const resData = await res.json();
-      // setItems(productData)
       onClose();
       setSelectedImage("");
-      setCategoryName("");
-      getAllCategory();
+      setLocationName("");
+      getAllLocations();
     } catch (error) {
       //console.log(error);
     }
   };
-  const deleteCategory = async (_id: string) => {
-    try {
-      const res = await fetch(`${API}/category/${_id}`, {
-        headers: {
-          AUTHORIZATION: "Bearer " + token,
-        },
-        method: "DELETE",
-      });
-      if (res.ok) {
-        setAllCategories((prevCategories) =>
-          prevCategories.filter((Category) => Category._id !== _id)
-        );
-      }
-    } catch (error) {
-      // console.log(error);
-    }
-  };
+
   useEffect(() => {
     if (token) {
-      getAllCategory();
+      getAllLocations();
     }
   }, [token]);
 
-  // Filter categories based on filterValue
-  const filteredCategories = allCategories?.filter((category) =>
-    category.name.toLowerCase().includes(filterValue.toLowerCase())
+  // Filter locations based on filterValue
+  const filteredLocations = allLocations?.filter((location) =>
+    location.location.toLowerCase().includes(filterValue.toLowerCase())
   );
 
   return (
     <div>
       <div className="flex w-full justify-between items-center gap-4">
         <Input
-          placeholder="Search category"
+          placeholder="Search locations"
           endContent={<CiSearch size={28} color="#8B909A" />}
           size="md"
           radius="sm"
@@ -168,9 +167,10 @@ export default function AddCategories() {
           }}
           className="text-white bg-[#1EB564]"
         >
-          Add new category
+          Add new location
         </Button>
       </div>
+
       <div className="py-8">
         <Modal
           size={"lg"}
@@ -186,11 +186,11 @@ export default function AddCategories() {
             {(onClose) => (
               <>
                 <ModalHeader className="flex flex-col gap-1 text-lg">
-                  Category name
+                  Location name
                 </ModalHeader>
                 <ModalBody>
                   <Input
-                    placeholder="Category name"
+                    placeholder="location name"
                     endContent={<CiSearch size={28} color="#8B909A" />}
                     size="md"
                     radius="md"
@@ -206,9 +206,9 @@ export default function AddCategories() {
                         "group-data-[focus=true]:bg-white",
                       ],
                     }}
-                    value={categoryName}
+                    value={locationName}
                     onChange={(e) => {
-                      setCategoryName(e.target.value);
+                      setLocationName(e.target.value);
                     }}
                   ></Input>
                   <p className="text-lg py-2">Upload a picture</p>
@@ -269,9 +269,9 @@ export default function AddCategories() {
                   <Button
                     className="bg-[#1EB564] text-white text-sm w-[150px]"
                     onClick={() => {
-                      toast.promise(addCategory(), {
-                        pending: "Adding product information ",
-                        success: "Product information editted",
+                      toast.promise(addLocation(), {
+                        pending: "Adding location ",
+                        success: "location added",
                         error: "An error occured , please try again",
                       });
                     }}
@@ -283,8 +283,8 @@ export default function AddCategories() {
                     onPress={() => {
                       setSelectedImage("");
                       setImagePreview("");
-                      setCategoryName("")
-                      onClose()
+                      setLocationName("");
+                      onClose();
                     }}
                   >
                     CANCEL
@@ -295,6 +295,9 @@ export default function AddCategories() {
           </ModalContent>
         </Modal>
       </div>
+      {/* <div>
+        <p>Note that deleting a </p>
+      </div> */}
       <div className="w-full">
         {!loading ? (
           <Listbox
@@ -305,14 +308,14 @@ export default function AddCategories() {
               base: "gap-3 flex-wrap w-full",
             }}
           >
-            {filteredCategories &&
-              filteredCategories.map((category: Category) => (
+            {filteredLocations &&
+              filteredLocations.map((location: location) => (
                 <ListboxItem
                   className="border-1 max-w-[300px] w-full"
                   startContent={
                     <Image
-                      src={category.image}
-                      alt="category image"
+                      src={location.image}
+                      alt="location image"
                       width={1000}
                       height={1000}
                       className="w-[35px] h-[35px]"
@@ -323,9 +326,9 @@ export default function AddCategories() {
                       isIconOnly
                       className="bg-transparent z-50"
                       onClick={() => {
-                        toast.promise(deleteCategory(category._id), {
-                          pending: "deleting category",
-                          success: "category deleted",
+                        toast.promise(deleteLocation(location._id), {
+                          pending: "deleting location",
+                          success: "location deleted",
                           error: "An error occured , please try again",
                         });
                       }}
@@ -333,9 +336,9 @@ export default function AddCategories() {
                       <HiOutlineTrash size={20} />
                     </Button>
                   }
-                  key={category.name+category._id}
+                  key={location.location + location._id}
                 >
-                  {category.name}
+                  {location.location}
                 </ListboxItem>
               ))}
           </Listbox>
@@ -351,4 +354,4 @@ export default function AddCategories() {
     </div>
   );
 }
-AddCategories.requireAuth = true;
+AddLocation.requireAuth = true;

@@ -26,6 +26,7 @@ import Image from "next/image";
 import BoxAdd from "../../public/box-add.svg";
 import { signOut } from "next-auth/react";
 import { TicketDiscount } from "iconsax-react";
+import { MdOutlineAddLocationAlt } from "react-icons/md";
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -190,7 +191,6 @@ export function Header() {
               Customers
             </p>
           </NavbarItem>
-
           <NavbarItem>
             <p className="px-3 py-1 opacity-60">COUPONS</p>
           </NavbarItem>
@@ -228,6 +228,22 @@ export function Header() {
               className={`flex gap-3 justify-normal items-center p-[6px] rounded text-black text-lg font-semibold `}
             >
               Add Categories
+            </p>
+          </NavbarItem>
+          <NavbarItem
+            className={`flex gap-3 justify-normal items-center p-[6px] rounded text-black ${
+              pathname === "/admin/add-location" ? "bg-[#F3F4F8]" : "opacity-60"
+            }   transition-[width] transform ease-in-out  duration-300`}
+            key="add-location"
+            as={Link}
+            href="/admin/add-location"
+          >
+            {" "}
+            <MdOutlineAddLocationAlt size={34} />
+            <p
+              className={`flex gap-3 justify-normal items-center p-[6px] rounded text-black text-lg font-semibold `}
+            >
+              Add Locations
             </p>
           </NavbarItem>
           <NavbarItem

@@ -5,7 +5,7 @@ import Image from "next/image";
 import Cookies from "js-cookie";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useAppToast } from "@/app/providers/useAppToast";
 
@@ -99,6 +99,7 @@ const History = () => {
     }
   };
 
+
   const [user, setUser] = useState<any>([]);
   const [order, setOrder] = useState<any>([]);
 
@@ -183,8 +184,9 @@ const History = () => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentItems =
-    order && order.reverse().slice(startIndex, startIndex + itemsPerPage);
+  const currentItems = useMemo(() => {
+    return order.slice(startIndex, startIndex + itemsPerPage);
+  }, [order, startIndex, itemsPerPage]);
 
   const handlePageClick = (page: number) => {
     setCurrentPage(page);

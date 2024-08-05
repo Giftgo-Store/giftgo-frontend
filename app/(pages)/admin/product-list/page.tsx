@@ -61,6 +61,7 @@ export default function ProductList() {
         method: "GET",
       });
       const productData = await data.json();
+
       setLoading(false);
       if (productData.data) {
         setItems(productData.data);
@@ -156,7 +157,7 @@ export default function ProductList() {
   };
 
   const PinProduct = (index: number) => {
-    const product: item = Items[index];
+    const product: item = paginatedItems[index];
     if (!pinnedList.some((item: item) => item._id === product._id)) {
       setPinnedList((pinnedlist) => [...pinnedlist, product]);
     }
@@ -212,10 +213,11 @@ export default function ProductList() {
           filterValue.length < 1 &&
           pinnedList.map((item: item, index: number) => (
             <ProductListCard
-            
               key={item._id}
               avatar={item.images[0]}
-              productCategory={item.category.name}
+              productCategory={
+                item.category.name ? item.category?.name : "unavailable"
+              }
               productName={item.productName}
               productPrice={Number(item.salePrice).toLocaleString()}
               productSold={""}
@@ -241,7 +243,7 @@ export default function ProductList() {
         {!loading ? (
           <div
             className={`flex gap-5  ${
-              paginatedItems.length > 3 ? "justify-start" : "justify-stretch"
+              paginatedItems.length > 3 ? "justify-between" : "justify-stretch"
             } flex-wrap`}
           >
             {paginatedItems.length ? (
@@ -249,7 +251,9 @@ export default function ProductList() {
                 <ProductListCard
                   key={item._id}
                   avatar={item.images[0]}
-                  productCategory={item.category.name}
+                  productCategory={
+                    item.category.name ? item.category?.name : "unavailable"
+                  }
                   productName={item.productName}
                   productPrice={Number(item.salePrice).toLocaleString()}
                   productSold={""}

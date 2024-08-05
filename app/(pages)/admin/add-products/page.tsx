@@ -42,6 +42,13 @@ interface Flag {
   placeholder: string;
   flag: string;
 }
+
+interface location {
+  _id: string;
+  location: string;
+  image: string;
+}
+
 type ActionType = {
   type: string;
   payload: any;
@@ -87,6 +94,7 @@ export default function AddProducts() {
   const [sku, setSku] = useState("");
   const [expressShipping, setExpressShipping] = useState<boolean>(false);
   const [categories, setCategories] = useState([]);
+  const [allLocations, setAllLocations] = useState<location[]>([]);
   const [loading, setLoading] = useState(false);
   const [categoryloading, setCategoryLoading] = useState(true);
   const [isCouponActive, setIsCouponActive] = useState(false);
@@ -406,12 +414,31 @@ export default function AddProducts() {
       setCategories(resData.data);
     } catch (error) {}
   };
+  const getAllLocations = async () => {
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${API}/location/`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
+
+      const resData = await res.json();
+      setLoading(false);
+      setAllLocations(resData.data);
+    } catch (error) {
+      // console.log(error);
+    }
+  };
 
   useEffect(() => {
     if (token) {
       getAllCategory();
+      getAllLocations();
     }
   }, [token]);
+  
   const fetchProduct = async (id: string) => {
     try {
       const res = await fetch(`${API}/products/${id}`, {
@@ -776,10 +803,10 @@ export default function AddProducts() {
                   selectedKeys={[location]}
                   isDisabled={edit ? true : false}
                 >
-                  {countries &&
-                    countries.map((country) => (
-                      <SelectItem key={country.toUpperCase()}>
-                        {country}
+                  {allLocations &&
+                    allLocations.map((country: location) => (
+                      <SelectItem key={country.location.toUpperCase()}>
+                        {country.location}
                       </SelectItem>
                     ))}
                 </Select>
