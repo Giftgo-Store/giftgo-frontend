@@ -60,7 +60,12 @@ const Page = () => {
         setCartItems(response.data.data);
         console.log("product");
         console.log(response.data.data);
-      } catch (error) {
+      } catch (error: any) {
+              if (error?.response?.status === 401) {
+                Cookies.remove("token");
+                router.push('/')
+                return;
+              }
         console.error(
           //@ts-ignore
           "Error fetching resource",
@@ -71,7 +76,7 @@ const Page = () => {
       }
     };
     fetchCartItems();
-  }, [params]);
+  }, [params, router]);
 
   useEffect(() => {
     const fetchUser = async () => {

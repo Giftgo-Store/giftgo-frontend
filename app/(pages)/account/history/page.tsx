@@ -45,7 +45,8 @@ const History = () => {
         status: "error",
         description:
           //@ts-expect-error
-          error?.response?.data.message || error?.message || "an error occurred ",
+          error?.response?.data.message || error?.message ||
+          "an error occurred ",
       });
     } finally {
       // Any cleanup or final actions
@@ -77,24 +78,26 @@ const History = () => {
           headers: {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
-        });
-        toast({
-          status: "success",
-          description: response.data.message || "Success",
-        });
-        setComment('')
-        setRate('')
-      } catch (error) {
-        toast({
-          status: "error",
-          description:
-            //@ts-expect-error
-            error?.response?.data.message || error?.message || "an error occurred ",
-        });
-      } finally {
-        // Any cleanup or final actions
-      }
-    };
+        }
+      );
+      toast({
+        status: "success",
+        description: response.data.message || "Success",
+      });
+      setComment("");
+      setRate("");
+    } catch (error) {
+      toast({
+        status: "error",
+        description:
+          //@ts-expect-error
+          error?.response?.data.message || error?.message ||
+          "an error occurred ",
+      });
+    } finally {
+      // Any cleanup or final actions
+    }
+  };
 
 
   const [user, setUser] = useState<any>([]);
@@ -116,7 +119,7 @@ const History = () => {
       }
     };
     fetchUser();
-  }, [toast]);
+  }, []);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -130,7 +133,7 @@ const History = () => {
           }
         );
         // Handle successful response, e.g., save token, redirect, etc.
-        setOrder(response.data.data.reverse());
+        setOrder(response.data.data);
       } catch (error) {
         console.log(error);
       } finally {
@@ -138,7 +141,7 @@ const History = () => {
       }
     };
     fetchOrder();
-  }, [toast]);
+  }, []);
 
   function formatDateString(dateString: string): string {
     const date = new Date(dateString);
@@ -583,9 +586,7 @@ const History = () => {
                     <div className="flex justify-start items-center gap-4 mb-[20px]">
                       <div className="flex justify-start items-start flex-col gap-1">
                         <p className="font-[500] text-[14px] leading-[20px] text-[#5F6C72]">
-                          Donec ac vehicula turpis. Aenean sagittis est eu arcu
-                          ornare, eget venenatis purus lobortis. Aliquam erat
-                          volutpat. Aliquam magna odio.
+                          Nill
                         </p>
                       </div>
                     </div>
