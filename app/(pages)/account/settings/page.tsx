@@ -23,9 +23,12 @@ const Settings = () => {
   const [city, setCity] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [user, setUser] = useState<any>([]);
+  const [loading1, setLoading1] = useState(false);
+  const [loading2, setLoading2] = useState(false);
+  const [loading3, setLoading3] = useState(false);
 
-    const [countries, setCountries] = useState<any>([]);
-    const [countCity, setCountCity] = useState<any>([]);
+  const [countries, setCountries] = useState<any>([]);
+  const [countCity, setCountCity] = useState<any>([]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -39,69 +42,69 @@ const Settings = () => {
         // Handle successful response, e.g., save token, redirect, etc.
         setUser(response.data.data);
       } catch (error) {
-                console.log(error);
-
+        console.log(error);
       } finally {
         // Any cleanup or final actions
       }
     };
     fetchUser();
-  }, [toast]);
+  }, []);
 
-   useEffect(() => {
-     const fetchCountries = async () => {
-       try {
-         const response = await axios.get(
-           `https://countriesnow.space/api/v0.1/countries/states`,
-           {
-             headers: {
-               "Content-Type": "application/json",
-             },
-           }
-         );
-         // Handle successful response, e.g., save token, redirect, etc.
-         setCountries(response.data.data);
-       } catch (error) {
-         console.error(
-           //@ts-ignore
-           "Error fetching resource", error?.response?.data || error?.message );
-       } finally {
-         // Any cleanup or final actions
-       }
-     };
-     fetchCountries();
-   }, []);
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await axios.get(
+          `https://countriesnow.space/api/v0.1/countries/states`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        // Handle successful response, e.g., save token, redirect, etc.
+        setCountries(response.data.data);
+      } catch (error) {
+        console.error(
+          //@ts-ignore
+          "Error fetching resource", error?.response?.data || error?.message
+        );
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+    fetchCountries();
+  }, []);
 
-   const selectedState =
-     countries && countries.filter((count: any) => count.name === country);
+  const selectedState =
+    countries && countries.filter((count: any) => count.name === country);
 
-   useEffect(() => {
-     const fetchCountCity = async () => {
-       try {
-         const response = await axios.get(
-           `https://countriesnow.space/api/v0.1/countries`,
-           {
-             headers: {
-               "Content-Type": "application/json",
-             },
-           }
-         );
-         // Handle successful response, e.g., save token, redirect, etc.
-         setCountCity(response.data.data);
-       } catch (error) {
-         console.error(
-           //@ts-ignore
-           "Error fetching resource", error?.response?.data || error?.message);
-       } finally {
-         // Any cleanup or final actions
-       }
-     };
-     fetchCountCity();
-   }, []);
+  useEffect(() => {
+    const fetchCountCity = async () => {
+      try {
+        const response = await axios.get(
+          `https://countriesnow.space/api/v0.1/countries`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        // Handle successful response, e.g., save token, redirect, etc.
+        setCountCity(response.data.data);
+      } catch (error) {
+        console.error(
+          //@ts-ignore
+          "Error fetching resource", error?.response?.data || error?.message
+        );
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+    fetchCountCity();
+  }, []);
 
-   const selectedCity =
-     countCity && countCity.filter((count: any) => count.country === country);
-
+  const selectedCity =
+    countCity && countCity.filter((count: any) => count.country === country);
 
   useEffect(() => {
     if (user && user.address) {
@@ -118,77 +121,82 @@ const Settings = () => {
   }, [user]);
 
   const handleProfileUpdate = async (e: { preventDefault: () => void }) => {
-        e.preventDefault();
-        try {
-          const response = await axios.put(
-            `${BASE_URL}/api/v1/user/update-profile`,
-            {
-              name: firstName + " " + lastName,
-              phone,
-              email,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${Cookies.get("token")}`,
-              },
-            }
-          );
-          console.log(response.data);
-          // Handle successful response, e.g., save token, redirect, etc.
-          toast({
-            status: "success",
-            description: response.data.message || "Success",
-          });
-        } catch (error) {
-          //@ts-ignore
-          toast({
-            status: "error",
-            description:
-              //@ts-expect-error
-              error?.response?.data || error?.message || "an error occurred ",
-          });
-        } finally {
-          // Any cleanup or final actions
+    e.preventDefault();
+    setLoading1(true);
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/api/v1/user/update-profile`,
+        {
+          name: firstName + " " + lastName,
+          phone,
+          email,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
         }
+      );
+      console.log(response.data);
+      // Handle successful response, e.g., save token, redirect, etc.
+      toast({
+        status: "success",
+        description: response.data.message || "Success",
+      });
+    } catch (error) {
+      //@ts-ignore
+      toast({
+        status: "error",
+        description:
+          //@ts-expect-error
+          error?.response?.data.message || error?.message ||
+          "an error occurred ",
+      });
+    } finally {
+      setLoading1(false);
+      // Any cleanup or final actions
+    }
   };
 
-    const handleAddressUpdate = async (e: { preventDefault: () => void }) => {
-      e.preventDefault();
-      try {
-        const response = await axios.put(
-          `${BASE_URL}/api/v1/user/update-address`,
-          {
-            address,
-            city,
-            state: region,
-            country,
-            postal_code: zipCode,
+  const handleAddressUpdate = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    setLoading2(true);
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/api/v1/user/update-address`,
+        {
+          address,
+          city: user?.address?.city,
+          state: user?.address?.state,
+          country: user?.address?.country,
+          postal_code: zipCode,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${Cookies.get("token")}`,
-            },
-          }
-        );
-        console.log(response.data);
-        // Handle successful response, e.g., save token, redirect, etc.
-        toast({
-          status: "success",
-          description: response.data.message || "Success",
-        });
-      } catch (error) {
-        //@ts-ignore
-        toast({
-          status: "error",
-          description:
-            //@ts-expect-error
-            error?.response?.data || error?.message || "an error occurred ",
-        });
-      } finally {
-        // Any cleanup or final actions
-      }
-    };
-
+        }
+      );
+      console.log(response.data);
+      // Handle successful response, e.g., save token, redirect, etc.
+      toast({
+        status: "success",
+        description: response.data.message || "Success",
+      });
+    } catch (error) {
+      //@ts-ignore
+      toast({
+        status: "error",
+        description:
+          //@ts-expect-error
+          error?.response?.data.message || error?.message ||
+          "an error occurred ",
+      });
+    } finally {
+      setLoading2(false);
+      // Any cleanup or final actions
+    }
+  };
 
   const handlePassword = () => {
     setShowPassword(!showPassword);
@@ -210,7 +218,7 @@ const Settings = () => {
       });
       return;
     }
-
+    setLoading3(true);
     try {
       const response = await axios.put(
         `${BASE_URL}/api/v1/user/change-password`,
@@ -237,9 +245,11 @@ const Settings = () => {
         status: "error",
         description:
           //@ts-expect-error
-          error?.response?.data || error?.message || "an error occurred ",
+          error?.response?.data.message || error?.message ||
+          "an error occurred ",
       });
     } finally {
+      setLoading3(false);
       // Any cleanup or final actions
     }
   };
@@ -310,8 +320,30 @@ const Settings = () => {
           </div>
           <button
             onClick={(e) => handleProfileUpdate(e)}
-            className="mt-2 flex justify-center items-center w-[204px] gap-[35px] text-white px-6 py-4 bg-primary rounded-[3px] font-[700] text-[14px]"
+            className="mt-2 flex justify-center items-center w-[204px] gap-[10px] text-white px-6 py-4 bg-primary rounded-[3px] font-[700] text-[14px]"
           >
+            {loading1 && (
+              <svg
+                className="animate-spin h-5 w-5 mr-3 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                ></path>
+              </svg>
+            )}{" "}
             SAVE CHANGES
           </button>
         </form>
@@ -487,9 +519,31 @@ const Settings = () => {
             </fieldset>
           </div>
           <button
-            className="mt-2 flex justify-center items-center w-[204px] gap-[35px] text-white px-6 py-4 bg-primary rounded-[3px] font-[700] text-[14px]"
+            className="mt-2 flex justify-center items-center w-[204px] gap-[8px] text-white px-6 py-4 bg-primary rounded-[3px] font-[700] text-[14px]"
             onClick={(e) => handleAddressUpdate(e)}
           >
+            {loading2 && (
+              <svg
+                className="animate-spin h-5 w-5 mr-3 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                ></path>
+              </svg>
+            )}
             SAVE CHANGES
           </button>
         </form>
@@ -578,6 +632,28 @@ const Settings = () => {
             onClick={(e) => handlePasswordChange(e)}
             className="mt-2 flex justify-center items-center w-[204px] gap-[35px] text-white px-6 py-4 bg-primary rounded-[3px] font-[700] text-[14px]"
           >
+            {loading3 && (
+              <svg
+                className="animate-spin h-5 w-5 mr-3 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                ></path>
+              </svg>
+            )}
             CHANGE PASSWORD
           </button>
         </form>

@@ -81,10 +81,10 @@ const Page = () => {
           `${BASE_URL}/api/v1/products/${params && params.id}`
         );
         setProduct(response.data.data);
-      } catch (error) {
+      } catch (error: any) {
         console.error(
           //@ts-ignore
-          "Error fetching resource",
+          "Error fetching resource"
           // error?.response?.data || error?.message
         );
       } finally {
@@ -117,7 +117,7 @@ const Page = () => {
       setShowLogin(true);
       return;
     }
-    if (quantity > product?.stockQuantity){
+    if (quantity > product?.stockQuantity) {
       toast({
         status: "error",
         description: `Not enough stock. Only ${product.stockQuantity} stocks are available at the moment.`,
@@ -142,14 +142,19 @@ const Page = () => {
         status: "success",
         description: response.data.message || "Success",
       });
-    } catch (error) {
+    } catch (error: any) {
       //@ts-ignore
       toast({
         status: "error",
         description:
-          //@ts-expect-error
-          error?.response?.data || error?.message || "an error occurred ",
-      });
+          //@ts-ignore
+          error?.response?.data.message ||error?.message ||
+          "an error occurred ",
+      })
+      if (error?.response?.status === 401) {
+        Cookies.remove("token");
+        return;
+      }
     } finally {
       // Any cleanup or final actions
     }
@@ -225,6 +230,18 @@ const Page = () => {
               }}
               // className="w-full flex justify-between items-center"
             >
+              {product && product?.images && product?.images[0] && (
+                <SwiperSlide>
+                  {" "}
+                  <Image
+                    src={product && product?.images && product?.images[0]}
+                    alt=""
+                    width={174}
+                    height={148}
+                    className="w-full h-[100px] lg:h-[136px] object-cover rounded-[8px] hover:shadow-lg hover:shadow-[#EB6363]"
+                  />
+                </SwiperSlide>
+              )}
               {product && product?.images && product?.images[1] && (
                 <SwiperSlide>
                   {" "}
