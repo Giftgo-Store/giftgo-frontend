@@ -67,6 +67,8 @@ export default function ProductList() {
         setItems(productData.data);
       } else if (productData.data === null) {
         setItems([]);
+      } else if ((productData.data = [])) {
+        setItems([]);
       }
     } catch (error) {
       console.error(error);
@@ -216,7 +218,7 @@ export default function ProductList() {
               key={item._id}
               avatar={item.images[0]}
               productCategory={
-                item.category.name ? item.category?.name : "unavailable"
+                item.category ? item.category?.name : "unavailable"
               }
               productName={item.productName}
               productPrice={Number(item.salePrice).toLocaleString()}
@@ -240,19 +242,19 @@ export default function ProductList() {
       </div>
 
       <div>
-        {!loading ? (
+        {!loading && paginatedItems ? (
           <div
             className={`flex gap-5  ${
               paginatedItems.length > 3 ? "justify-between" : "justify-stretch"
             } flex-wrap`}
           >
-            {paginatedItems.length ? (
+            {paginatedItems.length > 0 ? (
               paginatedItems.map((item: item, index) => (
                 <ProductListCard
                   key={item._id}
                   avatar={item.images[0]}
                   productCategory={
-                    item.category.name ? item.category?.name : "unavailable"
+                    item.category ? item.category?.name : "unavailable"
                   }
                   productName={item.productName}
                   productPrice={Number(item.salePrice).toLocaleString()}
@@ -286,6 +288,12 @@ export default function ProductList() {
           </div>
         )}
       </div>
+      {paginatedItems.length === 0 ||
+        (paginatedItems === null && (
+          <div className="h-[40vh] flex justify-center items-center w-full">
+            <p className="text-center">No products found !</p>
+          </div>
+        ))}
       <div className="flex justify-between items-center py-2 px-3">
         <div className="flex justify-normal gap-2 items-center text-[#8B909A] text-sm font-medium">
           <p>Showing</p>
