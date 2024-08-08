@@ -6,6 +6,7 @@ import Footer from "../footer/Footer";
 import { usePathname } from "next/navigation";
 import "../../globals.css";
 import Image from "next/image";
+import Link from "next/link";
 
 const AppWrapper = ({
   children,
@@ -19,7 +20,10 @@ const AppWrapper = ({
       {!pathname?.includes("admin") && (
         <div className="relative">
           <Header />
-          <div className="top-[600px] sticky right-[4px] flex justify-center items-center gap-0 z-0 cursor-pointer hover:z-[999]">
+          <Link
+            href="https://wa.me/2349114140300?text=Hello+i+want+to+make+enquiry,+My+Name+is"
+           target="_blank" rel="noreferrer" className="top-[600px] sticky right-[4px] flex justify-center items-center gap-0 z-0 cursor-pointer hover:z-[999]"
+          >
             <Image
               src="/whatsapp.svg"
               alt=""
@@ -27,7 +31,7 @@ const AppWrapper = ({
               height={68}
               className="absolute right-2"
             />
-          </div>
+          </Link>
           <div>{children}</div>
           <Footer />
         </div>

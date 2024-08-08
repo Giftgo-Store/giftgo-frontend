@@ -34,53 +34,54 @@ const page = () => {
   console.log(params?.category);
   const [category, setCategory] = useState([]);
   const [product, setProduct] = useState<any>([]);
-      const [revPerPage, setRevPerPage] = useState(1);
+  const [revPerPage, setRevPerPage] = useState(1);
 
-      useEffect(() => {
-        const handleResize = () => {
-          if (window.innerWidth < 1000) {
-            setRevPerPage(1);
-          }
-        };
-        console.log(revPerPage, window.innerWidth);
-        window.addEventListener("resize", handleResize);
-        return () => {
-          window.removeEventListener("resize", handleResize);
-        };
-      }, [revPerPage]);
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1000) {
+        setRevPerPage(1);
+      }
+    };
+    console.log(revPerPage, window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [revPerPage]);
 
-      useEffect(() => {
-        const handleResize = () => {
-          if (window.innerWidth > 1200) {
-            setRevPerPage(4);
-          }
-        };
-        console.log(revPerPage, window.innerWidth);
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 1200) {
+        setRevPerPage(4);
+      }
+    };
+    console.log(revPerPage, window.innerWidth);
 
-        window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize);
 
-        return () => {
-          window.removeEventListener("resize", handleResize);
-        };
-      }, [revPerPage]);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [revPerPage]);
 
   const location = Cookies.get("location");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}/api/v1/products/locate/${location}`
+          `${BASE_URL}/api/v1/products/locate/${location} `
         );
         setProduct(response.data.data.products[0]);
         // Handle successful response, e.g., save token, redirect, etc.
       } catch (error) {
         //@ts-ignore
-        toast({
-          status: "error",
-          description:
-            //@ts-expect-error
-            error?.response?.data || error?.message || "an error occurred ",
-        });
+        // toast({
+        //   status: "error",
+        //   description:
+        //     //@ts-expect-error
+        //     error?.response?.data || error?.message || "an error occurred ",
+        // });
       } finally {
         // Any cleanup or final actions
       }
@@ -100,12 +101,12 @@ const page = () => {
         // Handle successful response, e.g., save token, redirect, etc.
       } catch (error) {
         //@ts-ignore
-        toast({
-          status: "error",
-          description:
-            //@ts-expect-error
-            error?.response?.data || error?.message || "an error occurred ",
-        });
+        // toast({
+        //   status: "error",
+        //   description:
+        //     //@ts-expect-error
+        //     error?.response?.data || error?.message || "an error occurred ",
+        // });
       } finally {
         // Any cleanup or final actions
       }
@@ -138,36 +139,76 @@ const page = () => {
           </div>
 
           {/* <div className="flex justify-center items-center w-[100%] overflow-x-hidden "> */}
-          <Swiper
-            modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
-            spaceBetween={80}
-            slidesPerView={revPerPage}
-            // scrollbar={{ draggable: true }}
-            autoplay={{
-              delay: 5000,
-              disableOnInteraction: false,
-            }}
-            //   scrollbar={{ draggable: true }}
-            navigation={{
-              nextEl: ".custom-nextt",
-              prevEl: ".custom-prevv",
-            }}
-            // className="w-full flex justify-between items-center"
-          >
-            {/* <SwiperSlide></SwiperSlide> */}
-            {category &&
-              category.map((cat: any, i: any) => {
-                return (
-                  <SwiperSlide key={i}>
-                    <Category
-                      key={i}
-                      catId={cat}
-                      paramId={params && params.category}
-                    />
-                  </SwiperSlide>
-                );
-              })}
-          </Swiper>
+          {category && category.length > 0 ? (
+            <Swiper
+              modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
+              spaceBetween={80}
+              // slidesPerView={
+              //   category.length === 1
+              //     ? 1
+              //     : category.length === 2
+              //     ? 2
+              //     : category.length === 3
+              //     ? 3
+              //     : revPerPage
+              // }
+              autoplay={{
+                delay: 5000,
+                disableOnInteraction: false,
+              }}
+              navigation={{
+                nextEl: ".custom-nextt",
+                prevEl: ".custom-prevv",
+              }}
+              breakpoints={{
+                // When window width is >= 640px
+                640: {
+                  slidesPerView: 1,
+                },
+                // When window width is >= 768px
+                768: {
+                  slidesPerView: 2,
+                },
+                // When window width is >= 1024px
+                1024: {
+                  slidesPerView:
+                    category.length === 1
+                      ? 1
+                      : category.length === 2
+                      ? 2
+                      : category.length === 3
+                      ? 3
+                      : revPerPage,
+                },
+                // When window width is >= 1200px
+                1200: {
+                  slidesPerView:
+                    category.length === 1
+                      ? 1
+                      : category.length === 2
+                      ? 2
+                      : category.length === 3
+                      ? 3
+                      : revPerPage,
+                },
+              }}
+            >
+              {category &&
+                category.map((cat: any, i: any) => {
+                  return (
+                    <SwiperSlide key={i}>
+                      <Category
+                        key={i}
+                        catId={cat}
+                        paramId={params && params.category}
+                      />
+                    </SwiperSlide>
+                  );
+                })}
+            </Swiper>
+          ) : (
+            "No available category"
+          )}
           {/* </div> */}
           <div>
             <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center cursor-pointer custom-prevv z-40">
@@ -291,8 +332,8 @@ const page = () => {
               product.products.map((product: any, i: any) => {
                 return (
                   product &&
-                  product?.expressShipping && <Card key={i} lists={product} />
-                );
+                  product?.expressShipping === "true" ? <Card key={i} lists={product} />
+               : <p className="text-center font-medium">No express product available</p> );
               })}
             <Link
               href={`/category/${params && params.category}/category-detail/${

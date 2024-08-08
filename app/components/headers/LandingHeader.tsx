@@ -23,6 +23,7 @@ const LandingHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [cartItems, setCartItems] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -57,6 +58,27 @@ const LandingHeader = () => {
     fetchCartItems();
   }, [refetch]);
 
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/v1/category`);
+        console.log(response.data.data);
+        // Handle successful response, e.g., save token, redirect, etc.
+        setCategories(response.data.data);
+        console.log("Successful", response.data.data);
+      } catch (error) {
+        console.error(
+          //@ts-ignore
+          "Error fetching resource",
+          // error?.response?.data || error?.message
+        );
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+    fetchCartItems();
+  }, []);
+
   const [showModal, setShowModal] = useState(false);
 
   const openModal = () => setShowModal(true);
@@ -90,7 +112,15 @@ const LandingHeader = () => {
           <Link onClick={toggleMenu} href={"/"} className="w-full">
             <p className="">Home</p>
           </Link>
-          <Link onClick={toggleMenu} href={"/contact"} className="w-full">
+          <Link
+            onClick={toggleMenu}
+            href={
+              "https://wa.me/2349114140300?text=Hello+i+want+to+make+enquiry,+My+Name+is"
+            }
+            target="_blank"
+            rel="noreferrer"
+            className="w-full"
+          >
             <p className="">Contact</p>
           </Link>
         </div>
@@ -146,7 +176,7 @@ const LandingHeader = () => {
               />
               <p className="absolute bg-white h-4 w-4 rounded-full text-xs flex justify-center items-center font-semibold top-[-4px] right-[-10px]">
                 {cartItems.length}
-              </p> 
+              </p>
             </div>
             <CheckoutModal
               showCheckoutModal={showCheckoutModal}
@@ -180,10 +210,17 @@ const LandingHeader = () => {
               <PiMapPinLine />
               <p>Track Order</p>
             </button>
-            <div className="flex justify-center items-center gap-1 text-[14px] text-white leading-[20px]">
+            <Link
+              href={
+                "https://wa.me/2349114140300?text=Hello+i+want+to+make+enquiry,+My+Name+is"
+              }
+              target="_blank"
+              rel="noreferrer"
+              className="flex justify-center items-center gap-1 text-[14px] text-white leading-[20px]"
+            >
               <FiHeadphones />
               <p>Customer Support</p>
-            </div>
+            </Link>
           </div>
         </div>
 
@@ -192,20 +229,27 @@ const LandingHeader = () => {
             name=""
             id=""
             className="rounded-[4px] h-[48px] w-full lg:w-[150px] text-[14px] font-[600] px-[10px] py-[14px] outline-none text-black hidden lg:flex"
-          >
-            <option value="All category">All category</option>
-            <option value="Uncategorized">Uncategorized</option>
-            <option value="Flowers and Notes">Flowers and Notes</option>
-            <option value="Kids items">Kids items</option>
-            <option value="Adult items">Adult items</option>
-            <option value="Food Items">Food Items</option>
+            >
+            <option>
+              Filter Category
+            </option>
+            {categories && categories.map((category:any, i:any) => {
+              return (
+                <option key={i} value={category.id}>
+                  {category.name}
+                </option>
+              );
+            })}
           </select>
 
           <div className="lg:flex hidden justify-center items-center gap-[32px]">
-            <div className="flex justify-center items-center gap-2 text-[14px] lg:text-[18px] text-white leading-[20px]">
+            <Link
+              href={"tel:09114140300"}
+              className="flex justify-center items-center gap-2 text-[14px] lg:text-[18px] text-white leading-[20px]"
+            >
               <FiPhoneCall />
-              <p>+234 9000000000</p>
-            </div>
+              <p>+234 91 1414 0300</p>
+            </Link>
             <div className="relative">
               <PiShoppingCart
                 className="w-[25px] text-white h-[25px] cursor-pointer"

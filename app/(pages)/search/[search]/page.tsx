@@ -87,7 +87,7 @@ const Page = () => {
           <div>
             <div className="flex justify-between flex-col lg:flex-row items-start lg:items-center mb-6 gap-2">
               <h2 className="text-[#475156] text-[16px] text-left lg:text-center font-[400]">
-                Showing 1-8 of {result.length} results
+                Showing {result.length} results
               </h2>
               <div className="flex justify-end items-center gap-4">
                 <p className="text-[#475156] text-[14px] font-[400] gap-2">

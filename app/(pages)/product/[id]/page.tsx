@@ -195,7 +195,7 @@ const Page = () => {
       </div>
 
       <div className="flex justify-center lg:justify-between items-center flex-col lg:flex-row px-[4%] lg:px-[8%] mt-[20px] lg:mt-[56px] mb-[24px] w-full">
-        <div className="lg:w-[50%] flex-col justify-start items-start lg:px-[24px] gap-2 h-full">
+        <div className="lg:w-[50%] flex-col justify-start items-start lg:px-[24px] gap-2 h-full overflow-x-hidden">
           <Image
             src={product && product?.images && product?.images[0]}
             alt=""
@@ -203,7 +203,7 @@ const Page = () => {
             height={148}
             className="w-full lg:w-[80%] h-[315px] object-cover rounded-[8px]"
           />
-          <div className="flex gap-2 lg:w-[80%] justify-between mt-2 items-center relative overflow-x-hidden z-40">
+          <div className="flex gap-2 w-[80%] justify-between mt-2 items-center relative overflow-x-hidden z-40">
             <div className=" absolute cursor-pointer -left-6 custom-nextt z-40">
               <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center z-[999]">
                 <FaArrowLeft className="h-6 w-6 text-white" />
@@ -217,13 +217,11 @@ const Page = () => {
             <Swiper
               modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
               spaceBetween={10}
-              slidesPerView={2}
-              // scrollbar={{ draggable: true }}
+              slidesPerView={product?.images?.length === 1 ? 1 : 2}
               autoplay={{
                 delay: 5000,
                 disableOnInteraction: false,
               }}
-              //   scrollbar={{ draggable: true }}
               navigation={{
                 nextEl: ".custom-nextt",
                 prevEl: ".custom-prevv",
@@ -406,7 +404,7 @@ const Page = () => {
               <h2 className="text-[#191C1F] font-[500]">
                 Shipping Information
               </h2>
-              {product.expressShipping && (
+              {product.expressShipping === "true" && (
                 <div className="bg-primary rounded-br-[8px] mt-2 lg:mt-5 rounded-tl-[8px] py-[5px] px-[12px] flex justify-center items-center gap-1 text-white w-[fit-content]">
                   <LiaFighterJetSolid />
                   <p className="text-[11px]">Express shipping</p>
