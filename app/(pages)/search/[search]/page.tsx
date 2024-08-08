@@ -13,49 +13,70 @@ const Page = () => {
   const [result, setResult] = useState([]);
 
   const searchParams = useSearchParams();
-
+  console.log(searchParams?.get("filter"));
   useEffect(() => {
     const fetchCartItems = async () => {
-      try {
-        const response = await axios.post(
-          `${BASE_URL}/api/v1/products/search`,
-          {
-            query: searchParams?.get("product"),
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${Cookies.get("token")}`,
-            },
+      if (searchParams?.get("product") !== null) {
+        try {
+          const response = await axios.post(
+            `${BASE_URL}/api/v1/products/search`,
+            {
+              query: searchParams?.get("product"),
+            }
+          );
+          console.log(response.data.data.length);
+          // Handle successful response, e.g., save token, redirect, etc.
+          if (response.data.data.length > 0) {
+            setResult(response.data.data);
+            console.log("trueeeeeee");
+            setShowResult(true);
+            return;
+          } else {
+            setShowResult(false);
+            return;
           }
-        );
-        console.log(response.data.data.length);
-        // Handle successful response, e.g., save token, redirect, etc.
-        if (response.data.data.length > 0) {
-          setResult(response.data.data);
-          console.log("trueeeeeee");
-          setShowResult(true);
-          return;
-        } else {
-          setShowResult(false);
-          return;
-        }
 
-        console.log("Successful", response.data.data);
-      } catch (error) {
-        console.error(
-          //@ts-ignore
-          "Error fetching resource",
-          // error?.response?.data || error?.message
-        );
-      } finally {
-        // Any cleanup or final actions
+          console.log("Successful", response.data.data);
+        } catch (error) {
+          console.error(
+            //@ts-ignore
+            "Error fetching resource"
+            // error?.response?.data || error?.message
+          );
+        } finally {
+          // Any cleanup or final actions
+        }
+      } else {
+        try {
+          const response = await axios.get(
+            `${BASE_URL}/api/v1/category/category/filter?name=${searchParams?.get(
+              "filter"
+            )}`
+          );
+          console.log(response.data.data.products);
+          // Handle successful response, e.g., save token, redirect, etc.
+          if (response.data.data.products.length > 0) {
+            setResult(response.data.data.products);
+            console.log("trueeeeeee");
+            setShowResult(true);
+            return;
+          } else {
+            setShowResult(false);
+            return;
+          }
+        } catch (error) {
+          console.error(
+            //@ts-ignore
+            "Error fetching resource"
+            // error?.response?.data || error?.message
+          );
+        } finally {
+          // Any cleanup or final actions
+        }
       }
     };
     fetchCartItems();
   }, [searchParams]);
-
-  console.log(result);
-  console.log(showResult);
 
   const handleShow = () => {
     setShowResult(true);
@@ -64,7 +85,11 @@ const Page = () => {
     <>
       <div className="py-[20px] px-[4%] lg:px-[8%] text-center bg-secondary ">
         <h2 className="font-[600] leading-[32px] text-[28px] text-[#191C1F] pb-1">
-          Search results for &quot;{searchParams?.get("product")}&quot;
+          Search results for &quot;
+          {searchParams?.get("product") !== null
+            ? searchParams?.get("product")
+            : searchParams?.get("filter")}
+          &quot;
         </h2>
         <p className="text-[#475156] text-[18px] font-[500]">
           Home / <span className="cursor-pointer">Search</span>
@@ -74,7 +99,7 @@ const Page = () => {
       {!showResult ? (
         <div className="py-[140px] flex justify-center items-center">
           <div>
-            <p className="font-[600] text-[20px] text-[#191C1F]">
+            <p className="font-[600] text-center text-[20px] text-[#191C1F]">
               No products found matching your description
             </p>
             <div className="flex justify-center items-center">
