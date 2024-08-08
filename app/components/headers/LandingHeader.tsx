@@ -33,6 +33,14 @@ const LandingHeader = () => {
     router.push(`/search/product?${query}`);
   };
 
+  const handleFilter = (e: ChangeEvent<HTMLSelectElement>) => {
+    setSearch(e.target.value);
+    const query = new URLSearchParams({
+      filter: e.target.value,
+    });
+    router.push(`/search/filter?${query}`);
+  };
+
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
@@ -48,7 +56,7 @@ const LandingHeader = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource",
+          "Error fetching resource"
           // error?.response?.data || error?.message
         );
       } finally {
@@ -69,7 +77,7 @@ const LandingHeader = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource",
+          "Error fetching resource"
           // error?.response?.data || error?.message
         );
       } finally {
@@ -229,17 +237,18 @@ const LandingHeader = () => {
             name=""
             id=""
             className="rounded-[4px] h-[48px] w-full lg:w-[150px] text-[14px] font-[600] px-[10px] py-[14px] outline-none text-black hidden lg:flex"
-            >
-            <option>
-              Filter Category
-            </option>
-            {categories && categories.map((category:any, i:any) => {
-              return (
-                <option key={i} value={category.id}>
-                  {category.name}
-                </option>
-              );
-            })}
+            value={search}
+            onChange={(e) => handleFilter(e)}
+          >
+            <option>Filter Category</option>
+            {categories &&
+              categories.map((category: any, i: any) => {
+                return (
+                  <option key={i} value={category.id}>
+                    {category.name}
+                  </option>
+                );
+              })}
           </select>
 
           <div className="lg:flex hidden justify-center items-center gap-[32px]">
