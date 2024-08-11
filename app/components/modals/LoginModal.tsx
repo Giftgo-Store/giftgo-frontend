@@ -174,7 +174,13 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                   <label className="text-sm font-medium text-[#191C1F] flex justify-between items-center">
                     Password
                   </label>
-                  <Link href={'/forgot-password'} onClick={() => closeModal()} className="text-sm">Forgot Password?</Link>
+                  <Link
+                    href={"/forgot-password"}
+                    onClick={() => closeModal()}
+                    className="text-sm"
+                  >
+                    Forgot Password?
+                  </Link>
                 </div>
                 <div className="relative">
                   <input
@@ -200,7 +206,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
               </div>
               <button
                 type="submit"
-                className="w-full bg-primary text-white py-2 h-[48px] rounded-[2px] flex justify-center items-center gap-4 font-[700]"
+                className="w-full bg-primary hover:bg-primary/80  text-white py-2 h-[48px] rounded-[2px] flex justify-center items-center gap-4 font-[700]"
               >
                 {isSigningIn ? (
                   <svg
@@ -373,7 +379,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
 
               <button
                 type="submit"
-                className="w-full bg-primary text-white py-2 h-[48px] rounded-[2px] flex justify-center items-center gap-4 font-[700]"
+                className="w-full bg-primary hover:bg-primary/80 text-white py-2 h-[48px] rounded-[2px] flex justify-center items-center gap-4 font-[700]"
               >
                 {isSigningUp ? (
                   <svg

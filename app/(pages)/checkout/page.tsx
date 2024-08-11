@@ -810,30 +810,30 @@ const [loading, setLoading] = useState(false)
             <button
               // onClick={handlePlaceOrder}
               onClick={(e) => validateForm(e)}
-              className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary rounded-[3px] font-[700] disabled:bg-primary/50 disabled:cursor-not-allowed"
+              className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary hover:bg-primary/80  rounded-[3px] font-[700] disabled:bg-primary/50 disabled:cursor-not-allowed"
               disabled={!isFormValid}
             >
               {loading && (
-              <svg
-                className="animate-spin h-5 w-5 mr-3 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v8H4z"
-                ></path>
-              </svg>
+                <svg
+                  className="animate-spin h-5 w-5 mr-3 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  ></path>
+                </svg>
               )}
               {isFormValid && (
                 <PaystackButton

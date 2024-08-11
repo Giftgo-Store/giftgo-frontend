@@ -318,7 +318,7 @@ const Page = () => {
               />
             </div>
             <button
-              className="flex w-full lg:w-fit justify-center items-center gap-2 text-white px-8 py-4 bg-primary rounded-[3px] font-[700]"
+              className="flex w-full lg:w-fit justify-center items-center gap-2 text-white px-8 py-4 bg-primary hover:bg-primary/80  rounded-[3px] font-[700]"
               onClick={handleAddToCart}
             >
               <p>ADD TO CART</p>
@@ -634,7 +634,7 @@ const Page = () => {
             <Card />
             <Card express={true} />
             <Card /> */}
-            <button className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]">
+            <button className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary hover:bg-primary/80  rounded-[3px] font-[700] text-[16px]">
               <p> Browse All Products</p>
             </button>
           </div>

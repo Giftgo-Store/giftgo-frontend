@@ -174,7 +174,7 @@ const Order = () => {
 
           <div className="flex w-full justify-center items-center">
             <button
-              className="py-[14px] px-[24px] rounded-[2px] bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2 min-w-[150px]"
+              className="py-[14px] px-[24px] rounded-[2px] hover:bg-primary/80  text-white text-[16px] font-[600] flex justify-center items-center gap-2 min-w-[150px]"
               onClick={(e) => handleFetchOrder(e)}
             >
               {loading ? (
@@ -229,7 +229,9 @@ const Order = () => {
               <div className="flex flex-col items-start gap-2">
                 <div className="flex justify-start gap-3 items-center">
                   <p className="text-[24px] font-[600] leading-[30px]">
-                    {single.trackingNumber ? single.trackingNumber : "Not Available"}
+                    {single.trackingNumber
+                      ? single.trackingNumber
+                      : "Not Available"}
                   </p>
                   <svg
                     onClick={() => {
@@ -261,7 +263,9 @@ const Order = () => {
                   Courier:{" "}
                   <span className="text-[#000000]">
                     {" "}
-                    {single.courierService ? single.courierService : "Not Available"}
+                    {single.courierService
+                      ? single.courierService
+                      : "Not Available"}
                   </span>
                 </p>
               </div>

@@ -13,9 +13,26 @@ import BASE_URL from "./config/baseurl";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Cookies from "js-cookie";
+import { useInView } from "react-intersection-observer";
+import { motion } from "framer-motion";
 
 const Landing = () => {
   const [location, setLocation] = useState([]);
+
+    const { ref: ref1, inView: inView1 } = useInView({
+      triggerOnce: false,
+      threshold: 0.5,
+    });
+
+    const { ref: ref2, inView: inView2 } = useInView({
+      triggerOnce: false,
+      threshold: 0.5,
+    });
+
+    const { ref: ref3, inView: inView3 } = useInView({
+      triggerOnce: false,
+      threshold: 0.5,
+    });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,20 +59,42 @@ const Landing = () => {
     <>
       <div className="mx-[4%] lg:mx-[8%] mt-[30px] lg:mt-[96px] bg-secondary pt-[20px] lg:pt-[40px] px-[20px] lg:px-[40px] rounded-[8px] flex justify-between item-end mb-[32px] flex-col lg:flex-row">
         <div className="flex flex-col items-start justify-center lg:pb-[40px]">
-          <Image src="/icon.svg" alt="" width={118} height={48} />
+          <motion.div
+            ref={ref3}
+            initial={{ opacity: 0, y: -100 }}
+            animate={{ opacity: inView3 ? 1 : 0, y: inView3 ? 0 : -100 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Image src="/icon.svg" alt="" width={118} height={48} />
+          </motion.div>
 
-          <h1 className="pt-2 lg:leading-[72px] text-[25px] lg:text-[48px] font-[600] text-[#191C1F] pb-[40px]">
+          <motion.h1
+            ref={ref2}
+            initial={{ opacity: 0, x: -100 }}
+            animate={{ opacity: inView2 ? 1 : 0, x: inView2 ? 0 : -100 }}
+            transition={{ duration: 0.8 }}
+            className="pt-2 lg:leading-[72px] text-[25px] lg:text-[48px] font-[600] text-[#191C1F] pb-[40px]"
+          >
             Shop the Best Selection <br className="hidden lg:block" /> from
             Around the Globe at <br className="hidden lg:block" /> GiftGo!
-          </h1>
+          </motion.h1>
 
-          <button className="py-[18px] px-[40px] rounded-[4px] bg-primary text-white text-[16px] font-[600]">
+          <Link
+            href={"#location"}
+            className="py-[18px] px-[40px] rounded-[4px] bg-primary hover:bg-primary/80 text-white text-[16px] font-[600]"
+          >
             Shop Now
-          </button>
+          </Link>
         </div>
-        <div className="flex justify-end items-end">
+        <motion.div
+          ref={ref1}
+          initial={{ opacity: 0, y: -100 }}
+          animate={{ opacity: inView1 ? 1 : 0, y: inView1 ? 0 : -100 }}
+          transition={{ duration: 0.8 }}
+          className="flex justify-end items-end"
+        >
           <Image src="/teddy.png" alt="" width={430} height={386} />
-        </div>
+        </motion.div>
       </div>
 
       <div className="border-[#E4E7E9] border-[1px] bg-[#F5F5F5] flex gap-2 justify-between items-center p-2 mx-[4%] lg:mx-[8%] rounded-[8px] mb-[84px] overflow-x-auto">
@@ -113,7 +152,10 @@ const Landing = () => {
           Shop By
         </h2>
 
-        <div className="bg-[#F5F5F5] py-10 px-10 lg:px-20 w-full flex justify-center items-center lg:gap-x-[140px] gap-y-5 gap-x-14 lg:gap-y-10 flex-wrap">
+        <div
+          id="location"
+          className="bg-[#F5F5F5] py-10 px-10 lg:px-20 w-full flex justify-center items-center lg:gap-x-[140px] gap-y-5 gap-x-14 lg:gap-y-10 flex-wrap"
+        >
           {location.length > 0 &&
             location.map((loc: any, i: any) => {
               return (

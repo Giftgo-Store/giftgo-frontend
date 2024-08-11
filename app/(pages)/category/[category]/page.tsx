@@ -142,16 +142,7 @@ const page = () => {
           {category && category.length > 0 ? (
             <Swiper
               modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
-              spaceBetween={80}
-              // slidesPerView={
-              //   category.length === 1
-              //     ? 1
-              //     : category.length === 2
-              //     ? 2
-              //     : category.length === 3
-              //     ? 3
-              //     : revPerPage
-              // }
+              spaceBetween={30}
               autoplay={{
                 delay: 5000,
                 disableOnInteraction: false,
@@ -161,15 +152,12 @@ const page = () => {
                 prevEl: ".custom-prevv",
               }}
               breakpoints={{
-                // When window width is >= 640px
                 640: {
                   slidesPerView: 1,
                 },
-                // When window width is >= 768px
                 768: {
                   slidesPerView: 2,
                 },
-                // When window width is >= 1024px
                 1024: {
                   slidesPerView:
                     category.length === 1
@@ -178,9 +166,8 @@ const page = () => {
                       ? 2
                       : category.length === 3
                       ? 3
-                      : revPerPage,
+                      : 4,
                 },
-                // When window width is >= 1200px
                 1200: {
                   slidesPerView:
                     category.length === 1
@@ -189,7 +176,7 @@ const page = () => {
                       ? 2
                       : category.length === 3
                       ? 3
-                      : revPerPage,
+                      : 4,
                 },
               }}
             >
@@ -241,7 +228,7 @@ const page = () => {
 
             <Link
               href={`/category/${params && params.category}/all`}
-              className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]"
+              className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary hover:bg-primary/80  rounded-[3px] font-[700] text-[16px]"
             >
               <p> Browse All Products</p>
             </Link>
@@ -262,7 +249,7 @@ const page = () => {
                 <br className="hidden lg:block" /> fluffiest teddy bears{" "}
               </p>
 
-              <button className="py-[14px] px-[10px] lg:px-[24px] rounded-[2px] bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2">
+              <button className="py-[14px] px-[10px] lg:px-[24px] rounded-[2px] hover:bg-primary/80  bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2">
                 SHOP NOW <FaArrowRight className="w-5 h-5" />
               </button>
             </div>
@@ -289,7 +276,7 @@ const page = () => {
                 bears{" "}
               </p>
 
-              <button className="py-[14px] px-[24px] rounded-[2px] bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2">
+              <button className="py-[14px] px-[24px] rounded-[2px] bg-primary hover:bg-primary/80  text-white text-[16px] font-[600] flex justify-center items-center gap-2">
                 SHOP NOW <FaArrowRight className="w-5 h-5" />
               </button>
             </div>
@@ -327,19 +314,25 @@ const page = () => {
             </Link>
           </div>
           <div className="flex justify-center items-center flex-wrap gap-6">
-            {product &&
-              product?.products &&
+            {product && product?.products ? (
               product.products.map((product: any, i: any) => {
                 return (
                   product &&
-                  product?.expressShipping === "true" ? <Card key={i} lists={product} />
-               : <p className="text-center font-medium">No express product available</p> );
-              })}
+                  product?.expressShipping === "true" && (
+                    <Card key={i} lists={product} />
+                  )
+                );
+              })
+            ) : (
+              <p className="text-center font-medium">
+                No express product available
+              </p>
+            )}
             <Link
               href={`/category/${params && params.category}/category-detail/${
                 params && params.category
               }`}
-              className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary rounded-[3px] font-[700] text-[16px]"
+              className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary hover:bg-primary/80  rounded-[3px] font-[700] text-[16px]"
             >
               <p> Browse All Products</p>
             </Link>
