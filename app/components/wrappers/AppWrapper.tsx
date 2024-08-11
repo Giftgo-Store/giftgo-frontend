@@ -22,7 +22,9 @@ const AppWrapper = ({
           <Header />
           <Link
             href="https://wa.me/2349114140300?text=Hello+i+want+to+make+enquiry,+My+Name+is"
-           target="_blank" rel="noreferrer" className="top-[600px] sticky right-[4px] flex justify-center items-center gap-0 z-0 cursor-pointer hover:z-[999]"
+            target="_blank"
+            rel="noreferrer"
+            className="top-[600px] sticky right-[4px] flex justify-center items-center gap-0 z-0 cursor-pointer hover:z-[999]"
           >
             <Image
               src="/whatsapp.svg"
@@ -32,7 +34,7 @@ const AppWrapper = ({
               className="absolute right-2"
             />
           </Link>
-          <div>{children}</div>
+            {children}
           <Footer />
         </div>
       )}

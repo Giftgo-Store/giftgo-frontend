@@ -640,8 +640,7 @@ const Page = () => {
                 Discount <span className="text-primary">-10%</span>
               </p>
               <p className="text-primary text-[14px] font-[700]">
-                -₦{" "}
-                {formatNumberWithCommas(total)}
+                -₦ {formatNumberWithCommas(total)}
               </p>
             </div>
             <div className="flex justify-between items-center w-full">
@@ -677,7 +676,7 @@ const Page = () => {
             <button
               // onClick={handlePlaceOrder}
               onClick={(e) => validateForm(e)}
-              className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary rounded-[3px] font-[700] disabled:bg-primary/50 disabled:cursor-not-allowed"
+              className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary hover:bg-primary/80  rounded-[3px] font-[700] disabled:bg-primary/50 disabled:cursor-not-allowed"
               disabled={!isFormValid}
             >
               {isFormValid && (
