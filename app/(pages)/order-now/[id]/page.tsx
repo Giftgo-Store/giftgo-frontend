@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import Image from "next/image";
@@ -119,6 +120,8 @@ const Page = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [coupon, setCoupon] = useState("");
+  const [couponInfo, setCouponInfo] = useState<any>("");
+  const [couponValid, setCouponValid] = useState(false);
 
   useEffect(() => {
     if (user && user.address) {
@@ -129,6 +132,52 @@ const Page = () => {
       setZipCode(user.address.postal_code);
     }
   }, [user]);
+
+    useEffect(() => {
+      const fetchCoupon = async () => {
+        try {
+          const response = await axios.get(
+            `${BASE_URL}/api/v1/coupons/${coupon}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          // Handle successful response, e.g., save token, redirect, etc.
+          setCouponInfo(response.data);
+          console.log(response.data);
+          if (response.data.isActive === "true") {
+            setCouponValid(true);
+            toast({
+              status: "success",
+              description: "Valid coupon",
+            });
+            return;
+          } else {
+            toast({
+              status: "error",
+              description: "Invalid coupon",
+            });
+          }
+        } catch (error) {
+          console.error(
+            //@ts-ignore
+            "Error fetching resource"
+            // error?.response?.data || error?.message
+          );
+          toast({
+            status: "error",
+            description: "Invalid coupon",
+          });
+        } finally {
+          // Any cleanup or final actions
+        }
+      };
+      if (coupon.length > 6) {
+        fetchCoupon();
+      }
+    }, [coupon]);
 
   console.log(user && user.address && user.address.address);
 
@@ -239,6 +288,16 @@ const Page = () => {
     }
   };
 
+let totalDiscount = 0;
+
+if (cartItems.isCouponActive === true) {
+  const price = Number(cartItems.salePrice) || 0;
+  const discountPercentage = couponInfo?.discountPercentage || 0;
+  totalDiscount = (cartItems.quantity * price * discountPercentage) / 100;
+}
+
+console.log(totalDiscount);
+
   const total = Number(quantity) * Number(cartItems.salePrice);
   function formatNumberWithCommas(amount: number): string {
     return new Intl.NumberFormat("en-US").format(amount);
@@ -247,7 +306,7 @@ const Page = () => {
   const componentProps = {
     reference: new Date().getTime().toString(),
     email: user && user.email,
-    amount: total * 100,
+    amount: (total - totalDiscount) * 100,
     metadata: {
       name: user && user?.name,
       custom_fields: [
@@ -635,14 +694,19 @@ const Page = () => {
                 ₦ {formatNumberWithCommas(total)}
               </p>
             </div>
-            <div className="flex justify-between items-center w-full">
-              <p className="text-[#5F6C72] text-[14px]">
-                Discount <span className="text-primary">-10%</span>
-              </p>
-              <p className="text-primary text-[14px] font-[700]">
-                -₦ {formatNumberWithCommas(total)}
-              </p>
-            </div>
+            {couponValid && (
+              <div className="flex justify-between items-center w-full">
+                <p className="text-[#5F6C72] text-[14px]">
+                  Discount{" "}
+                  <span className="text-primary">
+                    -{couponInfo?.discountPercentage.toString()}%
+                  </span>
+                </p>
+                <p className="text-primary text-[14px] font-[700]">
+                  -₦ {formatNumberWithCommas(totalDiscount)}
+                </p>
+              </div>
+            )}
             <div className="flex justify-between items-center w-full">
               <p className="text-[#5F6C72] text-[14px]">Shipping</p>
               <p className="text-[#191C1F] text-[14px] font-[700]">Free</p>
@@ -658,19 +722,21 @@ const Page = () => {
             </p>
           </div>
 
-          <div className="flex justify-between flex-col items-start w-full px-5 pt-[24px] gap-2">
-            {" "}
-            <label htmlFor="username" className="text-[#191C1F] text-[14px]">
-              Enter Coupon <span className="text-[#929FA5]">(Optional)</span>
-            </label>
-            <input
-              type="tel"
-              className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none"
-              placeholder="Coupon Code"
-              value={coupon}
-              onChange={(e) => setCoupon(e.target.value)}
-            />
-          </div>
+          {!couponValid && (
+            <div className="flex justify-between flex-col items-start w-full px-5 pt-[24px] gap-2">
+              {" "}
+              <label htmlFor="username" className="text-[#191C1F] text-[14px]">
+                Enter Coupon <span className="text-[#929FA5]">(Optional)</span>
+              </label>
+              <input
+                type="tel"
+                className="border-[#E4E7E9] text-[14px] border-[1px] h-[44px] px-5 outline-none"
+                placeholder="Coupon Code"
+                value={coupon}
+                onChange={(e) => setCoupon(e.target.value)}
+              />
+            </div>
+          )}
 
           <div className="flex justify-center items-center my-6">
             <button

@@ -162,6 +162,10 @@ const [loading, setLoading] = useState(false)
           "Error fetching resource"
           // error?.response?.data || error?.message
         );
+        toast({
+          status: "error",
+          description: "Invalid coupon",
+        });
       } finally {
         // Any cleanup or final actions
       }

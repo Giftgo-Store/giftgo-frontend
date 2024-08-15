@@ -166,7 +166,15 @@ const Landing = () => {
                   onClick={() => Cookies.set("location", loc.location)}
                 >
                   <div className="w-[90px] lg:w-[112px] h-[90px] lg:h-[112px] flex justify-center items-center bg-[#05031A] rounded-full">
-                    <Image src={loc.image} alt="" width={68} height={50} />
+                    <Image
+                      src={loc.image}
+                      alt=""
+                      width={68}
+                      height={50}
+                      quality={100}
+                      unoptimized={true}
+                      className="w-[90px] h-[90px] lg:w-[112px] lg:h-[112px] rounded-full object-cover transition-transform duration-300 ease-in-out transform hover:scale-110"
+                    />
                   </div>
                   <p className="text-[20px]">{loc.location}</p>
                 </Link>

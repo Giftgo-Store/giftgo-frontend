@@ -8,7 +8,9 @@ const Footer = () => {
     return (
       <>
         <div className="py-[56px] px-[8%] flex flex-col justify-center items-center gap-[40px] bg-primary w-full flex-wrap">
-          <Image src="/icon.svg" alt="" width={158} height={64} />
+          <Link href={'/'}>
+            <Image src="/icon.svg" alt="" width={158} height={64} />
+          </Link>
           <div>
             <p className="text-center text-white text-[18px] pb-[16px]">
               For enquiries, call
