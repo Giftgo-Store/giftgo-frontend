@@ -12,6 +12,8 @@ import {
   ListboxItem,
   Selection,
   Skeleton,
+  CheckboxGroup,
+  Checkbox,
 } from "@nextui-org/react";
 import { useEffect, useMemo, useState } from "react";
 import { CiSearch } from "react-icons/ci";
@@ -28,7 +30,11 @@ interface Category {
   name: string;
   image: string;
 }
-
+interface location {
+  _id: string;
+  location: string;
+  image: string;
+}
 export default function AddCategories() {
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
@@ -36,6 +42,8 @@ export default function AddCategories() {
   const [selectedImage, setSelectedImage] = useState<any>("");
   const [imagePreview, setImagePreview] = useState("");
   const [allCategories, setAllCategories] = useState<Category[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<any>([]);
+  const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -87,6 +95,7 @@ export default function AddCategories() {
     const data = new FormData();
     data.append("image", selectedImage as unknown as Blob);
     data.append("name", categoryName);
+    data.append("locations",selectedLocation)
 
     try {
       const res = await fetch(`${API}/category/add-category`, {
@@ -124,9 +133,28 @@ export default function AddCategories() {
       // console.log(error);
     }
   };
+   const getAllLocations = async () => {
+     setLoading(true);
+
+     try {
+       const res = await fetch(`${API}/location/`, {
+         headers: {
+           AUTHORIZATION: "Bearer " + token,
+         },
+       });
+
+       const resData = await res.json();
+       setLoading(false);
+       setLocations(resData.data);
+     } catch (error) {
+       // console.log(error);
+     }
+  };
+  
   useEffect(() => {
     if (token) {
       getAllCategory();
+      getAllLocations()
     }
   }, [token]);
 
@@ -211,6 +239,22 @@ export default function AddCategories() {
                       setCategoryName(e.target.value);
                     }}
                   ></Input>
+                  <p className="text-lg py-2">Select locations</p>
+                  <div className="flex flex-col gap-3 relative z-20">
+                    <CheckboxGroup
+                      orientation="horizontal"
+                      aria-label="Select locations"
+                      color="success"
+                      value={selectedLocation}
+                      onValueChange={setSelectedLocation}
+                    >
+                      {locations.map((location:location) => (
+                        <Checkbox value={location.location} key={location._id}>
+                          {location.location}
+                        </Checkbox>
+                      ))}
+                    </CheckboxGroup>
+                  </div>
                   <p className="text-lg py-2">Upload a picture</p>
                   {selectedImage ? (
                     <Image
@@ -283,8 +327,8 @@ export default function AddCategories() {
                     onPress={() => {
                       setSelectedImage("");
                       setImagePreview("");
-                      setCategoryName("")
-                      onClose()
+                      setCategoryName("");
+                      onClose();
                     }}
                   >
                     CANCEL
@@ -308,6 +352,7 @@ export default function AddCategories() {
             {filteredCategories &&
               filteredCategories.map((category: Category) => (
                 <ListboxItem
+                  
                   className="border-1 max-w-[300px] w-full"
                   startContent={
                     <Image
@@ -333,7 +378,7 @@ export default function AddCategories() {
                       <HiOutlineTrash size={20} />
                     </Button>
                   }
-                  key={category.name+category._id}
+                  key={category._id}
                 >
                   {category.name}
                 </ListboxItem>

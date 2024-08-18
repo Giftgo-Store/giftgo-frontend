@@ -208,7 +208,7 @@ export default function ProductList() {
       )}
       <div
         className={`flex gap-3 ${
-          pinnedList.length > 3 ? "justify-between" : "justify-stretch"
+          pinnedList.length > 3 ? "justify-between" : "justify-normal"
         } flex-wrap`}
       >
         {pinnedList &&
@@ -245,7 +245,7 @@ export default function ProductList() {
         {!loading && paginatedItems ? (
           <div
             className={`flex gap-5  ${
-              paginatedItems.length > 3 ? "justify-between" : "justify-stretch"
+              paginatedItems.length > 3 ? "justify-between" : "justify-normal"
             } flex-wrap`}
           >
             {paginatedItems.length > 0 ? (

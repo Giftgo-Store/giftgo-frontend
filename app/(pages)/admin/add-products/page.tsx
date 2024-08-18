@@ -315,7 +315,7 @@ export default function AddProducts() {
     formdata.append("stockQuantity", stockQuantity);
     formdata.append("expressShipping", expressShipping.toString());
     formdata.append("isCouponActive", isCouponActive.toString());
-    formdata.append("location", location.toUpperCase());
+    // formdata.append("location", location.toUpperCase());
     setLoading(true);
     try {
       const res = await fetch(`${API}/products/add-product`, {
@@ -469,7 +469,7 @@ export default function AddProducts() {
           setSku(productData.sku);
           setExpressShipping(productData.expressShipping === "true");
           setIsCouponActive(productData.isCouponActive === "true");
-          setLocation(productData.location.location.toUpperCase());
+          // setLocation(productData.location.location.toUpperCase());
           // Handle image previews if necessary
           setSelectedImages(productData.images);
           setImagePreviews(productData.images);
@@ -779,7 +779,7 @@ export default function AddProducts() {
                   }}
                 ></Input>
               </div>
-              <div className="flex w-full flex-col gap-3">
+              {/* <div className="flex w-full flex-col gap-3">
                 <p>Location</p>
                 <Select
                   isRequired
@@ -810,7 +810,7 @@ export default function AddProducts() {
                       </SelectItem>
                     ))}
                 </Select>
-              </div>
+              </div> */}
             </div>
             <div className="flex md:flex-row flex-col w-full justify-between gap-2">
               <div className="flex w-full flex-col gap-3">
