@@ -13,6 +13,7 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useAppToast } from "@/app/providers/useAppToast";
 import { PaystackButton } from "react-paystack";
 
+
 const Page = () => {
   const toast = useAppToast();
   const router = useRouter();
