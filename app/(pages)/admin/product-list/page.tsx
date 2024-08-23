@@ -215,6 +215,7 @@ export default function ProductList() {
           filterValue.length < 1 &&
           pinnedList.map((item: item, index: number) => (
             <ProductListCard
+              _id={item._id}
               key={item._id}
               avatar={item.images[0]}
               productCategory={
@@ -251,6 +252,7 @@ export default function ProductList() {
             {paginatedItems.length > 0 ? (
               paginatedItems.map((item: item, index) => (
                 <ProductListCard
+                  _id={item._id}
                   key={item._id}
                   avatar={item.images[0]}
                   productCategory={

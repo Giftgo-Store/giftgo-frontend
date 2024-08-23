@@ -1068,9 +1068,10 @@ export default function Dashboard() {
               isLoading={loading}
               loadingContent={<Spinner label="Loading..." color="default" />}
               emptyContent={!loading && "There is no data"}
+              className="flex flex-col gap-2 justify-start"
             >
               {(item) => (
-                <TableRow key={item.orderId}>
+                <TableRow key={item.orderId} className="h-fit">
                   {(columnKey) => (
                     <TableCell>{renderCell(item, columnKey)}</TableCell>
                   )}

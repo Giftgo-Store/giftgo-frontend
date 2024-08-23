@@ -12,6 +12,7 @@ import { MouseEventHandler } from "react";
 import { HiDotsVertical } from "react-icons/hi";
 import { IoArrowUpOutline } from "react-icons/io5";
 interface cardprops {
+  _id: string;
   avatar: string;
   EditProduct: MouseEventHandler<HTMLLIElement>;
   PinProduct: MouseEventHandler;
@@ -25,6 +26,7 @@ interface cardprops {
   isPinned: boolean;
 }
 export default function ProductListCard({
+  _id,
   avatar,
   productName,
   productCategory,
@@ -86,7 +88,12 @@ export default function ProductListCard({
                   <DropdownItem key="Edit products" onClick={EditProduct}>
                     Edit product
                   </DropdownItem>
-
+                  <DropdownItem
+                    key="View reviews"
+                    href={`/admin/reviews/${_id}`}
+                  >
+                    View reviews
+                  </DropdownItem>
                   <DropdownItem
                     key="Pin products"
                     onClick={PinProduct}
@@ -99,6 +106,7 @@ export default function ProductListCard({
                     className="text-danger"
                     key="Delete Product"
                     onClick={DeleteProduct}
+                    color="danger"
                   >
                     {isPinned ? "Unpin Product" : "Delete Product"}
                   </DropdownItem>

@@ -31,6 +31,9 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   function pageName() {
+    if (pathname?.startsWith("/admin/reviews")) {
+      return "Reviews";
+    }
     switch (pathname) {
       case "/admin":
         return "Dashboard";
@@ -48,6 +51,7 @@ export function Header() {
         return "Product List";
       case "/admin/coupons":
         return "Coupons";
+
       default:
         return "Dashboard";
     }
