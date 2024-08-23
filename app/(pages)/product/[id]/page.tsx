@@ -44,6 +44,9 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "swiper/css/autoplay";
+import { Skeleton } from "@nextui-org/react";
+import Lightbox from "react-image-lightbox";
+import "react-image-lightbox/style.css";
 
 interface Review {
   rating: number;
@@ -63,11 +66,20 @@ const Page = () => {
   const [showMore, setShowMore] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [showLogin, setShowLogin] = useState(false);
+  const [loadingImages, setLoadingImages] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const [showModal, setShowModal] = useState(false);
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
+
+  const openLightbox = (index: number) => {
+    setCurrentImageIndex(index);
+    setIsOpen(true);
+  };
+  
 
   const [product, setProduct] = useState<any>([]);
   const location = Cookies.get("location");
@@ -81,6 +93,7 @@ const Page = () => {
           `${BASE_URL}/api/v1/products/${params && params.id}`
         );
         setProduct(response.data.data);
+        setLoadingImages(false);
       } catch (error: any) {
         console.error(
           //@ts-ignore
@@ -148,9 +161,10 @@ const Page = () => {
         status: "error",
         description:
           //@ts-ignore
-          error?.response?.data.message ||error?.message ||
+          error?.response?.data.message ||
+          error?.message ||
           "an error occurred ",
-      })
+      });
       if (error?.response?.status === 401) {
         Cookies.remove("token");
         return;
@@ -177,6 +191,32 @@ const Page = () => {
   return (
     <div className="">
       {showLogin && <Modal showModal={showModal} closeModal={closeModal} />}
+      {isOpen && (
+        <Lightbox
+          mainSrc={product.images[currentImageIndex]}
+          nextSrc={
+            product.images[(currentImageIndex + 1) % product.images.length]
+          }
+          prevSrc={
+            product.images[
+              (currentImageIndex + product.images.length - 1) %
+                product.images.length
+            ]
+          }
+          onCloseRequest={() => setIsOpen(false)}
+          onMovePrevRequest={() =>
+            setCurrentImageIndex(
+              (currentImageIndex + product.images.length - 1) %
+                product.images.length
+            )
+          }
+          onMoveNextRequest={() =>
+            setCurrentImageIndex(
+              (currentImageIndex + 1) % product.images.length
+            )
+          }
+        />
+      )}
       <div className="py-[20px] px-[8%] bg-secondary mb-[56px]">
         <h2
           className="font-[600] leading-[32px] text-[28px] text-[#191C1F]"
@@ -196,13 +236,22 @@ const Page = () => {
 
       <div className="flex justify-center lg:justify-between items-center flex-col lg:flex-row px-[4%] lg:px-[8%] mt-[20px] lg:mt-[56px] mb-[24px] w-full">
         <div className="lg:w-[50%] flex-col justify-start items-start lg:px-[24px] gap-2 h-full overflow-x-hidden">
-          <Image
-            src={product && product?.images && product?.images[0]}
-            alt=""
-            width={174}
-            height={148}
-            className="w-full lg:w-[80%] h-[315px] object-cover rounded-[8px]"
-          />
+          {loadingImages ? (
+            <Skeleton
+              // width="100%"
+              // height="315px"
+              className="w-full lg:w-[80%] h-[315px] object-cover rounded-[8px]"
+            />
+          ) : (
+            <Image
+              src={product && product?.images && product?.images[0]}
+              alt=""
+              width={174}
+              height={148}
+              className="w-full lg:w-[80%] h-[315px] object-cover rounded-[8px] transition-transform duration-300 ease-in-out transform hover:scale-95"
+              onClick={() => openLightbox(0)}
+            />
+          )}
           <div className="flex gap-2 w-[80%] justify-between mt-2 items-center relative overflow-x-hidden z-40">
             <div className=" absolute cursor-pointer -left-6 custom-nextt z-40">
               <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center z-[999]">
@@ -226,55 +275,24 @@ const Page = () => {
                 nextEl: ".custom-nextt",
                 prevEl: ".custom-prevv",
               }}
-              // className="w-full flex justify-between items-center"
             >
-              {product && product?.images && product?.images[0] && (
-                <SwiperSlide>
-                  {" "}
-                  <Image
-                    src={product && product?.images && product?.images[0]}
-                    alt=""
-                    width={174}
-                    height={148}
-                    className="w-full h-[100px] lg:h-[136px] object-cover rounded-[8px] hover:shadow-lg hover:shadow-[#EB6363]"
-                  />
-                </SwiperSlide>
-              )}
-              {product && product?.images && product?.images[1] && (
-                <SwiperSlide>
-                  {" "}
-                  <Image
-                    src={product && product?.images && product?.images[1]}
-                    alt=""
-                    width={174}
-                    height={148}
-                    className="w-full h-[100px] lg:h-[136px] object-cover rounded-[8px] hover:shadow-lg hover:shadow-[#EB6363]"
-                  />
-                </SwiperSlide>
-              )}
-              {product && product?.images && product?.images[2] && (
-                <SwiperSlide>
-                  <Image
-                    src={product && product?.images && product?.images[2]}
-                    alt=""
-                    width={174}
-                    height={148}
-                    className="w-full h-[100px] lg:h-[136px] object-cover rounded-[8px] hover:shadow-lg hover:shadow-[#EB6363]"
-                  />
-                </SwiperSlide>
-              )}
-              {product && product?.images && product?.images[2] && (
-                <SwiperSlide>
-                  {" "}
-                  <Image
-                    src={product && product?.images && product?.images[3]}
-                    alt=""
-                    width={174}
-                    height={148}
-                    className="w-full h-[100px] lg:h-[136px] object-cover rounded-[8px] hover:shadow-lg hover:shadow-[#EB6363]"
-                  />
-                </SwiperSlide>
-              )}
+              {product &&
+                product?.images &&
+                product?.images.map((image: string, index: number) => (
+                  <div
+                    key={index}
+                    className="relative"
+                    onClick={() => openLightbox(index)}
+                  >
+                    <Image
+                      src={image}
+                      alt={`product image ${index + 1}`}
+                      width={80}
+                      height={80}
+                      className="w-[80px] h-[80px] object-cover cursor-pointer rounded-[8px]"
+                    />
+                  </div>
+                ))}
             </Swiper>
           </div>
         </div>
