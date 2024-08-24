@@ -24,7 +24,7 @@ const AppWrapper = ({
             href="https://wa.me/2349114140300?text=Hello+i+want+to+make+enquiry,+My+Name+is"
             target="_blank"
             rel="noreferrer"
-            className="top-[600px] sticky right-[4px] flex justify-center items-center gap-0 z-0 cursor-pointer hover:z-[999]"
+            className="top-[600px] 2xl:top-[700px] sticky right-[4px] flex justify-center items-center gap-0 cursor-pointer z-[9999]"
           >
             <Image
               src="/whatsapp.svg"

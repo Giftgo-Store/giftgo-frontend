@@ -7,10 +7,12 @@ import { useSearchParams } from "next/navigation";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [showResult, setShowResult] = useState(false);
   const [result, setResult] = useState([]);
+  const router = useRouter();
 
   const searchParams = useSearchParams();
   console.log(searchParams?.get("filter"));
@@ -28,7 +30,6 @@ const Page = () => {
           // Handle successful response, e.g., save token, redirect, etc.
           if (response.data.data.length > 0) {
             setResult(response.data.data);
-            console.log("trueeeeeee");
             setShowResult(true);
             return;
           } else {
@@ -57,7 +58,6 @@ const Page = () => {
           // Handle successful response, e.g., save token, redirect, etc.
           if (response.data.data.products.length > 0) {
             setResult(response.data.data.products);
-            console.log("trueeeeeee");
             setShowResult(true);
             return;
           } else {
@@ -92,7 +92,10 @@ const Page = () => {
           &quot;
         </h2>
         <p className="text-[#475156] text-[18px] font-[500]">
-          Home / <span className="cursor-pointer">Search</span>
+          <span className="cursor-pointer" onClick={() => router.push("/")}>
+            Home
+          </span>{" "}
+          / <span>Search</span>
         </p>
       </div>
 
