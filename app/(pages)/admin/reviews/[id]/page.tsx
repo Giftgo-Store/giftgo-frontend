@@ -78,6 +78,7 @@ export default function Reviews({ params }: { params: { id: string } }) {
     <div className="flex flex-wrap w-full justify-between ">
       {reviews.map((review: review) => (
         <ReviewCard
+          key={review._id}
           DeleteReview={() => {
             toast.promise(DeleteReview(review._id), {
               pending: "Deleting review ",
