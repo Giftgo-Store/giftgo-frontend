@@ -10,12 +10,14 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import Link from "next/link";
 import { useState, useEffect, ChangeEvent } from "react";
 import Modal from "../modals/LoginModal";
+import ReviewModal from "../modals/ReviewModal";
 import CheckoutModal from "../modals/CheckoutModal";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
 import { useRefetch } from "../../context/refetchContext";
+
 const LandingHeader = () => {
   const { refetch } = useRefetch();
 
@@ -24,6 +26,8 @@ const LandingHeader = () => {
   const [search, setSearch] = useState("");
   const [cartItems, setCartItems] = useState([]);
   const [categories, setCategories] = useState([]);
+    const [location, setLocation] = useState([]);
+
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -38,6 +42,7 @@ const LandingHeader = () => {
     const query = new URLSearchParams({
       filter: e.target.value,
     });
+    setIsOpen(false);
     router.push(`/search/filter?${query}`);
   };
 
@@ -87,10 +92,36 @@ const LandingHeader = () => {
     fetchCartItems();
   }, []);
 
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(`${BASE_URL}/api/v1/location`);
+          setLocation(response.data.data);
+          // Handle successful response, e.g., save token, redirect, etc.
+          console.log("Successful", response.data.data);
+        } catch (error) {
+          //@ts-ignore
+          console.error(
+            "Error fetching resource"
+            // error?.response?.data || error?.message
+          );
+        } finally {
+          // Any cleanup or final actions
+        }
+      };
+
+      fetchData();
+    }, []);
+
   const [showModal, setShowModal] = useState(false);
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
+
+  const [showSearchModal, setShowSearchModal] = useState(false);
+
+  const openSearchModal = () => setShowSearchModal(true);
+  const closeSearchModal = () => setShowSearchModal(false);
 
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
@@ -106,6 +137,25 @@ const LandingHeader = () => {
 
   return (
     <>
+      {showSearchModal && (
+        <ReviewModal isOpen={showSearchModal} onClose={closeSearchModal}>
+          <div className="flex h-[300px] items-center justify-center">
+            <div className="relative">
+              <input
+                type="search"
+                className="rounded-[4px] h-[48px] w-[260px] lg:w-[600px] px-[20px] py-[14px] outline-none text-[14px] border border-black flex z-0"
+                placeholder="Search for anything..."
+                value={search}
+                onChange={(e) => handleSearch(e)}
+              />
+              <FiSearch
+                className="text-black absolute right-4 top-4 w-[20px] h-[20px]"
+                onClick={() => closeSearchModal()}
+              />
+            </div>
+          </div>
+        </ReviewModal>
+      )}
       <div
         className={`${
           isOpen
@@ -113,11 +163,11 @@ const LandingHeader = () => {
             : "fixed left-[-100%] transition-all duration-300 ease-in-out"
         } `}
       >
-        <div className="text-center flex flex-col justify-start items-end gap-[25px]">
-          <div className="lg:hidden" onClick={toggleMenu}>
+        <div className="text-center flex flex-col justify-start items-end gap-[10px]">
+          <div className="lg:hidden -mt-[20px] mb-[20px]" onClick={toggleMenu}>
             <IoCloseOutline className="text-white h-[30px] w-[30px]" />
           </div>
-          <Link onClick={toggleMenu} href={"/"} className="w-full">
+          {/* <Link onClick={toggleMenu} href={"/"} className="w-full">
             <p className="">Home</p>
           </Link>
           <Link
@@ -130,7 +180,43 @@ const LandingHeader = () => {
             className="w-full"
           >
             <p className="">Contact</p>
-          </Link>
+          </Link> */}
+          {location.length > 0 &&
+            location.map((loc: any, i: any) => {
+              return (
+                <Link
+                  href={`/category/${loc._id}`}
+                  key={i}
+                  className="flex flex-col items-center justify-center gap-[4px]"
+                  onClick={() => Cookies.set("location", loc.location)}
+                >
+                  <p className="text-[14px]" onClick={toggleMenu}>
+                    {loc.location}
+                  </p>
+                </Link>
+              );
+            })}
+
+          <div className="mt-5">
+            <p>Filter Products</p>
+            <select
+              name=""
+              id=""
+              className="rounded-[4px] w-full lg:w-[150px] text-[12px] font-[600] px-[10px] py-[14px] outline-none text-black flex"
+              value={search}
+              onChange={(e) => handleFilter(e)}
+            >
+              <option selected>Filter Products</option>
+              {categories &&
+                categories.map((category: any, i: any) => {
+                  return (
+                    <option key={i} value={category.id} className="text-[12px]">
+                      {category.name}
+                    </option>
+                  );
+                })}
+            </select>
+          </div>
         </div>
       </div>
       <div className="py-3 flex justify-between w-full items-center bg-secondary px-[4%] lg:px-[8%]">
@@ -173,7 +259,10 @@ const LandingHeader = () => {
               value={search}
               onChange={(e) => handleSearch(e)}
             />
-            <FiSearch className="text-white lg:text-black lg:absolute right-4 top-4 w-[20px] h-[20px]" />
+            <FiSearch
+              className="text-white lg:text-black lg:absolute right-4 top-4 w-[20px] h-[20px]"
+              onClick={() => openSearchModal()}
+            />
           </div>
 
           <div className="flex justify-center items-center gap-[20px] lg:hidden">
@@ -240,7 +329,7 @@ const LandingHeader = () => {
             value={search}
             onChange={(e) => handleFilter(e)}
           >
-            <option>Filter Category</option>
+            <option selected>Filter Products</option>
             {categories &&
               categories.map((category: any, i: any) => {
                 return (

@@ -362,8 +362,7 @@ const Page = () => {
             <div className="text-[14px]">
               <h2 className="text-[#191C1F] font-[500]">Description</h2>
               <p className="text-[#5F6C72] mt-2 lg:mt-3">
-                Write your description here. It may be long or short, just
-                necessary information the users need to know
+                {product && product?.description}
               </p>
             </div>
             <div className="text-[14px] text-[#191C1F] whitespace-nowrap">

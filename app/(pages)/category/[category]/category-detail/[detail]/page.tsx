@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import Card from "@/app/components/cards/Card";
@@ -45,7 +46,7 @@ const Page = () => {
     };
 
     fetchData();
-  }, [location, toast]);
+  }, [location]);
 
   const cat: any =
     category &&
@@ -61,7 +62,11 @@ const Page = () => {
           <span className="cursor-pointer" onClick={() => router.push("/")}>
             Home
           </span>{" "}
-          / <span className="cursor-pointer">Shop</span> /{" "}
+          /{" "}
+          <span className="cursor-pointer" onClick={handleBack}>
+            Shop
+          </span>{" "}
+          /{" "}
           <span className="cursor-pointer" onClick={handleBack}>
             {location} store
           </span>{" "}
