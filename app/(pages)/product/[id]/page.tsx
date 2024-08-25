@@ -45,8 +45,6 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "swiper/css/autoplay";
 import { Skeleton } from "@nextui-org/react";
-import Lightbox from "react-image-lightbox";
-import "react-image-lightbox/style.css";
 
 interface Review {
   rating: number;
@@ -79,7 +77,6 @@ const Page = () => {
     setCurrentImageIndex(index);
     setIsOpen(true);
   };
-  
 
   const [product, setProduct] = useState<any>([]);
   const location = Cookies.get("location");
@@ -191,32 +188,6 @@ const Page = () => {
   return (
     <div className="">
       {showLogin && <Modal showModal={showModal} closeModal={closeModal} />}
-      {isOpen && (
-        <Lightbox
-          mainSrc={product.images[currentImageIndex]}
-          nextSrc={
-            product.images[(currentImageIndex + 1) % product.images.length]
-          }
-          prevSrc={
-            product.images[
-              (currentImageIndex + product.images.length - 1) %
-                product.images.length
-            ]
-          }
-          onCloseRequest={() => setIsOpen(false)}
-          onMovePrevRequest={() =>
-            setCurrentImageIndex(
-              (currentImageIndex + product.images.length - 1) %
-                product.images.length
-            )
-          }
-          onMoveNextRequest={() =>
-            setCurrentImageIndex(
-              (currentImageIndex + 1) % product.images.length
-            )
-          }
-        />
-      )}
       <div className="py-[20px] px-[8%] bg-secondary mb-[56px]">
         <h2
           className="font-[600] leading-[32px] text-[28px] text-[#191C1F]"
@@ -391,8 +362,7 @@ const Page = () => {
             <div className="text-[14px]">
               <h2 className="text-[#191C1F] font-[500]">Description</h2>
               <p className="text-[#5F6C72] mt-2 lg:mt-3">
-                Write your description here. It may be long or short, just
-                necessary information the users need to know
+                {product && product?.description}
               </p>
             </div>
             <div className="text-[14px] text-[#191C1F] whitespace-nowrap">
