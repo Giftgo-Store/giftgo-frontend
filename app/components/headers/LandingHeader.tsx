@@ -26,8 +26,7 @@ const LandingHeader = () => {
   const [search, setSearch] = useState("");
   const [cartItems, setCartItems] = useState([]);
   const [categories, setCategories] = useState([]);
-    const [location, setLocation] = useState([]);
-
+  const [location, setLocation] = useState([]);
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -92,26 +91,26 @@ const LandingHeader = () => {
     fetchCartItems();
   }, []);
 
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const response = await axios.get(`${BASE_URL}/api/v1/location`);
-          setLocation(response.data.data);
-          // Handle successful response, e.g., save token, redirect, etc.
-          console.log("Successful", response.data.data);
-        } catch (error) {
-          //@ts-ignore
-          console.error(
-            "Error fetching resource"
-            // error?.response?.data || error?.message
-          );
-        } finally {
-          // Any cleanup or final actions
-        }
-      };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/v1/location`);
+        setLocation(response.data.data);
+        // Handle successful response, e.g., save token, redirect, etc.
+        console.log("Successful", response.data.data);
+      } catch (error) {
+        //@ts-ignore
+        console.error(
+          "Error fetching resource"
+          // error?.response?.data || error?.message
+        );
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
 
-      fetchData();
-    }, []);
+    fetchData();
+  }, []);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -260,9 +259,10 @@ const LandingHeader = () => {
               onChange={(e) => handleSearch(e)}
             />
             <FiSearch
-              className="text-white lg:text-black lg:absolute right-4 top-4 w-[20px] h-[20px]"
+              className="text-white lg:hidden lg:text-black lg:absolute right-4 top-4 w-[20px] h-[20px]"
               onClick={() => openSearchModal()}
             />
+            <FiSearch className="text-white hidden lg:block lg:text-black lg:absolute right-4 top-4 w-[20px] h-[20px]" />
           </div>
 
           <div className="flex justify-center items-center gap-[20px] lg:hidden">
@@ -284,7 +284,7 @@ const LandingHeader = () => {
               onClick={() => (token ? router.push("/account") : openModal())}
             />
             <Modal showModal={showModal} closeModal={closeModal} />
-            <select
+            {/* <select
               name=""
               id=""
               className="border-none bg-primary text-white outline-none text-[16px] font-[500]"
@@ -295,7 +295,7 @@ const LandingHeader = () => {
               >
                 Ship to <Image src="/flag.png" alt="" width={20} height={10} />
               </option>
-            </select>
+            </select> */}
           </div>
           <div className="hidden lg:flex justify-center items-center gap-[24px] mt-4 lg:mt-0">
             <button
@@ -366,7 +366,7 @@ const LandingHeader = () => {
               onClick={() => (token ? router.push("/account") : openModal())}
             />
             <Modal showModal={showModal} closeModal={closeModal} />
-            <select
+            {/* <select
               name=""
               id=""
               className="border-none bg-primary text-white outline-none text-[16px] font-[500]"
@@ -377,7 +377,7 @@ const LandingHeader = () => {
               >
                 Ship to <Image src="/flag.png" alt="" width={20} height={10} />
               </option>
-            </select>
+            </select> */}
           </div>
         </div>
       </div>
