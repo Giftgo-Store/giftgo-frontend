@@ -153,10 +153,16 @@ const page = () => {
               }}
               breakpoints={{
                 640: {
-                  slidesPerView: 2,
+                  slidesPerView: category.length === 1
+                      ? 1
+                      : category.length === 2
+                      ? 2 : 1,
                 },
                 768: {
-                  slidesPerView: 2,
+                  slidesPerView: category.length === 1
+                      ? 1
+                      : category.length === 2
+                      ? 2 : 1,
                 },
                 1024: {
                   slidesPerView:
