@@ -148,12 +148,12 @@ const page = () => {
                 disableOnInteraction: false,
               }}
               navigation={{
-                nextEl: ".custom-nextt",
-                prevEl: ".custom-prevv",
+                prevEl: ".custom-nextt",
+                nextEl: ".custom-prevv",
               }}
               breakpoints={{
                 640: {
-                  slidesPerView: 1,
+                  slidesPerView: 2,
                 },
                 768: {
                   slidesPerView: 2,

@@ -649,8 +649,8 @@ const Page = () => {
             <Card />
             <Card express={true} />
             <Card /> */}
-            {relatedProduct && relatedProduct?.products ? (
-              relatedProduct.products.map((product: any, i: any) => {
+            {relatedProduct && relatedProduct ? (
+              relatedProduct.map((product: any, i: any) => {
                 return <Card key={i} lists={product} />;
               })
             ) : (
