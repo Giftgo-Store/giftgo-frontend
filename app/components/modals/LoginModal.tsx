@@ -117,6 +117,29 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
     }
   };
 
+    const handleGoogle = async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+        const response = await axios.get(`${BASE_URL}/api/v1/google/callback`);
+        // Handle successful response, e.g., show success message, redirect, etc.
+        toast({
+          status: "success",
+          description: response.data.message || "Success",
+        });
+        Cookie.set("token", response.data.data.accessToken.token);
+        closeModal();
+      } catch (error) {
+        toast({
+          status: "error",
+          //@ts-ignore
+          description: error.response?.data.message || error?.message || "Sign up error",
+        });
+        // console.error("Sign Up Error", error.response?.data || error.message);
+      } finally {
+        setIsSigningUp(false);
+      }
+    };
+
   return (
     <div
       className={classNames(
@@ -243,7 +266,10 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
               <div className="bg-[#E4E7E9] h-[2px] w-[45%]"></div>
             </div>
             <div className="text-center px-6 py-4">
-              <button className="w-full bg-white border-[1px] border-[#E4E7E9] text-[#191C1F] py-2 rounded-[2px] h-[44px] mb-2 relative">
+              <button
+                onClick={(e) => handleGoogle(e)}
+                className="w-full bg-white border-[1px] border-[#E4E7E9] text-[#191C1F] py-2 rounded-[2px] h-[44px] mb-2 relative"
+              >
                 <Image
                   src="/Google.png"
                   alt=""

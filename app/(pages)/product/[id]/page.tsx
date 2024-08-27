@@ -79,6 +79,7 @@ const Page = () => {
   };
 
   const [product, setProduct] = useState<any>([]);
+  const [relatedProduct, setRelatedProduct] = useState<any>([]);
   const location = Cookies.get("location");
   console.log(params);
   const token = Cookies.get("token");
@@ -118,6 +119,29 @@ const Page = () => {
       setQuantity(quantity - 1);
     }
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/api/v1/products/${params && params.id}/related`
+        );
+        setRelatedProduct(response.data.data);
+      } catch (error: any) {
+        console.error(
+          //@ts-ignore
+          "Error fetching resource"
+          // error?.response?.data || error?.message
+        );
+      } finally {
+        // Any cleanup or final actions
+      }
+    };
+
+    fetchData();
+  }, [location, params]);
+
+  console.log(relatedProduct)
+
 
   const handleAddToCart = async () => {
     const token = Cookies.get("token");
@@ -608,10 +632,13 @@ const Page = () => {
             <h2 className=" text-[#191C1F] text-[24px] text-center font-[600]">
               Products you may like
             </h2>
-            <p className=" hidden lg:flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2">
+            <Link
+              href={"/#location"}
+              className=" hidden lg:flex justify-end items-center text-[#EB6363] text-[14px] font-[600] gap-2"
+            >
               Browse All Products
               <FaArrowRight />
-            </p>
+            </Link>
           </div>
           <div className="flex justify-center items-center flex-wrap gap-6">
             {/* <Card />
@@ -622,9 +649,21 @@ const Page = () => {
             <Card />
             <Card express={true} />
             <Card /> */}
-            <button className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary hover:bg-primary/80  rounded-[3px] font-[700] text-[16px]">
+            {relatedProduct && relatedProduct ? (
+              relatedProduct.map((product: any, i: any) => {
+                return <Card key={i} lists={product} />;
+              })
+            ) : (
+              <p className="text-center font-medium">
+                No related product available
+              </p>
+            )}
+            <Link
+              href={"/#location"}
+              className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary hover:bg-primary/80  rounded-[3px] font-[700] text-[16px]"
+            >
               <p> Browse All Products</p>
-            </button>
+            </Link>
           </div>
         </div>
       </div>
