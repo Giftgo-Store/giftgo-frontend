@@ -49,11 +49,8 @@ export default function ReviewCard({
             href={`/admin/customer/customer-detail/${reviewerId}`}
             className="flex flex-col"
           >
-            <div className="text-sm font-semibold text-black">
-              {userName} •{" "}
-              <span className="font-normal">
-                {new Date(timestamp).toDateString()}
-              </span>
+            <div className="text-sm font-semibold text-black w-[300px] whitespace-normal text-ellipsis overflow-hidden">
+              {userName}
             </div>
             <p className="text-gray-400 w-full">{email}</p>
           </Link>
@@ -65,11 +62,14 @@ export default function ReviewCard({
         </div>
       </div>
       <div className="mt-2">
-        <h1 className="text-lg text-gray-700 font-semibold hover:underline cursor-pointer">
-          Product Review
-        </h1>
         <span className="font-semibold text-lg">Rating</span>
-        <StarRating rating={reviewRating} />
+        <div className="flex gap-2 py-1">
+          <StarRating rating={reviewRating} />{" "}
+          <span className="font-normal">
+            {new Date(timestamp).toDateString()}
+          </span>
+        </div>
+
         <div className="text-wrap">
           <p className="mt-4 text-base text-gray-600  whitespace-normal">
             {comment}
