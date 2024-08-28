@@ -55,7 +55,7 @@ export default function ReviewCard({
                 {new Date(timestamp).toDateString()}
               </span>
             </div>
-            <p className="text-gray-400">{email}</p>
+            <p className="text-gray-400 w-full">{email}</p>
           </Link>
         </div>
         <div className="p-5 bg-yellow-400 rounded-full h-4 w-4 flex items-center justify-center text-2xl text-white mt-4 shadow-lg cursor-pointer">

@@ -115,7 +115,7 @@ export default function Reviews({ params }: { params: { id: string } }) {
         ></Input>
       </div>
       <Spacer y={4}></Spacer>
-      <div className="flex flex-wrap w-full justify-normal ">
+      <div className="flex flex-wrap w-full justify-normal gap-3 ">
         {filteredReviews.map((review: review) => (
           <ReviewCard
             key={review._id}
