@@ -65,7 +65,7 @@ export default function ReviewCard({
       </div>
       <div className="mt-2">
         <span className="font-semibold text-lg">Rating</span>•{" "}
-          <span className=" font-thin text-sm">
+          <span className=" font-normal text-sm">
             {new Date(timestamp).toDateString()}
           </span>
         <div className="flex gap-2 py-1">
