@@ -73,7 +73,7 @@ export default function ReviewCard({
         </div>
 
         <div className="text-wrap">
-          <p className="mt-4 text-base text-gray-600  whitespace-normal">
+          <p className="mt-2 text-base text-gray-600  whitespace-normal">
             {comment}
           </p>
         </div>
