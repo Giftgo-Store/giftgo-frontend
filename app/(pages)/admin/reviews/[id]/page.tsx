@@ -8,7 +8,11 @@ import { toast } from "react-toastify";
 import { Input, Spinner } from "@nextui-org/react";
 import { CiSearch } from "react-icons/ci";
 interface review {
-  reviewerName: string;
+  reviewerName: {
+    name: string;
+    _id: string;
+    email: string;
+  };
   rating: number;
   _id: string;
   createdAt: string;
@@ -76,10 +80,12 @@ export default function Reviews({ params }: { params: { id: string } }) {
     fetchReviews();
   }, []);
 
- // Filter categories based on filterValue
+  // Filter categories based on filterValue
   const filteredReviews = reviews?.filter(
     (review: review) =>
-      review.reviewerName.toLowerCase().includes(filterValue.toLowerCase()) ||
+      review.reviewerName.name
+        .toLowerCase()
+        .includes(filterValue.toLowerCase()) ||
       review.comment.toLowerCase().includes(filterValue.toLowerCase())
   );
   return (
@@ -103,7 +109,7 @@ export default function Reviews({ params }: { params: { id: string } }) {
             ],
           }}
           value={filterValue}
-          onChange={(e) => {
+          onChange={(e:any) => {
             setFilterValue(e.target.value);
           }}
         ></Input>
@@ -119,9 +125,11 @@ export default function Reviews({ params }: { params: { id: string } }) {
                 error: "An error occured , please try again",
               });
             }}
+            reviewerId={review.reviewerName._id}
+            email={review.reviewerName.email}
             reviewRating={review.rating}
             comment={review.comment}
-            userName={review.reviewerName}
+            userName={review.reviewerName.name}
             timestamp={review.createdAt}
           />
         ))}

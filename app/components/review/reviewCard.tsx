@@ -1,15 +1,19 @@
-import { Avatar, Button } from "@nextui-org/react";
+import { Avatar, Button, Link } from "@nextui-org/react";
 import { MouseEventHandler } from "react";
 import { TbTrash } from "react-icons/tb";
 interface ReviewCard {
   reviewRating: number;
+  email: string;
   comment: string;
   userName: string;
   timestamp: string;
+  reviewerId: string;
   DeleteReview: MouseEventHandler<HTMLButtonElement>;
 }
 export default function ReviewCard({
+  reviewerId,
   reviewRating,
+  email,
   comment,
   userName,
   timestamp,
@@ -41,12 +45,15 @@ export default function ReviewCard({
           <div className="">
             <Avatar size="md"></Avatar>
           </div>
-          <div className="text-sm font-semibold">
-            {userName} •{" "}
-            <span className="font-normal">
-              {new Date(timestamp).toDateString()}
-            </span>
-          </div>
+          <Link href={`/admin/customer/customer-detail/${reviewerId}`}>
+            <div className="text-sm font-semibold">
+              {userName} •{" "}
+              <span className="font-normal">
+                {new Date(timestamp).toDateString()}
+              </span>
+            </div>
+            <p className="text-gray-400">{email}</p>
+          </Link>
         </div>
         <div className="p-5 bg-yellow-400 rounded-full h-4 w-4 flex items-center justify-center text-2xl text-white mt-4 shadow-lg cursor-pointer">
           <Button isIconOnly className="bg-transparent" onClick={DeleteReview}>
