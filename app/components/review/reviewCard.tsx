@@ -45,8 +45,11 @@ export default function ReviewCard({
           <div className="">
             <Avatar size="md"></Avatar>
           </div>
-          <Link href={`/admin/customer/customer-detail/${reviewerId}`}>
-            <div className="text-sm font-semibold">
+          <Link
+            href={`/admin/customer/customer-detail/${reviewerId}`}
+            className="flex flex-col"
+          >
+            <div className="text-sm font-semibold text-black">
               {userName} •{" "}
               <span className="font-normal">
                 {new Date(timestamp).toDateString()}

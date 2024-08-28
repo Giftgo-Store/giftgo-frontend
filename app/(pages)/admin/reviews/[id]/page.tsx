@@ -5,7 +5,7 @@ import BASE_URL from "@/app/config/baseurl";
 import { useEffect, useState } from "react";
 import ReviewCard from "@/app/components/review/reviewCard";
 import { toast } from "react-toastify";
-import { Input, Spinner } from "@nextui-org/react";
+import { Input, Spacer, Spinner } from "@nextui-org/react";
 import { CiSearch } from "react-icons/ci";
 interface review {
   reviewerName: {
@@ -114,7 +114,8 @@ export default function Reviews({ params }: { params: { id: string } }) {
           }}
         ></Input>
       </div>
-      <div className="flex flex-wrap w-full justify-between ">
+      <Spacer y={4}></Spacer>
+      <div className="flex flex-wrap w-full justify-normal ">
         {filteredReviews.map((review: review) => (
           <ReviewCard
             key={review._id}
