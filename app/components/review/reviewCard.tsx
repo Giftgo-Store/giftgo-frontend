@@ -52,7 +52,9 @@ export default function ReviewCard({
             <div className="text-sm font-semibold text-black w-[300px] whitespace-normal text-ellipsis overflow-hidden">
               {userName}
             </div>
-            <p className="text-gray-400 w-full">{email}</p>
+            <p className="text-gray-400 w-full max-w-[280px] whitespace-normal text-ellipsis overflow-hidden">
+              {email}
+            </p>
           </Link>
         </div>
         <div className="p-5 bg-yellow-400 rounded-full h-4 w-4 flex items-center justify-center text-2xl text-white mt-4 shadow-lg cursor-pointer">
