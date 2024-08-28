@@ -47,11 +47,11 @@ export default function ReviewCard({
           </div>
           <Link
             href={`/admin/customer/customer-detail/${reviewerId}`}
-            className="flex flex-col"
+            className="flex flex-col max-w-[250px]"
           >
-            <div className="text-sm font-semibold text-black w-[300px] whitespace-normal text-ellipsis overflow-hidden">
+            <p className="text-sm font-semibold text-black w-full whitespace-normal text-ellipsis overflow-hidden">
               {userName}
-            </div>
+            </p>
             <p className="text-gray-400 w-full max-w-[280px] whitespace-normal text-ellipsis overflow-hidden">
               {email}
             </p>
@@ -64,12 +64,12 @@ export default function ReviewCard({
         </div>
       </div>
       <div className="mt-2">
-        <span className="font-semibold text-lg">Rating</span>
-        <div className="flex gap-2 py-1">
-          <StarRating rating={reviewRating} />{" "}
-          <span className="font-normal">
+        <span className="font-semibold text-lg">Rating</span>•{" "}
+          <span className=" font-thin text-sm">
             {new Date(timestamp).toDateString()}
           </span>
+        <div className="flex gap-2 py-1">
+          <StarRating rating={reviewRating} />
         </div>
 
         <div className="text-wrap">
