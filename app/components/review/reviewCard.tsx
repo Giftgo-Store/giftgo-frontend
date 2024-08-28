@@ -68,6 +68,7 @@ export default function ReviewCard({
         <h1 className="text-lg text-gray-700 font-semibold hover:underline cursor-pointer">
           Product Review
         </h1>
+        <span className="font-semibold text-lg">Rating</span>
         <StarRating rating={reviewRating} />
         <div className="text-wrap">
           <p className="mt-4 text-base text-gray-600  whitespace-normal">
