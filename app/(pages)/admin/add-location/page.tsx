@@ -113,7 +113,6 @@ export default function AddLocation() {
         method: "POST",
         body: data,
       });
-
       onClose();
       setSelectedImage("");
       setLocationName("");
@@ -326,11 +325,15 @@ export default function AddLocation() {
                       isIconOnly
                       className="bg-transparent z-50"
                       onClick={() => {
-                        toast.promise(deleteLocation(location._id), {
-                          pending: "deleting location",
-                          success: "location deleted",
-                          error: "An error occured , please try again",
-                        });
+                        if (selectedImage) {
+                          toast.promise(deleteLocation(location._id), {
+                            pending: "deleting location",
+                            success: "location deleted",
+                            error: "An error occured , please try again",
+                          });
+                        } else {
+                          toast.error("Image is required");
+                        }
                       }}
                     >
                       <HiOutlineTrash size={20} />
