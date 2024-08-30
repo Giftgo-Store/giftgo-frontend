@@ -13,7 +13,6 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useAppToast } from "@/app/providers/useAppToast";
 import { PaystackButton } from "react-paystack";
 
-
 const Page = () => {
   const toast = useAppToast();
   const router = useRouter();
@@ -63,14 +62,14 @@ const Page = () => {
         console.log("product");
         console.log(response.data.data);
       } catch (error: any) {
-              if (error?.response?.status === 401) {
-                Cookies.remove("token");
-                router.push('/')
-                return;
-              }
+        if (error?.response?.status === 401) {
+          Cookies.remove("token");
+          router.push("/");
+          return;
+        }
         console.error(
           //@ts-ignore
-          "Error fetching resource",
+          "Error fetching resource"
           // error?.response?.data || error?.message
         );
       } finally {
@@ -93,7 +92,7 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource",
+          "Error fetching resource"
           // error?.response?.data || error?.message
         );
       } finally {
@@ -134,51 +133,51 @@ const Page = () => {
     }
   }, [user]);
 
-    useEffect(() => {
-      const fetchCoupon = async () => {
-        try {
-          const response = await axios.get(
-            `${BASE_URL}/api/v1/coupons/${coupon}`,
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-          // Handle successful response, e.g., save token, redirect, etc.
-          setCouponInfo(response.data);
-          console.log(response.data);
-          if (response.data.isActive === "true") {
-            setCouponValid(true);
-            toast({
-              status: "success",
-              description: "Valid coupon",
-            });
-            return;
-          } else {
-            toast({
-              status: "error",
-              description: "Invalid coupon",
-            });
+  useEffect(() => {
+    const fetchCoupon = async () => {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/api/v1/coupons/${coupon}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
           }
-        } catch (error) {
-          console.error(
-            //@ts-ignore
-            "Error fetching resource"
-            // error?.response?.data || error?.message
-          );
+        );
+        // Handle successful response, e.g., save token, redirect, etc.
+        setCouponInfo(response.data);
+        console.log(response.data);
+        if (response.data.isActive === "true") {
+          setCouponValid(true);
+          toast({
+            status: "success",
+            description: "Valid coupon",
+          });
+          return;
+        } else {
           toast({
             status: "error",
             description: "Invalid coupon",
           });
-        } finally {
-          // Any cleanup or final actions
         }
-      };
-      if (coupon.length > 6) {
-        fetchCoupon();
+      } catch (error) {
+        console.error(
+          //@ts-ignore
+          "Error fetching resource"
+          // error?.response?.data || error?.message
+        );
+        toast({
+          status: "error",
+          description: "Invalid coupon",
+        });
+      } finally {
+        // Any cleanup or final actions
       }
-    }, [coupon]);
+    };
+    if (coupon.length > 6) {
+      fetchCoupon();
+    }
+  }, [coupon]);
 
   console.log(user && user.address && user.address.address);
 
@@ -198,7 +197,7 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource",
+          "Error fetching resource"
           // error?.response?.data || error?.message
         );
       } finally {
@@ -227,7 +226,7 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource",
+          "Error fetching resource"
           // error?.response?.data || error?.message
         );
       } finally {
@@ -289,15 +288,15 @@ const Page = () => {
     }
   };
 
-let totalDiscount = 0;
+  let totalDiscount = 0;
 
-if (cartItems.isCouponActive === true) {
-  const price = Number(cartItems.salePrice) || 0;
-  const discountPercentage = couponInfo?.discountPercentage || 0;
-  totalDiscount = (cartItems.quantity * price * discountPercentage) / 100;
-}
+  if (cartItems.isCouponActive === true) {
+    const price = Number(cartItems.salePrice) || 0;
+    const discountPercentage = couponInfo?.discountPercentage || 0;
+    totalDiscount = (cartItems.quantity * price * discountPercentage) / 100;
+  }
 
-console.log(totalDiscount);
+  console.log(totalDiscount);
 
   const total = Number(quantity) * Number(cartItems.salePrice);
   function formatNumberWithCommas(amount: number): string {
@@ -743,7 +742,7 @@ console.log(totalDiscount);
             <button
               // onClick={handlePlaceOrder}
               onClick={(e) => validateForm(e)}
-              className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary hover:bg-primary/80  rounded-[3px] font-[700] disabled:bg-primary/50 disabled:cursor-not-allowed"
+              className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary hover:bg-[#05031A]  rounded-[3px] font-[700] disabled:bg-primary/50 disabled:cursor-not-allowed"
               disabled={!isFormValid}
             >
               {isFormValid && (

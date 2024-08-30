@@ -24,7 +24,7 @@ const Page = () => {
   const [product, setProduct] = useState<any>([]);
 
   const location = Cookies.get("location");
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -123,7 +123,7 @@ const Page = () => {
                 <br className="hidden lg:block" /> fluffiest teddy bears{" "}
               </p>
 
-              <button className="py-[14px] px-[10px] lg:px-[24px] rounded-[2px] hover:bg-primary/80  bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2">
+              <button className="py-[14px] px-[10px] lg:px-[24px] rounded-[2px] hover:bg-[#05031A]  bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2">
                 SHOP NOW <FaArrowRight className="w-5 h-5" />
               </button>
             </div>

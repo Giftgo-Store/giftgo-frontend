@@ -35,15 +35,16 @@ const Order = () => {
           },
         }
       );
-      if (response.data.statusCode === 200 || response.data.statusCode === 201) {
-
+      if (
+        response.data.statusCode === 200 ||
+        response.data.statusCode === 201
+      ) {
         setSingle(response.data.data);
         setShowDetails(false);
         toast({
           status: "success",
           description: response.data.message || "Success",
         });
-
       } else {
         toast({
           status: "error",
@@ -89,9 +90,9 @@ const Order = () => {
         status: "error",
         description:
           //@ts-expect-error
-          error?.response?.data.message || error?.message ||
+          error?.response?.data.message ||
+          error?.message ||
           "an error occurred ",
-
       });
     } finally {
       setLoading(false);
@@ -107,7 +108,7 @@ const Order = () => {
     setShowDetails(!showDetails);
   };
 
-  console.log(single)
+  console.log(single);
 
   return (
     <>
@@ -174,7 +175,7 @@ const Order = () => {
 
           <div className="flex w-full justify-center items-center">
             <button
-              className="py-[14px] px-[24px] rounded-[2px] hover:bg-primary/80  text-white text-[16px] font-[600] flex justify-center items-center gap-2 min-w-[150px]"
+              className="py-[14px] px-[24px] rounded-[2px] hover:bg-[#05031A]  text-white text-[16px] font-[600] flex justify-center items-center gap-2 min-w-[150px]"
               onClick={(e) => handleFetchOrder(e)}
             >
               {loading ? (

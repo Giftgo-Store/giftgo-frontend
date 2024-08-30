@@ -28,7 +28,7 @@ const page = () => {
           </div>
           <Link
             href="/"
-            className="py-[14px] px-[24px] rounded-[2px] bg-primary hover:bg-primary/80  text-white text-[16px] font-[600] flex justify-center items-center gap-2"
+            className="py-[14px] px-[24px] rounded-[2px] bg-primary hover:bg-[#05031A]  text-white text-[16px] font-[600] flex justify-center items-center gap-2"
           >
             CONTINUE SHOPPING
           </Link>

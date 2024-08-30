@@ -20,12 +20,11 @@ const Page = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
 
   const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
-
 
   const handleValidChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -59,11 +58,11 @@ const [loading, setLoading] = useState(false)
         // Handle successful response, e.g., save token, redirect, etc.
         setCartItems(response.data.data);
       } catch (error: any) {
-              if (error?.response?.status === 401) {
-                Cookies.remove("token");
-                router.push("/");
-                return;
-              }
+        if (error?.response?.status === 401) {
+          Cookies.remove("token");
+          router.push("/");
+          return;
+        }
         console.error(
           //@ts-ignore
           "Error fetching resource"
@@ -143,7 +142,7 @@ const [loading, setLoading] = useState(false)
         );
         // Handle successful response, e.g., save token, redirect, etc.
         setCouponInfo(response.data);
-        if (response.data.isActive === 'true') {
+        if (response.data.isActive === "true") {
           setCouponValid(true);
           toast({
             status: "success",
@@ -305,11 +304,13 @@ const [loading, setLoading] = useState(false)
         status: "error",
         description:
           //@ts-expect-error
-          error?.response?.data.message || error?.message || "an error occurred ",
+          error?.response?.data.message ||
+          error?.message ||
+          "an error occurred ",
       });
       alert("error");
     } finally {
-      setLoading(false)
+      setLoading(false);
       // Any cleanup or final actions
     }
   };
@@ -320,16 +321,15 @@ const [loading, setLoading] = useState(false)
   );
 
   const couponProducts = cartItems.filter(
-    (item: any) => item.product && item.product.isCouponActive === 'true'
+    (item: any) => item.product && item.product.isCouponActive === "true"
   );
 
-  console.log(couponProducts)
-
+  console.log(couponProducts);
 
   const totalDiscount = couponProducts.reduce((acc: number, item: any) => {
     const price = Number(item.product?.salePrice) || 0; // Ensure price is a valid number
     const discountPercentage = couponInfo?.discountPercentage || 0; // Default to 0 if undefined
-    console.log(discountPercentage, price)
+    console.log(discountPercentage, price);
     return acc + (item.quantity * price * discountPercentage) / 100;
   }, 0);
 
@@ -342,10 +342,13 @@ const [loading, setLoading] = useState(false)
   const componentProps = {
     reference: new Date().getTime().toString(),
     email: user && user.email,
-    amount: (total.reduce(
-          (accumulator: any, currentValue: any) => accumulator + currentValue,
-          0
-        ) - totalDiscount) * 100,
+    amount:
+      (total.reduce(
+        (accumulator: any, currentValue: any) => accumulator + currentValue,
+        0
+      ) -
+        totalDiscount) *
+      100,
     metadata: {
       name: user && user?.name,
       custom_fields: [
@@ -356,7 +359,7 @@ const [loading, setLoading] = useState(false)
         },
       ],
     },
-    publicKey: publicKey ? publicKey : '',
+    publicKey: publicKey ? publicKey : "",
     text: "PLACE ORDER",
     onClose: () => {
       alert("Payment not successful!");
@@ -814,7 +817,7 @@ const [loading, setLoading] = useState(false)
             <button
               // onClick={handlePlaceOrder}
               onClick={(e) => validateForm(e)}
-              className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary hover:bg-primary/80  rounded-[3px] font-[700] disabled:bg-primary/50 disabled:cursor-not-allowed"
+              className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary hover:bg-[#05031A]  rounded-[3px] font-[700] disabled:bg-primary/50 disabled:cursor-not-allowed"
               disabled={!isFormValid}
             >
               {loading && (

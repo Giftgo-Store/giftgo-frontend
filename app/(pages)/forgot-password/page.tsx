@@ -67,7 +67,7 @@ const ForgotPassword = () => {
             </div>
             <button
               type="submit"
-              className="w-full bg-primary hover:bg-primary/80  text-white py-2 h-[48px] rounded-[2px] flex justify-center items-center gap-4 font-[700]"
+              className="w-full bg-primary hover:bg-[#05031A]  text-white py-2 h-[48px] rounded-[2px] flex justify-center items-center gap-4 font-[700]"
             >
               {isSending ? (
                 <svg

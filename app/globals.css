@@ -67,3 +67,19 @@ html {
   max-height: 90%;
   object-fit: cover;
 }
+
+.hero {
+  background-image: url("/heroBg.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+@media (max-width: 780px) {
+  .hero {
+    background-image: url("/heroMob.svg");
+    /* background-position: center; */
+    background-attachment: unset;
+    /* height: 70vh; */
+    /* background-size: cover; */
+  }
+}

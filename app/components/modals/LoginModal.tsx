@@ -51,7 +51,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       });
       return;
     }
-    setIsSigningIn(true)
+    setIsSigningIn(true);
     try {
       const response = await axios.post(
         `${BASE_URL}/api/v1/auth/log-in`,
@@ -65,11 +65,11 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       Cookie.set("token", response.data.data.token);
       closeModal();
     } catch (error) {
-       toast({
-         status: "error",
-         //@ts-ignore
-         description: error?.response?.data.message || error?.message || "Sign in error",
-       });
+      toast({
+        status: "error",
+        //@ts-ignore
+        description: error?.response?.data.message || error?.message || "Sign in error",
+      });
       // console.error("Sign In Error", error.response?.data.message || error.message);
     } finally {
       setIsSigningIn(false);
@@ -92,7 +92,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       });
       return;
     }
-    setIsSigningUp(true)
+    setIsSigningUp(true);
     try {
       const response = await axios.post(
         `${BASE_URL}/api/v1/auth/sign-up`,
@@ -117,37 +117,37 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
     }
   };
 
-    const handleGoogle = async (e: React.FormEvent) => {
-      e.preventDefault();
-      try {
-        const response = await axios.get(`${BASE_URL}/api/v1/google/callback`);
-        // Handle successful response, e.g., show success message, redirect, etc.
-        toast({
-          status: "success",
-          description: response.data.message || "Success",
-        });
-        Cookie.set("token", response.data.data.accessToken.token);
-        closeModal();
-      } catch (error) {
-        toast({
-          status: "error",
-          //@ts-ignore
-          description: error.response?.data.message || error?.message || "Sign up error",
-        });
-        // console.error("Sign Up Error", error.response?.data || error.message);
-      } finally {
-        setIsSigningUp(false);
-      }
-    };
+  const handleGoogle = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await axios.get(`${BASE_URL}/api/v1/google/callback`);
+      // Handle successful response, e.g., show success message, redirect, etc.
+      toast({
+        status: "success",
+        description: response.data.message || "Success",
+      });
+      Cookie.set("token", response.data.data.accessToken.token);
+      closeModal();
+    } catch (error) {
+      toast({
+        status: "error",
+        //@ts-ignore
+        description: error.response?.data.message || error?.message || "Sign up error",
+      });
+      // console.error("Sign Up Error", error.response?.data || error.message);
+    } finally {
+      setIsSigningUp(false);
+    }
+  };
 
   return (
     <div
       className={classNames(
-        "absolute inset-0 z-50 flex l items-center justify-center",
+        "absolute inset-0 z-[99999] flex l items-center justify-center",
         { "bg-overlayy ": showModal, hidden: !showModal }
       )}
     >
-      <div className="absolute lg:right-[120px] bg-white rounded-[4px] top-[100px] lg:top-[195px] shadow-lg w-[90%] lg:w-[426px] py-3">
+      <div className="absolute lg:right-[120px] bg-white z-[9999] rounded-[4px] top-[100px] lg:top-[115px] shadow-lg w-[90%] lg:w-[426px] py-3">
         <button
           className="absolute z-40 top-0 right-0 mt-1 mr-2 text-[20px] text-gray-600"
           onClick={closeModal}
@@ -229,7 +229,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
               </div>
               <button
                 type="submit"
-                className="w-full bg-primary hover:bg-primary/80  text-white py-2 h-[48px] rounded-[2px] flex justify-center items-center gap-4 font-[700]"
+                className="w-full bg-primary hover:bg-[#05031A]  text-white py-2 h-[48px] rounded-[2px] flex justify-center items-center gap-4 font-[700]"
               >
                 {isSigningIn ? (
                   <svg
@@ -405,7 +405,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
 
               <button
                 type="submit"
-                className="w-full bg-primary hover:bg-primary/80 text-white py-2 h-[48px] rounded-[2px] flex justify-center items-center gap-4 font-[700]"
+                className="w-full bg-primary hover:bg-[#05031A] text-white py-2 h-[48px] rounded-[2px] flex justify-center items-center gap-4 font-[700]"
               >
                 {isSigningUp ? (
                   <svg
