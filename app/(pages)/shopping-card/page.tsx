@@ -35,8 +35,7 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource",
-          error?.response?.data || error?.message
+          "Error fetching resource", error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
