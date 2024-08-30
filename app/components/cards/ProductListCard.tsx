@@ -70,9 +70,9 @@ export default function ProductListCard({
                 removeWrapper
                 src={"/pin.svg"}
                 alt="Preview"
-                className="object-cover rounded-lg w-[20px] h-[20px]"
-                width={100}
-                height={100}
+                className="object-contain rounded-lg w-[20px] h-[20px]"
+                width={40}
+                height={40}
               />
             </Button>
             <div>

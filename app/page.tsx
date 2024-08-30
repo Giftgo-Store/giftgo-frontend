@@ -28,6 +28,8 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "swiper/css/autoplay";
+import { Skeleton } from "@nextui-org/react";
+
 
 const Landing = () => {
   const [location, setLocation] = useState([]);
@@ -214,15 +216,15 @@ const Landing = () => {
           id="location"
           className="lg:py-10 px-10 lg:px-20 w-full flex justify-center items-center lg:gap-x-[140px] gap-y-5 gap-x-8 lg:gap-y-10 flex-wrap"
         >
-          {location.length > 0 &&
-            location.map((loc: any, i: any) => {
-              return (
-                <Link
-                  href={`/category/${loc._id}`}
-                  key={i}
-                  className="flex flex-col items-center justify-center gap-1"
-                  onClick={() => Cookies.set("location", loc.location)}
-                >
+          {location.length > 0
+            ? location.map((loc: any, i: any) => {
+                return (
+                  <Link
+                    href={`/category/${loc._id}`}
+                    key={i}
+                    className="flex flex-col items-center justify-center gap-1"
+                    onClick={() => Cookies.set("location", loc.location)}
+                  >
                   <div className="w-[72px] lg:w-[112px] h-[72px] lg:h-[112px] flex justify-center items-center bg-[#FBDFDF3D] relative z-[99] rounded-full">
                     <Image
                       src={loc.image}
@@ -239,7 +241,22 @@ const Landing = () => {
                   </p>
                 </Link>
               );
-            })}
+              })
+            : Array.from({ length: 5 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="flex flex-col items-center justify-center gap-1"
+                >
+                  <Skeleton
+                    className="rounded-full"
+                    style={{ width: "112px", height: "112px" }}
+                  />
+                  <Skeleton
+                    className="rounded-lg mt-2"
+                    style={{ width: "80px", height: "20px" }}
+                  />
+                </div>
+              ))}
         </div>
       </div>
     </>

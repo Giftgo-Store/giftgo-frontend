@@ -114,6 +114,7 @@ export default function AddCategories() {
       getAllCategory();
     } catch (error) {
       //console.log(error);
+      toast.error("an error has occured, please try againg")
     }
   };
   const deleteCategory = async (_id: string) => {
@@ -314,8 +315,8 @@ export default function AddCategories() {
                     className="bg-[#1EB564] text-white text-sm w-[150px]"
                     onClick={() => {
                       toast.promise(addCategory(), {
-                        pending: "Adding product information ",
-                        success: "Product information editted",
+                        pending: "Adding category information ",
+                        success: "Category information editted",
                         error: "An error occured , please try again",
                       });
                     }}
