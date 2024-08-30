@@ -258,7 +258,7 @@ const LandingHeader = () => {
               </p>
             </div>
             <Image
-              src="/WishList.svg"
+              src="/Wishlist.svg"
               alt=""
               width={44}
               height={44}
@@ -302,7 +302,7 @@ const LandingHeader = () => {
               </p>
             </div>
             <Image
-              src="/WishList.svg"
+              src="/Wishlist.svg"
               alt=""
               width={44}
               height={44}
