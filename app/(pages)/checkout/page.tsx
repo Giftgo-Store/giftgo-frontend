@@ -304,8 +304,7 @@ const Page = () => {
         status: "error",
         description:
           //@ts-expect-error
-          error?.response?.data.message ||
-          error?.message ||
+          error?.response?.data.message || error?.message ||
           "an error occurred ",
       });
       alert("error");
