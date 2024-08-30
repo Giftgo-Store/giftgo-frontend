@@ -168,7 +168,7 @@ const page = () => {
                       ? 2
                       : category.length === 3
                       ? 3
-                      : 2,
+                      : 4,
                 },
               }}
             >
