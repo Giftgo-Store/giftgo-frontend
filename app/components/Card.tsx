@@ -136,7 +136,7 @@ const Card = ({ lists }: CardProps) => {
               ({lists && lists.reviews && lists.reviews.length})
             </p>
           </div>
-          <p className="text-[#05031A] text-[16px] font-[600] pt-2">
+          <p className="text-[[#05031A]] text-[16px] font-[600] pt-2">
             ₦ {formatNumberWithCommas(lists && lists?.salePrice)}
           </p>
         </div>

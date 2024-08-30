@@ -153,16 +153,12 @@ const page = () => {
               }}
               breakpoints={{
                 640: {
-                  slidesPerView: category.length === 1
-                      ? 1
-                      : category.length === 2
-                      ? 2 : 1,
+                  slidesPerView:
+                    category.length === 1 ? 1 : category.length === 2 ? 2 : 1,
                 },
                 768: {
-                  slidesPerView: category.length === 1
-                      ? 1
-                      : category.length === 2
-                      ? 2 : 1,
+                  slidesPerView:
+                    category.length === 1 ? 1 : category.length === 2 ? 2 : 1,
                 },
                 1024: {
                   slidesPerView:
@@ -234,7 +230,7 @@ const page = () => {
 
             <Link
               href={`/category/${params && params.category}/all`}
-              className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary hover:bg-primary/80  rounded-[3px] font-[700] text-[16px]"
+              className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary hover:bg-[#05031A]  rounded-[3px] font-[700] text-[16px]"
             >
               <p> Browse All Products</p>
             </Link>
@@ -255,7 +251,7 @@ const page = () => {
                 <br className="hidden lg:block" /> fluffiest teddy bears{" "}
               </p>
 
-              <button className="py-[14px] px-[10px] lg:px-[24px] rounded-[2px] hover:bg-primary/80  bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2">
+              <button className="py-[14px] px-[10px] lg:px-[24px] rounded-[2px] hover:bg-[#05031A]  bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2">
                 SHOP NOW <FaArrowRight className="w-5 h-5" />
               </button>
             </div>
@@ -282,7 +278,7 @@ const page = () => {
                 bears{" "}
               </p>
 
-              <button className="py-[14px] px-[24px] rounded-[2px] bg-primary hover:bg-primary/80  text-white text-[16px] font-[600] flex justify-center items-center gap-2">
+              <button className="py-[14px] px-[24px] rounded-[2px] bg-primary hover:bg-[#05031A]  text-white text-[16px] font-[600] flex justify-center items-center gap-2">
                 SHOP NOW <FaArrowRight className="w-5 h-5" />
               </button>
             </div>
@@ -338,7 +334,7 @@ const page = () => {
               href={`/category/${params && params.category}/category-detail/${
                 params && params.category
               }`}
-              className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary hover:bg-primary/80  rounded-[3px] font-[700] text-[16px]"
+              className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary hover:bg-[#05031A]  rounded-[3px] font-[700] text-[16px]"
             >
               <p> Browse All Products</p>
             </Link>

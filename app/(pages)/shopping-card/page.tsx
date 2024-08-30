@@ -35,7 +35,8 @@ const Page = () => {
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource", error?.response?.data || error?.message
+          "Error fetching resource",
+          error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
@@ -289,7 +290,7 @@ const Page = () => {
           <div className="flex justify-center items-center my-6">
             <Link
               href={"/checkout"}
-              className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary hover:bg-primary/80 rounded-[3px] font-[700]"
+              className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary hover:bg-[#05031A] rounded-[3px] font-[700]"
             >
               <p>PROCEED TO CHECKOUT</p>
               <FiArrowRight className="w-4 h-4 cursor-pointer" />

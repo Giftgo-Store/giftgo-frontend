@@ -39,7 +39,7 @@ const CheckoutModal: React.FC<ModalProps> = ({
       } catch (error) {
         console.error(
           //@ts-ignore
-          "Error fetching resource",
+          "Error fetching resource"
           // error?.response?.data || error?.message
         );
       } finally {
@@ -76,7 +76,8 @@ const CheckoutModal: React.FC<ModalProps> = ({
           status: "error",
           description:
             //@ts-expect-error
-            error?.response?.data.message || error?.message || "an error occurred ",
+            error?.response?.data.message || error?.message ||
+            "an error occurred ",
         });
       } finally {
         // Any cleanup or final actions
@@ -97,7 +98,8 @@ const CheckoutModal: React.FC<ModalProps> = ({
   };
 
   const total: any = cartItems.map(
-    (item: any) => Number(item.quantity) * Number(item.product && item.product.salePrice)
+    (item: any) =>
+      Number(item.quantity) * Number(item.product && item.product.salePrice)
   );
 
   function formatNumberWithCommas(amount: number): string {
@@ -107,11 +109,11 @@ const CheckoutModal: React.FC<ModalProps> = ({
   return (
     <div
       className={classNames(
-        "absolute inset-0 z-50 flex l items-center justify-center",
+        "absolute inset-0 z-[99999] flex l items-center justify-center",
         { "bg-overlayy ": showCheckoutModal, hidden: !showCheckoutModal }
       )}
     >
-      <div className="absolute lg:right-[120px] bg-white rounded-[4px] top-[100px] lg:top-[195px] shadow-lg w-[90%] lg:w-[375px] py-3">
+      <div className="absolute lg:right-[120px] bg-white rounded-[4px] top-[100px] lg:top-[105px] shadow-lg w-[90%] lg:w-[375px] py-3">
         <button
           className="absolute z-40 top-0 right-0 mt-1 mr-2 text-[20px] text-gray-600"
           onClick={closeCheckoutModal}
@@ -193,7 +195,7 @@ const CheckoutModal: React.FC<ModalProps> = ({
             <Link
               href={"/checkout"}
               onClick={closeCheckoutModal}
-              className="flex justify-center w-full items-center gap-2 text-white px-8 py-4 bg-primary hover:bg-primary/80  rounded-[3px] font-[700]"
+              className="flex justify-center w-full items-center gap-2 text-white px-8 py-4 bg-primary hover:bg-[#05031A]  rounded-[3px] font-[700]"
             >
               <p>CHECKOUT NOW</p>
               <FiArrowRight className="w-4 h-4 cursor-pointer" />

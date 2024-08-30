@@ -99,7 +99,6 @@ const History = () => {
     }
   };
 
-
   const [user, setUser] = useState<any>([]);
   const [order, setOrder] = useState<any>([]);
 
@@ -321,7 +320,7 @@ const History = () => {
                               key={index + 1}
                               className={`shadow-sm ${
                                 currentPage === index + 1
-                                  ? "w-[40px] text-white text-[14px] leading-[20px] h-[40px] bg-primary hover:bg-primary/80  rounded-full border-[#E4E7E9] border-[1px] flex justify-center text-center items-center"
+                                  ? "w-[40px] text-white text-[14px] leading-[20px] h-[40px] bg-primary hover:bg-[#05031A]  rounded-full border-[#E4E7E9] border-[1px] flex justify-center text-center items-center"
                                   : "w-[40px] text-[#191C1F] text-[14px] leading-[20px] h-[40px] bg-white rounded-full border-[#E4E7E9] border-[1px] flex justify-center text-center items-center"
                               }`}
                               onClick={() => handlePageClick(index + 1)}
@@ -681,7 +680,7 @@ const History = () => {
                   </fieldset>
 
                   <button
-                    className="flex justify-center items-center w-[204px] gap-[35px] text-white px-7 py-4 bg-primary hover:bg-primary/80  rounded-[3px] font-[700] text-[14px]"
+                    className="flex justify-center items-center w-[204px] gap-[35px] text-white px-7 py-4 bg-primary hover:bg-[#05031A]  rounded-[3px] font-[700] text-[14px]"
                     onClick={(e) => handleReview(e)}
                   >
                     PUBLISH REVIEW

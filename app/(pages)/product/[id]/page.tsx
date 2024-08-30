@@ -140,8 +140,7 @@ const Page = () => {
     fetchData();
   }, [location, params]);
 
-  console.log(relatedProduct)
-
+  console.log(relatedProduct);
 
   const handleAddToCart = async () => {
     const token = Cookies.get("token");
@@ -331,7 +330,7 @@ const Page = () => {
               />
             </div>
             <button
-              className="flex w-full lg:w-fit justify-center items-center gap-2 text-white px-8 py-4 bg-primary hover:bg-primary/80  rounded-[3px] font-[700]"
+              className="flex w-full lg:w-fit justify-center items-center gap-2 text-white px-8 py-4 bg-primary hover:bg-[#05031A]  rounded-[3px] font-[700]"
               onClick={handleAddToCart}
             >
               <p>ADD TO CART</p>
@@ -660,7 +659,7 @@ const Page = () => {
             )}
             <Link
               href={"/#location"}
-              className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary hover:bg-primary/80  rounded-[3px] font-[700] text-[16px]"
+              className="flex lg:hidden w-full lg:w-fit justify-center items-center gap-[35px] text-white px-7 py-4 bg-primary hover:bg-[#05031A]  rounded-[3px] font-[700] text-[16px]"
             >
               <p> Browse All Products</p>
             </Link>

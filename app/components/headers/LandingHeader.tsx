@@ -2,10 +2,7 @@
 
 import Image from "next/image";
 import { FiSearch } from "react-icons/fi";
-import { PiMapPinLine, PiShoppingCart } from "react-icons/pi";
-import { FiHeadphones, FiPhoneCall } from "react-icons/fi";
 import { IoCloseOutline } from "react-icons/io5";
-import { AiOutlineUser } from "react-icons/ai";
 import { GiHamburgerMenu } from "react-icons/gi";
 import Link from "next/link";
 import { useState, useEffect, ChangeEvent } from "react";
@@ -54,14 +51,12 @@ const LandingHeader = () => {
           },
         });
         console.log(response.data.data);
-        // Handle successful response, e.g., save token, redirect, etc.
         setCartItems(response.data.data);
         console.log("Successful", response.data.data);
       } catch (error) {
         console.error(
           //@ts-ignore
           "Error fetching resource"
-          // error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
@@ -75,14 +70,12 @@ const LandingHeader = () => {
       try {
         const response = await axios.get(`${BASE_URL}/api/v1/category`);
         console.log(response.data.data);
-        // Handle successful response, e.g., save token, redirect, etc.
         setCategories(response.data.data);
         console.log("Successful", response.data.data);
       } catch (error) {
         console.error(
           //@ts-ignore
           "Error fetching resource"
-          // error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
@@ -96,13 +89,11 @@ const LandingHeader = () => {
       try {
         const response = await axios.get(`${BASE_URL}/api/v1/location`);
         setLocation(response.data.data);
-        // Handle successful response, e.g., save token, redirect, etc.
         console.log("Successful", response.data.data);
       } catch (error) {
         //@ts-ignore
         console.error(
           "Error fetching resource"
-          // error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
@@ -158,7 +149,7 @@ const LandingHeader = () => {
       <div
         className={`${
           isOpen
-            ? "fixed bg-primary top-0 left-0 w-[80%] flex-col transition-all duration-300 ease-in-out py-[10px] px-[24px] rounded-r-[10px] flex justify-between gap-[25px] h-[100vh] pt-[70px] text-white lg:hidden activeNav z-40"
+            ? "fixed bg-primary top-0 left-0 w-[80%] flex-col transition-all duration-300 ease-in-out py-[10px] px-[24px] rounded-r-[10px] flex justify-between gap-[25px] h-[100vh] pt-[70px] text-white lg:hidden activeNav z-[9999]"
             : "fixed left-[-100%] transition-all duration-300 ease-in-out"
         } `}
       >
@@ -166,20 +157,6 @@ const LandingHeader = () => {
           <div className="lg:hidden -mt-[20px] mb-[20px]" onClick={toggleMenu}>
             <IoCloseOutline className="text-white h-[30px] w-[30px]" />
           </div>
-          {/* <Link onClick={toggleMenu} href={"/"} className="w-full">
-            <p className="">Home</p>
-          </Link>
-          <Link
-            onClick={toggleMenu}
-            href={
-              "https://wa.me/2349114140300?text=Hello+i+want+to+make+enquiry,+My+Name+is"
-            }
-            target="_blank"
-            rel="noreferrer"
-            className="w-full"
-          >
-            <p className="">Contact</p>
-          </Link> */}
           {location.length > 0 &&
             location.map((loc: any, i: any) => {
               return (
@@ -190,14 +167,13 @@ const LandingHeader = () => {
                   onClick={() => Cookies.set("location", loc.location)}
                 >
                   <p className="text-[14px]" onClick={toggleMenu}>
-                    {loc.location}
+                    {loc.location.toUpperCase()}
                   </p>
                 </Link>
               );
             })}
 
           <div className="mt-5">
-            <p>Filter Products</p>
             <select
               name=""
               id=""
@@ -205,7 +181,7 @@ const LandingHeader = () => {
               value={search}
               onChange={(e) => handleFilter(e)}
             >
-              <option selected>Filter Products</option>
+              <option selected>All Categories</option>
               {categories &&
                 categories.map((category: any, i: any) => {
                   return (
@@ -218,32 +194,32 @@ const LandingHeader = () => {
           </div>
         </div>
       </div>
-      <div className="py-3 flex justify-between w-full items-center bg-secondary px-[4%] lg:px-[8%]">
-        <p className="text-[14px] leading-[20px]">
+      <div className="py-2 hidden lg:flex justify-between w-full items-center bg-[#170303] px-[4%] lg:px-[8%] text-[#F2F4F5]">
+        <p className="text-[13px] leading-[20px]">
           Welcome to Giftgo online store.{" "}
         </p>
         <div className="flex justify-center items-center gap-[24px] text-[14px] font-[500]">
           <select
             name=""
             id=""
-            className="border-none bg-secondary outline-none"
+            className="border-none text-[13px] text-[#F2F4F5] bg-[#170303] outline-none"
           >
             <option value="">Eng</option>
           </select>
           <select
             name=""
             id=""
-            className="border-none bg-secondary outline-none"
+            className="border-none text-[13px] text-[#F2F4F5] bg-[#170303] outline-none"
           >
             <option value="">NGN</option>
           </select>
         </div>
       </div>
 
-      <div className="px-[4%] lg:px-[8%] flex flex-col justify-between items-center bg-primary pt-[20px] lg:pb-[16px] gap-[20px]">
+      <div className="px-[4%] lg:px-[8%] flex flex-col justify-between items-center bg-[#FFFCF5] pt-[20px] lg:pb-[16px] gap-[20px] border-b-[#E1E3E5] border-b-[1px]">
         <div className="flex justify-between items-center w-full flex-wrap">
           <div className="lg:hidden" onClick={toggleMenu}>
-            <GiHamburgerMenu className="text-white h-[30px] w-[30px]" />
+            <GiHamburgerMenu className="text-black h-[30px] w-[30px]" />
           </div>
           <div className="w-[20%] ">
             <Link href="/">
@@ -253,83 +229,130 @@ const LandingHeader = () => {
           <div className="relative">
             <input
               type="search"
-              className="rounded-[4px] h-[48px] w-[260px] lg:w-[600px] px-[20px] py-[14px] outline-none text-[14px] hidden lg:flex z-0"
+              className="rounded-[4px] h-[48px] w-[260px] lg:w-[600px] px-[20px] py-[14px] outline-none text-[14px] hidden bg-[#F9F9F999] border-[1px] border-[#E1E3E599] lg:flex z-0"
               placeholder="Search for anything..."
               value={search}
               onChange={(e) => handleSearch(e)}
             />
             <FiSearch
-              className="text-white lg:hidden lg:text-black lg:absolute right-4 top-4 w-[20px] h-[20px]"
+              className="text-white hidden lg:text-black lg:absolute right-4 top-4 w-[20px] h-[20px]"
               onClick={() => openSearchModal()}
             />
             <FiSearch className="text-white hidden lg:block lg:text-black lg:absolute right-4 top-4 w-[20px] h-[20px]" />
           </div>
 
-          <div className="flex justify-center items-center gap-[20px] lg:hidden">
-            <div className="relative">
-              <PiShoppingCart
-                className="w-[25px] text-white h-[25px] cursor-pointer"
-                onClick={openCheckoutModal}
+          <div className="flex justify-center items-center gap-[8px] lg:hidden">
+            <div
+              className="relative bg-[#F9F9F9] p-1 rounded-[2px]"
+              onClick={openCheckoutModal}
+            >
+              <Image
+                src="/Buy 2.svg"
+                alt=""
+                width={32}
+                height={32}
+                className=""
               />
-              <p className="absolute bg-white h-4 w-4 rounded-full text-xs flex justify-center items-center font-semibold top-[-4px] right-[-10px]">
+              <p className="absolute bg-primary text-white h-4 w-4 rounded-full text-xs flex justify-center items-center font-semibold top-[2px] right-[-4px]">
                 {cartItems.length}
               </p>
             </div>
-            <CheckoutModal
-              showCheckoutModal={showCheckoutModal}
-              closeCheckoutModal={closeCheckoutModal}
-            />
-            <AiOutlineUser
-              className="w-[25px] text-white h-[25px] cursor-pointer"
-              onClick={() => (token ? router.push("/account") : openModal())}
-            />
-            <Modal showModal={showModal} closeModal={closeModal} />
-            {/* <select
-              name=""
-              id=""
-              className="border-none bg-primary text-white outline-none text-[16px] font-[500]"
-            >
-              <option
-                value=""
-                className="flex justify-center gap-1 items-center"
-              >
-                Ship to <Image src="/flag.png" alt="" width={20} height={10} />
-              </option>
-            </select> */}
-          </div>
-          <div className="hidden lg:flex justify-center items-center gap-[24px] mt-4 lg:mt-0">
-            <button
+            <Image
+              src="/WishList.svg"
+              alt=""
+              width={44}
+              height={44}
+              className=" cursor-pointer"
               onClick={() =>
                 token ? router.push("/account/order") : openModal()
               }
-              className="flex justify-center items-center gap-1 text-[14px] text-white leading-[20px]"
-            >
-              <PiMapPinLine />
-              <p>Track Order</p>
-            </button>
-            <Link
-              href={
-                "https://wa.me/2349114140300?text=Hello+i+want+to+make+enquiry,+My+Name+is"
-              }
-              target="_blank"
-              rel="noreferrer"
-              className="flex justify-center items-center gap-1 text-[14px] text-white leading-[20px]"
-            >
-              <FiHeadphones />
-              <p>Customer Support</p>
-            </Link>
+            />
+           {token ? <CheckoutModal
+              showCheckoutModal={showCheckoutModal}
+              closeCheckoutModal={closeCheckoutModal}
+            /> : <Modal showModal={showModal} closeModal={closeModal} />}
+           
+            <Image
+              src="/userDropdown.svg"
+              alt=""
+              width={44}
+              height={44}
+              className=" cursor-pointer"
+              onClick={() => (token ? router.push("/account") : openModal())}
+            />
+            <Modal showModal={showModal} closeModal={closeModal} />
+           
           </div>
+          <div className="hidden lg:flex justify-center items-center gap-[12px] mt-4 lg:mt-0">
+            <div
+              className="relative bg-[#F9F9F9] rounded-[8px] py-[10px] px-[16px] flex justify-start items-center gap-2 cursor-pointer"
+              onClick={openCheckoutModal}
+            >
+             
+              <Image
+                src="/Buy 2.svg"
+                alt=""
+                width={22}
+                height={22}
+                className=""
+              />
+              <p className="text-[14px] font-[500] text-[#191C1F]">Cart</p>
+              <p className=" bg-primary text-white h-5 w-5 rounded-full text-xs flex justify-center items-center font-semibold top-[-4px] right-[-10px]">
+                {cartItems.length}
+              </p>
+            </div>
+            <Image
+              src="/WishList.svg"
+              alt=""
+              width={44}
+              height={44}
+              className=" cursor-pointer"
+              onClick={() =>
+                token ? router.push("/account/order") : openModal()
+              }
+            />
+           {token ? <CheckoutModal
+              showCheckoutModal={showCheckoutModal}
+              closeCheckoutModal={closeCheckoutModal}
+            /> : <Modal showModal={showModal} closeModal={closeModal} />}
+           
+            <Image
+              src="/userDropdown.svg"
+              alt=""
+              width={44}
+              height={44}
+              className=" cursor-pointer"
+              onClick={() => (token ? router.push("/account") : openModal())}
+            />
+            <Modal showModal={showModal} closeModal={closeModal} />
+          </div>
+         
+        </div>
+
+        <div className="relative w-full lg:hidden">
+          <input
+            type="search"
+            className="rounded-[4px] h-[48px] w-full px-[20px] py-[14px] outline-none text-[14px] bg-[#F9F9F999] border-[1px] border-[#E1E3E599] lg:flex z-0"
+            placeholder="Search for anything..."
+            value={search}
+            onChange={(e) => handleSearch(e)}
+          />
+          <FiSearch
+            className="text-black hidden lg:absolute right-4 top-4 w-[20px] h-[20px]"
+            onClick={() => openSearchModal()}
+          />
+          <FiSearch className="text-black block absolute right-4 top-4 w-[20px] h-[20px]" />
         </div>
 
         <div className="flex justify-between flex-col lg:flex-row items-start lg:items-center gap-5 w-full">
           <select
             name=""
             id=""
-            className="rounded-[4px] h-[48px] w-full lg:w-[150px] text-[14px] font-[600] px-[10px] py-[14px] outline-none text-black hidden lg:flex"
+            className="rounded-[4px] h-[48px] w-full lg:w-[150px] text-[14px] font-[600] px-[10px] py-[14px] outline-none border-[1px] border-[#E1E3E599] text-black hidden lg:flex"
             value={search}
             onChange={(e) => handleFilter(e)}
           >
-            <option selected>Filter Products</option>
+            <option selected>All Categories</option>
             {categories &&
               categories.map((category: any, i: any) => {
                 return (
@@ -345,39 +368,11 @@ const LandingHeader = () => {
               href={"tel:09114140300"}
               className="flex justify-center items-center gap-2 text-[14px] lg:text-[18px] text-white leading-[20px]"
             >
-              <FiPhoneCall />
-              <p>+234 91 1414 0300</p>
+              <p className="text-[#808080] text-[14px]">Contact</p>
+              <p className="text-[#191C1F] font-[500]">+234 91 1414 0300</p>
             </Link>
-            <div className="relative">
-              <PiShoppingCart
-                className="w-[25px] text-white h-[25px] cursor-pointer"
-                onClick={openCheckoutModal}
-              />
-              <p className="absolute bg-white h-4 w-4 rounded-full text-xs flex justify-center items-center font-semibold top-[-4px] right-[-10px]">
-                {cartItems.length}
-              </p>
-            </div>
-            <CheckoutModal
-              showCheckoutModal={showCheckoutModal}
-              closeCheckoutModal={closeCheckoutModal}
-            />
-            <AiOutlineUser
-              className="w-[25px] text-white h-[25px] cursor-pointer"
-              onClick={() => (token ? router.push("/account") : openModal())}
-            />
-            <Modal showModal={showModal} closeModal={closeModal} />
-            {/* <select
-              name=""
-              id=""
-              className="border-none bg-primary text-white outline-none text-[16px] font-[500]"
-            >
-              <option
-                value=""
-                className="flex justify-center gap-1 items-center"
-              >
-                Ship to <Image src="/flag.png" alt="" width={20} height={10} />
-              </option>
-            </select> */}
+
+           
           </div>
         </div>
       </div>
