@@ -138,11 +138,11 @@ const page = () => {
             </div>
           </div>
 
-          {/* <div className="flex justify-center items-center w-[100%] overflow-x-hidden "> */}
+          <div className="flex justify-center items-center w-[100%] overflow-x-hidden ">
           {category && category.length > 0 ? (
             <Swiper
               modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
-              spaceBetween={30}
+              spaceBetween={20}
               autoplay={{
                 delay: 5000,
                 disableOnInteraction: false,
@@ -168,29 +168,21 @@ const page = () => {
                       ? 2
                       : category.length === 3
                       ? 3
-                      : 4,
-                },
-                1200: {
-                  slidesPerView:
-                    category.length === 1
-                      ? 1
-                      : category.length === 2
-                      ? 2
-                      : category.length === 3
-                      ? 3
-                      : 4,
+                      : 2,
                 },
               }}
             >
               {category &&
                 category.map((cat: any, i: any) => {
                   return (
-                    <SwiperSlide key={i}>
-                      <Category
-                        key={i}
-                        catId={cat}
-                        paramId={params && params.category}
-                      />
+                    <SwiperSlide key={i} className="flex justify-center items-center">
+                      <div className=" flex justify-center items-center">
+                        <Category
+                          key={i}
+                          catId={cat}
+                          paramId={params && params.category}
+                        />
+                      </div>
                     </SwiperSlide>
                   );
                 })}
@@ -198,7 +190,7 @@ const page = () => {
           ) : (
             "No available category"
           )}
-          {/* </div> */}
+          </div>
           <div>
             <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center cursor-pointer custom-prevv z-40">
               <FaArrowRight className="h-6 w-6 text-white" />
