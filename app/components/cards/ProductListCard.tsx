@@ -46,7 +46,7 @@ export default function ProductListCard({
           removeWrapper
           src={avatar}
           alt="Preview"
-          className="object-cover w-[84px] h-[84px] rounded-lg"
+          className="object-cover w-[90px] h-[80px] rounded-lg"
           width={100}
           height={100}
         />

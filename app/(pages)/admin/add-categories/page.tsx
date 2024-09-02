@@ -95,8 +95,10 @@ export default function AddCategories() {
     const data = new FormData();
     data.append("image", selectedImage as unknown as Blob);
     data.append("name", categoryName);
-    data.append("locations",selectedLocation)
-
+    data.append("locations", JSON.stringify(selectedLocation));
+    // selectedLocation.forEach((location: any) => {
+    //   data.append(`locations`, JSON.stringify(location));
+    // });
     try {
       const res = await fetch(`${API}/category/add-category`, {
         headers: {
@@ -107,14 +109,22 @@ export default function AddCategories() {
       });
 
       const resData = await res.json();
+      if (resData.message) {
+        toast(resData.message);
+      }
       // setItems(productData)
-      onClose();
-      setSelectedImage("");
-      setCategoryName("");
-      getAllCategory();
+      if (res.ok) {
+        onClose();
+        setSelectedImage("");
+        setCategoryName("");
+        getAllCategory();
+        setSelectedLocation([]);
+      } else {
+        toast.error("An error has occured, please try again");
+      }
     } catch (error) {
       //console.log(error);
-      toast.error("an error has occured, please try againg")
+      toast.error("An error has occured, please try again");
     }
   };
   const deleteCategory = async (_id: string) => {
@@ -134,28 +144,28 @@ export default function AddCategories() {
       // console.log(error);
     }
   };
-   const getAllLocations = async () => {
-     setLoading(true);
+  const getAllLocations = async () => {
+    setLoading(true);
 
-     try {
-       const res = await fetch(`${API}/location/`, {
-         headers: {
-           AUTHORIZATION: "Bearer " + token,
-         },
-       });
+    try {
+      const res = await fetch(`${API}/location/`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+      });
 
-       const resData = await res.json();
-       setLoading(false);
-       setLocations(resData.data);
-     } catch (error) {
-       // console.log(error);
-     }
+      const resData = await res.json();
+      setLoading(false);
+      setLocations(resData.data);
+    } catch (error) {
+      // console.log(error);
+    }
   };
-  
+
   useEffect(() => {
     if (token) {
       getAllCategory();
-      getAllLocations()
+      getAllLocations();
     }
   }, [token]);
 
@@ -249,7 +259,7 @@ export default function AddCategories() {
                       value={selectedLocation}
                       onValueChange={setSelectedLocation}
                     >
-                      {locations.map((location:location) => (
+                      {locations.map((location: location) => (
                         <Checkbox value={location.location} key={location._id}>
                           {location.location}
                         </Checkbox>
@@ -316,8 +326,6 @@ export default function AddCategories() {
                     onClick={() => {
                       toast.promise(addCategory(), {
                         pending: "Adding category information ",
-                        success: "Category information editted",
-                        error: "An error occured , please try again",
                       });
                     }}
                   >
@@ -353,7 +361,6 @@ export default function AddCategories() {
             {filteredCategories &&
               filteredCategories.map((category: Category) => (
                 <ListboxItem
-                  
                   className="border-1 max-w-[300px] w-full"
                   startContent={
                     <Image

@@ -20,7 +20,7 @@ export function ImageUploadCard({
           removeWrapper
           src={avatar}
           alt="Preview"
-          className="object-cover rounded-lg w-[60px] h-[60px]"
+          className="object-cover rounded-lg w-[100px] h-[60px]"
           width={100}
           height={100}
         />

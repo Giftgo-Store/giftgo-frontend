@@ -896,7 +896,6 @@ export default function AddProducts() {
                 alt="Preview"
                 className="object-cover rounded-lg  w-full h-full"
                 width={100}
-                height={100}
               />
             ) : (
               <Skeleton className="h-full w-full rounded-lg"></Skeleton>
