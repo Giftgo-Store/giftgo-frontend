@@ -1,4 +1,10 @@
-import React, { useState } from "react";
+declare global {
+  interface Window {
+    google: any;
+  }
+}
+
+import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 import { FaArrowRight } from "react-icons/fa6";
 import Image from "next/image";
@@ -140,6 +146,41 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
     }
   };
 
+  useEffect(() => {
+    const initializeGoogleSignIn = () => {
+      if (window.google) {
+        console.log("yess")
+        window.google.accounts.id.initialize({
+          client_id:
+            "http://48399581233-6hk493r4h01ijuhkf6kn7tqhhn5i7mmt.apps.googleusercontent.comm",
+          callback: handleCredentialResponse,
+        });
+
+        window.google.accounts.id.renderButton(
+          document.getElementById("signInButton"),
+          { theme: "outline", size: "large" } // Customization options
+        );
+      } else {
+        console.error("Google API script not loaded.");
+      }
+    };
+
+    const loadGoogleScript = () => {
+      const script = document.createElement("script");
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true;
+      script.onload = initializeGoogleSignIn;
+      document.body.appendChild(script);
+    };
+
+    const handleCredentialResponse = (response: any) => {
+      console.log("Encoded JWT ID token:", response.credential);
+    };
+
+    loadGoogleScript();
+  }, []);
+
+
   return (
     <div
       className={classNames(
@@ -267,7 +308,8 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
             </div>
             <div className="text-center px-6 py-4">
               <button
-                onClick={(e) => handleGoogle(e)}
+                // onClick={(e) => handleGoogle(e)}
+                id="signInButton"
                 className="w-full bg-white border-[1px] border-[#E4E7E9] text-[#191C1F] py-2 rounded-[2px] h-[44px] mb-2 relative"
               >
                 <Image
@@ -442,7 +484,9 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
               <div className="bg-[#E4E7E9] h-[2px] w-[45%]"></div>
             </div>
             <div className="text-center px-6 py-4">
-              <button className="w-full bg-white border-[1px] border-[#E4E7E9] text-[#191C1F] py-2 rounded-[2px] h-[44px] mb-2 relative">
+              <button
+                className="w-full bg-white border-[1px] border-[#E4E7E9] text-[#191C1F] py-2 rounded-[2px] h-[44px] mb-2 relative" onClick={(e) => handleGoogle(e)}
+              >
                 <Image
                   src="/Google.png"
                   alt=""

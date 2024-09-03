@@ -70,7 +70,12 @@ const page = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}/api/v1/products/locate/${location} `
+          `${BASE_URL}/api/v1/products/location/${location}`,
+          // {
+          //   headers: {
+          //     Authorization: `Bearer ${Cookies.get("token")}`,
+          //   },
+          // }
         );
         setProduct(response.data.data.products[0]);
         // Handle successful response, e.g., save token, redirect, etc.
@@ -94,9 +99,8 @@ const page = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}/api/v1/products/location/${location}`
+          `${BASE_URL}/api/v1/products/locate/${location} `
         );
-        console.log(response.data.data.data);
         setCategory(response.data.data);
         // Handle successful response, e.g., save token, redirect, etc.
       } catch (error) {
@@ -113,7 +117,32 @@ const page = () => {
     };
 
     fetchData();
-  }, [params && params.category]);
+  }, [params?.category]);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `${BASE_URL}/api/v1/products/location/${location}`
+  //       );
+  //       console.log(response.data.data.data);
+  //       setCategory(response.data.data);
+  //       // Handle successful response, e.g., save token, redirect, etc.
+  //     } catch (error) {
+  //       //@ts-ignore
+  //       // toast({
+  //       //   status: "error",
+  //       //   description:
+  //       //     //@ts-expect-error
+  //       //     error?.response?.data || error?.message || "an error occurred ",
+  //       // });
+  //     } finally {
+  //       // Any cleanup or final actions
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [params && params.category]);
 
   return (
     <>
@@ -139,57 +168,61 @@ const page = () => {
           </div>
 
           <div className="flex justify-center items-center w-[100%] overflow-x-hidden ">
-          {category && category.length > 0 ? (
-            <Swiper
-              modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
-              spaceBetween={20}
-              autoplay={{
-                delay: 5000,
-                disableOnInteraction: false,
-              }}
-              navigation={{
-                prevEl: ".custom-nextt",
-                nextEl: ".custom-prevv",
-              }}
-              breakpoints={{
-                640: {
-                  slidesPerView:
-                    category.length === 1 ? 1 : category.length === 2 ? 2 : 1,
-                },
-                768: {
-                  slidesPerView:
-                    category.length === 1 ? 1 : category.length === 2 ? 2 : 1,
-                },
-                1024: {
-                  slidesPerView:
-                    category.length === 1
-                      ? 1
-                      : category.length === 2
-                      ? 2
-                      : category.length === 3
-                      ? 3
-                      : 4,
-                },
-              }}
-            >
-              {category &&
-                category.map((cat: any, i: any) => {
-                  return (
-                    <SwiperSlide key={i} className="flex justify-center items-center">
-                      <div className=" flex justify-center items-center">
-                        <Category
-                          key={i}
-                          catId={cat}
-                          paramId={params && params.category}
-                        />
-                      </div>
-                    </SwiperSlide>
-                  );
-                })}
-            </Swiper>
-          ) : (
-            "No available category"
-          )}
+            {category && category.length > 0 ? (
+              <Swiper
+                modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
+                spaceBetween={20}
+                autoplay={{
+                  delay: 5000,
+                  disableOnInteraction: false,
+                }}
+                navigation={{
+                  prevEl: ".custom-nextt",
+                  nextEl: ".custom-prevv",
+                }}
+                breakpoints={{
+                  640: {
+                    slidesPerView:
+                      category.length === 1 ? 1 : category.length === 2 ? 2 : 1,
+                  },
+                  768: {
+                    slidesPerView:
+                      category.length === 1 ? 1 : category.length === 2 ? 2 : 1,
+                  },
+                  1024: {
+                    slidesPerView:
+                      category.length === 1
+                        ? 1
+                        : category.length === 2
+                        ? 2
+                        : category.length === 3
+                        ? 3
+                        : 4,
+                  },
+                }}
+              >
+                {category &&
+                  category.map((cat: any, i: any) => {
+                    console.log(cat)
+                    return (
+                      <SwiperSlide
+                        key={i}
+                        className="flex justify-center items-center"
+                      >
+                        <div className=" flex justify-center items-center">
+                          <Category
+                            key={i}
+                            catId={cat}
+                            paramId={params && params.category}
+                          />
+                        </div>
+                      </SwiperSlide>
+                    );
+                  })}
+              </Swiper>
+            ) : (
+              "No available category"
+            )}
           </div>
           <div>
             <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center cursor-pointer custom-prevv z-40">
@@ -214,11 +247,15 @@ const page = () => {
             </Link>
           </div>
           <div className="flex justify-center items-center flex-wrap gap-6">
-            {product &&
-              product?.products &&
+            {product && product?.products ? (
               product.products.map((product: any, i: any) => {
                 return <Card key={i} lists={product} />;
-              })}
+              })
+            ) : (
+              <p className="text-center font-medium">
+                No product available
+              </p>
+            )}
 
             <Link
               href={`/category/${params && params.category}/all`}
