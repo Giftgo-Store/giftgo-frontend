@@ -15,7 +15,7 @@ const Page = () => {
   const toast = useAppToast();
   const router = useRouter();
   const params = useParams();
-  const [category, setCategory] = useState([]);
+  const [category, setCategory] = useState<any>([]);
 
   const handleBack = () => {
     router.back();
@@ -27,7 +27,7 @@ const Page = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
+        const response = await axios.post(
           `${BASE_URL}/api/v1/category/${params && params.detail}`, {
             headers: {
               Authorization: `Bearer ${Cookies.get("token")}`,
@@ -77,7 +77,7 @@ const Page = () => {
           <span className="cursor-pointer" onClick={handleBack}>
             {location} store
           </span>{" "}
-          / {cat && cat[0]?.name}
+          / {category && category?.name}
         </p>
       </div>
 
@@ -103,8 +103,8 @@ const Page = () => {
             </div>
           </div>
           <div className="flex justify-center items-center flex-wrap gap-6">
-            {cat && cat[0]?.products.length > 0 ? (
-              cat[0]?.products.map((product: any, i: any) => {
+            {category && category?.products && category?.products.length > 0 ? (
+              category?.products.map((product: any, i: any) => {
                 return <Card key={i} lists={product} />;
               })
             ) : (

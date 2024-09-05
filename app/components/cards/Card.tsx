@@ -147,6 +147,16 @@ const Card = ({ lists }: CardProps) => {
           <p className="text-[[#05031A]] text-[16px] font-[600] pt-2">
             ₦ {formatNumberWithCommas(lists?.salePrice)}
           </p>
+          <button
+            onClick={(e) => {
+              e.stopPropagation(); // Prevents card navigation when clicking this icon
+              router.push(`/product/${lists?._id}`);
+            }}
+            type="submit"
+            className="w-full bg-primary hover:bg-[#05031A]  text-white py-2 h-[48px] rounded-[8px] flex justify-center items-center gap-4 font-[700]"
+          >
+            Buy Now
+          </button>
         </div>
       </div>
     </>
