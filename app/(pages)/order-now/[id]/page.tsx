@@ -46,6 +46,10 @@ const Page = () => {
     }
   };
 
+    const handleBack = () => {
+      router.back();
+    };
+
   const [cartItems, setCartItems] = useState<any>([]);
   const [user, setUser] = useState<any>([]);
   const [countries, setCountries] = useState<any>([]);
@@ -366,7 +370,12 @@ const Page = () => {
           <span className="cursor-pointer" onClick={() => router.push("/")}>
             Home
           </span>{" "}
-          / <span className="cursor-pointer"> Shopping card</span> / Checkout
+          /{" "}
+          <span className="cursor-pointer" onClick={handleBack}>
+            {" "}
+            Shopping card
+          </span>{" "}
+          / Checkout
         </p>
       </div>
 
@@ -594,14 +603,14 @@ const Page = () => {
                   Order Notes <span className="text-[#929FA5]">(Optional)</span>
                 </label>
                 <textarea
-                  className="border-[#E4E7E9] text-[14px] border-[1px] h-[150px] lg:h-full py-2 px-5 outline-none"
+                  className="border-[#E4E7E9] text-[14px] border-[1px] h-[150px] lg:h-full py-2 px-5 outline-none min-h-[130px]"
                   placeholder="Notes about your order, e.g. special notes for delivery. This notes may or may not be checked."
                   value={additionalInfo}
                   onChange={(e) => setAdditionalInfo(e.target.value)}
                 />
               </div>
 
-              <div className="flex flex-col items-start">
+              {/* <div className="flex flex-col items-start">
                 <label className="text-[#191C1F]">
                   Upload Image you want printed
                 </label>
@@ -636,7 +645,7 @@ const Page = () => {
                     </p>
                   )}
                 </div>
-              </div>
+              </div> */}
             </div>
           ) : (
             <div className="flex flex-col">
