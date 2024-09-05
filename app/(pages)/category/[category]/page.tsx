@@ -143,6 +143,11 @@ const page = () => {
 
   //   fetchData();
   // }, [params && params.category]);
+  const cat = category && category.map((cat:any) => cat.products)
+
+  const allItems = cat.flatMap((innerArray) => innerArray);
+
+  console.log(allItems)
 
   return (
     <>
@@ -183,11 +188,11 @@ const page = () => {
                 breakpoints={{
                   640: {
                     slidesPerView:
-                      category.length === 1 ? 1 : category.length === 2 ? 2 : 1,
+                      category.length === 1 ? 1 : category.length === 2 ? 2 : 2,
                   },
                   768: {
                     slidesPerView:
-                      category.length === 1 ? 1 : category.length === 2 ? 2 : 1,
+                      category.length === 1 ? 1 : category.length === 2 ? 2 : 2,
                   },
                   1024: {
                     slidesPerView:
@@ -203,7 +208,7 @@ const page = () => {
               >
                 {category &&
                   category.map((cat: any, i: any) => {
-                    console.log(cat)
+                    console.log(cat);
                     return (
                       <SwiperSlide
                         key={i}
@@ -247,14 +252,12 @@ const page = () => {
             </Link>
           </div>
           <div className="flex justify-center items-center flex-wrap gap-6">
-            {product && product?.products ? (
-              product.products.map((product: any, i: any) => {
+            {allItems ? (
+              allItems.map((product: any, i: any) => {
                 return <Card key={i} lists={product} />;
               })
             ) : (
-              <p className="text-center font-medium">
-                No product available
-              </p>
+              <p className="text-center font-medium">No product available</p>
             )}
 
             <Link
