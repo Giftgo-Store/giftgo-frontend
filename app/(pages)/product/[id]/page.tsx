@@ -84,6 +84,10 @@ const Page = () => {
   console.log(params);
   const token = Cookies.get("token");
 
+    const handleBack = () => {
+      router.back();
+    };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -223,8 +227,10 @@ const Page = () => {
             Home
           </span>{" "}
           / <span className="cursor-pointer">Shop</span> /{" "}
-          <span className="cursor-pointer">{location} store</span> /{" "}
-          {product && product?.category?.name}
+          <span className="cursor-pointer" onClick={handleBack}>
+            {location} store
+          </span>{" "}
+          / {product && product?.category?.name}
         </p>
       </div>
 
@@ -257,37 +263,43 @@ const Page = () => {
                 <FaArrowRight className="h-6 w-6 text-white " />
               </div>
             </div>
-            <Swiper
-              modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
-              spaceBetween={10}
-              slidesPerView={product?.images?.length === 1 ? 1 : 2}
-              autoplay={{
-                delay: 5000,
-                disableOnInteraction: false,
-              }}
-              navigation={{
-                nextEl: ".custom-nextt",
-                prevEl: ".custom-prevv",
-              }}
-            >
-              {product &&
-                product?.images &&
-                product?.images.map((image: string, index: number) => (
-                  <div
-                    key={index}
-                    className="relative"
-                    onClick={() => openLightbox(index)}
-                  >
-                    <Image
-                      src={image}
-                      alt={`product image ${index + 1}`}
-                      width={80}
-                      height={80}
-                      className="w-[80px] h-[80px] object-cover cursor-pointer rounded-[8px]"
-                    />
-                  </div>
-                ))}
-            </Swiper>
+            <div className="w-full">
+              <Swiper
+                modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
+                spaceBetween={10}
+                slidesPerView={product?.images?.length === 1 ? 1 : 2}
+                autoplay={{
+                  delay: 5000,
+                  disableOnInteraction: false,
+                }}
+                navigation={{
+                  nextEl: ".custom-nextt",
+                  prevEl: ".custom-prevv",
+                }}
+              >
+                {product &&
+                  product?.images &&
+                  product?.images.map((image: string, index: number) => (
+                    <SwiperSlide
+                      key={index}
+                      className="flex justify-center items-center w-full"
+                    >
+                      <div
+                        className="relative flex justify-center gap-2 items-center"
+                        onClick={() => openLightbox(index)}
+                      >
+                        <Image
+                          src={image}
+                          alt={`product image ${index + 1}`}
+                          width={80}
+                          height={80}
+                          className="w-[80px] h-[80px] object-cover cursor-pointer rounded-[8px]"
+                        />
+                      </div>
+                    </SwiperSlide>
+                  ))}
+              </Swiper>
+            </div>
           </div>
         </div>
 

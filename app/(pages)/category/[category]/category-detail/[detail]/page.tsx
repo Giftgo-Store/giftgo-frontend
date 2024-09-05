@@ -28,7 +28,11 @@ const Page = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}/api/v1/products/location/${location}`
+          `${BASE_URL}/api/v1/category/${params && params.detail}`, {
+            headers: {
+              Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+          }
         );
         setCategory(response.data.data);
         // Handle successful response, e.g., save token, redirect, etc.
@@ -48,9 +52,12 @@ const Page = () => {
     fetchData();
   }, [location]);
 
-  const cat: any =
-    category &&
-    category.filter((cat: any) => cat._id === (params && params.detail));
+  
+  const cat: any = []
+  // category &&
+  // category.filter((cat: any) => cat._id === (params && params.detail));
+  console.log(cat)
+  console.log(category)
 
   return (
     <>
