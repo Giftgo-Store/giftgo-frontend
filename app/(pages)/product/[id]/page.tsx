@@ -235,7 +235,7 @@ const Page = () => {
       </div>
 
       <div className="flex justify-center lg:justify-between items-center flex-col lg:flex-row px-[4%] lg:px-[8%] mt-[20px] lg:mt-[56px] mb-[24px] w-full">
-        <div className="lg:w-[50%] flex-col justify-start items-start lg:px-[24px] gap-2 h-full overflow-x-hidden">
+        <div className="w-full lg:w-[50%] flex-col justify-start items-start lg:px-[24px] gap-2 h-full overflow-x-hidden">
           {loadingImages ? (
             <Skeleton
               // width="100%"
