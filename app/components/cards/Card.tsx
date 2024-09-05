@@ -7,6 +7,7 @@ import { PiShoppingCart } from "react-icons/pi";
 import { LiaFighterJetSolid } from "react-icons/lia";
 import { useRouter } from "next/navigation";
 import Slider from "../commons/Slider";
+import Link from "next/link";
 
 type List = {
   brandName: string;
@@ -69,6 +70,10 @@ const Card = ({ lists }: CardProps) => {
 
   const averageRating = calculateAverageRating(lists?.reviews || []);
   console.log(`Average Rating: ${averageRating}`);
+
+    const query = new URLSearchParams({
+      quantity: '1',
+    }).toString();
 
   return (
     <>
@@ -150,10 +155,12 @@ const Card = ({ lists }: CardProps) => {
           <button
             onClick={(e) => {
               e.stopPropagation(); // Prevents card navigation when clicking this icon
-              router.push(`/product/${lists?._id}`);
+              router.push(`/order-now/${lists && lists._id}?${query}`);
             }}
+            // onClick={(e) => e.stopPropagation()} // Prevents card click event
+            // href={`/order-now/${lists && lists._id}?${query}`}
             type="submit"
-            className="w-full bg-primary hover:bg-[#05031A]  text-white py-2 h-[48px] rounded-[8px] flex justify-center items-center gap-4 font-[700]"
+            className="w-full bg-primary relative z-[999] hover:bg-[#05031A]  text-white py-2 h-[48px] rounded-[8px] flex justify-center items-center gap-4 font-[700]"
           >
             Buy Now
           </button>

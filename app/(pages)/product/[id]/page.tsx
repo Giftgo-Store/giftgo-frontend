@@ -66,15 +66,15 @@ const Page = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [loadingImages, setLoadingImages] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState('');
 
   const [showModal, setShowModal] = useState(false);
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
 
-  const openLightbox = (index: number) => {
-    setCurrentImageIndex(index);
+  const openLightbox = (src: string) => {
+    setCurrentImageIndex(src);
     setIsOpen(true);
   };
 
@@ -95,6 +95,7 @@ const Page = () => {
           `${BASE_URL}/api/v1/products/${params && params.id}`
         );
         setProduct(response.data.data);
+        setCurrentImageIndex(response.data.data?.images[0]);
         setLoadingImages(false);
       } catch (error: any) {
         console.error(
@@ -244,12 +245,12 @@ const Page = () => {
             />
           ) : (
             <Image
-              src={product && product?.images && product?.images[0]}
+              src={currentImageIndex}
               alt=""
               width={174}
               height={148}
               className="w-full lg:w-[80%] h-[315px] object-cover rounded-[8px] transition-transform duration-300 ease-in-out transform hover:scale-95"
-              onClick={() => openLightbox(0)}
+              // onClick={() => openLightbox(0)}
             />
           )}
           <div className="flex gap-2 w-[80%] justify-between mt-2 items-center relative overflow-x-hidden z-40">
@@ -285,8 +286,8 @@ const Page = () => {
                       className="flex justify-center items-center w-full"
                     >
                       <div
-                        className="relative flex justify-center gap-2 items-center"
-                        onClick={() => openLightbox(index)}
+                        className={`${image === currentImageIndex ? "border-primary" : ''} relative flex justify-center gap-2 items-center`}
+                        onClick={() => openLightbox(image)}
                       >
                         <Image
                           src={image}
