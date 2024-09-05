@@ -286,7 +286,7 @@ const Page = () => {
                       className="flex justify-center items-center w-full"
                     >
                       <div
-                        className={`${image === currentImageIndex ? "border-primary" : ''} relative flex justify-center gap-2 items-center`}
+                        className={` relative flex justify-center gap-2 items-center`}
                         onClick={() => openLightbox(image)}
                       >
                         <Image
@@ -294,7 +294,7 @@ const Page = () => {
                           alt={`product image ${index + 1}`}
                           width={80}
                           height={80}
-                          className="w-[80px] h-[80px] object-cover cursor-pointer rounded-[8px]"
+                          className={`${image === currentImageIndex ? "border-primary border-[2px]" : ''} w-[80px] h-[80px] object-cover cursor-pointer rounded-[8px]`}
                         />
                       </div>
                     </SwiperSlide>

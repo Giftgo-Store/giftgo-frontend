@@ -348,8 +348,8 @@ const page = () => {
             </Link>
           </div>
           <div className="flex justify-center items-center flex-wrap gap-6">
-            {product && product?.products ? (
-              product.products.map((product: any, i: any) => {
+            {allItems ? (
+             allItems.map((product: any, i: any) => {
                 return (
                   product &&
                   product?.expressShipping === "true" && (

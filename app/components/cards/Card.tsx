@@ -130,7 +130,7 @@ const Card = ({ lists }: CardProps) => {
           <p className="text-[14px] font-[500] text-[#475156] pb-1">
             {lists?.productName}
           </p>
-          <p className="text-[14px] font-[500] text-[#475156] pb-1">
+          <p className="text-[13px] font-[500] text-[#838f95] pb-1">
             {lists?.description.slice(0, 30) + "..."}
           </p>
 
