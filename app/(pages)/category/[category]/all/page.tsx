@@ -10,6 +10,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useAppToast } from "@/app/providers/useAppToast";
+import Link from "next/link";
 
 const Page = () => {
   const toast = useAppToast();
@@ -21,33 +22,36 @@ const Page = () => {
   };
 
   console.log(params);
-  const [product, setProduct] = useState<any>([]);
+  const [category, setCategory] = useState([]);
 
   const location = Cookies.get("location");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `${BASE_URL}/api/v1/products/locate/${location}`
-        );
-        setProduct(response.data.data.products[0]);
-        // Handle successful response, e.g., save token, redirect, etc.
-      } catch (error) {
-        //@ts-ignore
-        toast({
-          status: "error",
-          description:
-            //@ts-expect-error
-            error?.response?.data || error?.message || "an error occurred ",
-        });
-      } finally {
-        // Any cleanup or final actions
-      }
-    };
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(
+            `${BASE_URL}/api/v1/products/locate/${location} `
+          );
+          setCategory(response.data.data);
+        } catch (error) {
+          //@ts-ignore
+          // toast({
+          //   status: "error",
+          //   description:
+          //     //@ts-expect-error
+          //     error?.response?.data || error?.message || "an error occurred ",
+          // });
+        } finally {
+          // Any cleanup or final actions
+        }
+      };
 
-    fetchData();
-  }, [location, params && params.category]);
+      fetchData();
+    }, [params?.category]);
+
+      const cat = category && category.map((cat: any) => cat.products);
+
+      const allItems = cat && cat.flatMap((innerArray) => innerArray);
 
   return (
     <>
@@ -59,7 +63,11 @@ const Page = () => {
           <span className="cursor-pointer" onClick={() => router.push("/")}>
             Home
           </span>{" "}
-          / <span className="cursor-pointer">Shop</span> /{" "}
+          /{" "}
+          <span className="cursor-pointer" onClick={handleBack}>
+            Shop
+          </span>{" "}
+          /{" "}
           <span className="cursor-pointer" onClick={handleBack}>
             {location} store
           </span>{" "}
@@ -71,9 +79,8 @@ const Page = () => {
         <div>
           <div className="flex justify-between flex-col lg:flex-row items-start lg:items-center mb-6 gap-2">
             <h2 className="text-[#475156] text-[16px] text-left lg:text-center font-[400]">
-              Showing 1-{product && product.products && product.products.length}{" "}
-              of {product && product.products && product.products.length}{" "}
-              results
+              Showing 1-{allItems && allItems.length} of{" "}
+              {allItems && allItems.length} results
             </h2>
             <div className="flex justify-end items-center gap-4">
               <p className="text-[#475156] text-[14px] font-[400] gap-2">
@@ -91,12 +98,12 @@ const Page = () => {
             </div>
           </div>
           <div className="flex justify-center items-center flex-wrap gap-6">
-            {product && product.products?.length > 1 ? (
-              product.products.map((product: any, i: any) => {
+            {allItems ? (
+              allItems.map((product: any, i: any) => {
                 return <Card key={i} lists={product} />;
               })
             ) : (
-              <>No product available</>
+              <p className="text-center font-medium">No product available</p>
             )}
             {/* <Card />
             <Card express={true} />
@@ -123,9 +130,12 @@ const Page = () => {
                 <br className="hidden lg:block" /> fluffiest teddy bears{" "}
               </p>
 
-              <button className="py-[14px] px-[10px] lg:px-[24px] rounded-[2px] hover:bg-[#05031A]  bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2">
+              <Link
+                href={"/#location"}
+                className="py-[14px] px-[10px] lg:px-[24px] rounded-[2px] hover:bg-[#05031A]  bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2"
+              >
                 SHOP NOW <FaArrowRight className="w-5 h-5" />
-              </button>
+              </Link>
             </div>
             <div className="flex justify-end items-center lg:w-[50%]">
               <Image
@@ -150,9 +160,12 @@ const Page = () => {
                 bears{" "}
               </p>
 
-              <button className="py-[14px] px-[24px] rounded-[2px] bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2">
+              <Link
+                href={"/#location"}
+                className="py-[14px] px-[24px] rounded-[2px] bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2"
+              >
                 SHOP NOW <FaArrowRight className="w-5 h-5" />
-              </button>
+              </Link>
             </div>
             <div className="flex justify-end items-center lg:w-[50%] relative">
               <div className="flex justify-center text-center items-center w-[100px] h-[88px] rounded-full bg-secondary absolute -top-3 right-6">
