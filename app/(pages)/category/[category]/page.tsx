@@ -145,7 +145,7 @@ const page = () => {
   // }, [params && params.category]);
   const cat = category && category.map((cat:any) => cat.products)
 
-  const allItems = cat.flatMap((innerArray) => innerArray);
+  const allItems = cat && cat.flatMap((innerArray) => innerArray);
 
   console.log(allItems)
 
