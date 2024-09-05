@@ -253,7 +253,7 @@ const page = () => {
           </div>
           <div className="flex justify-center items-center flex-wrap gap-6">
             {allItems ? (
-              allItems.map((product: any, i: any) => {
+              allItems.slice(0,12).map((product: any, i: any) => {
                 return <Card key={i} lists={product} />;
               })
             ) : (
@@ -283,9 +283,12 @@ const page = () => {
                 <br className="hidden lg:block" /> fluffiest teddy bears{" "}
               </p>
 
-              <button className="py-[14px] px-[10px] lg:px-[24px] rounded-[2px] hover:bg-[#05031A]  bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2">
+              <Link
+                href={"/#location"}
+                className="py-[14px] px-[10px] lg:px-[24px] rounded-[2px] hover:bg-[#05031A]  bg-primary text-white text-[16px] font-[600] flex justify-center items-center gap-2"
+              >
                 SHOP NOW <FaArrowRight className="w-5 h-5" />
-              </button>
+              </Link>
             </div>
             <div className="flex justify-end items-center lg:w-[50%]">
               <Image
@@ -310,9 +313,12 @@ const page = () => {
                 bears{" "}
               </p>
 
-              <button className="py-[14px] px-[24px] rounded-[2px] bg-primary hover:bg-[#05031A]  text-white text-[16px] font-[600] flex justify-center items-center gap-2">
+              <Link
+                href={"/#location"}
+                className="py-[14px] px-[24px] rounded-[2px] bg-primary hover:bg-[#05031A]  text-white text-[16px] font-[600] flex justify-center items-center gap-2"
+              >
                 SHOP NOW <FaArrowRight className="w-5 h-5" />
-              </button>
+              </Link>
             </div>
             <div className="flex justify-end items-center lg:w-[50%] relative">
               <div className="flex justify-center text-center items-center w-[100px] h-[88px] rounded-full bg-secondary absolute -top-3 right-6">
@@ -349,7 +355,7 @@ const page = () => {
           </div>
           <div className="flex justify-center items-center flex-wrap gap-6">
             {allItems ? (
-             allItems.map((product: any, i: any) => {
+              allItems.map((product: any, i: any) => {
                 return (
                   product &&
                   product?.expressShipping === "true" && (
