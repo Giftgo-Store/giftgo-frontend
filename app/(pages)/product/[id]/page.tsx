@@ -304,7 +304,7 @@ const Page = () => {
           </div>
         </div>
 
-        <div className="flex lg:w-[50%] pt-[50px] lg:pt-0 flex-col items-start lg:pl-[4%]">
+        <div className="w-full flex lg:w-[50%] pt-[50px] lg:pt-0 flex-col items-start lg:pl-[4%]">
           <div className="mb-[20px] lg:mb-[48px]">
             <h2 className="text-[#191C1F] text-[28px] font-[600]">
               {product && product?.productName}
@@ -369,7 +369,7 @@ const Page = () => {
         </div>
       </div>
 
-      <div className="px-[4%] lg:px-[8%] flex justify-center items-center flex-col">
+      <div className="px-[2%] lg:px-[8%] flex justify-center items-center flex-col">
         <div className="pt-[18px] flex justify-center items-center gap-3 border-b-[1px] border-b-[#E4E7E9] w-full">
           <p
             onClick={() => setActiveNav("1")}

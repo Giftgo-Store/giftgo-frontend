@@ -496,7 +496,7 @@ const History = () => {
                                 <td className=" px-2 lg:px-6 py-4 text-[14px] text-[#191C1F] ">
                                   <div className="flex justify-start items-center gap-2 lg:gap-3">
                                     <Image
-                                      src={item?.images}
+                                      src={item?.images.split(",")[0]}
                                       alt=""
                                       width={72}
                                       height={72}
