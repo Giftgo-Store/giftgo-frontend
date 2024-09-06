@@ -369,7 +369,7 @@ const Page = () => {
         </div>
       </div>
 
-      <div className=" w-full px-[2%] lg:px-[8%] flex justify-center items-center flex-col">
+      <div className="px-[2%] lg:px-[8%] flex justify-center items-center flex-col">
         <div className="pt-[18px] flex justify-center items-center gap-3 border-b-[1px] border-b-[#E4E7E9] w-full">
           <p
             onClick={() => setActiveNav("1")}
