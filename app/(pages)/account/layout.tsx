@@ -20,6 +20,19 @@ const Account = ({ children }: ChildProps) => {
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
   const handleLogout = () => {
+        const token = Cookies.get("token");
+
+    const revokeTokenUrl =
+      `https://accounts.google.com/o/oauth2/revoke?token=${token}`;
+
+    fetch(revokeTokenUrl)
+      .then((response) => {
+        if (response.ok) {
+          // Clear token and log user out locally
+          console.log("Google user signed out");
+        }
+      })
+      .catch((error) => console.error("Error logging out from Google:", error));
     Cookies.remove("token");
     router.push("/");
   };
