@@ -13,6 +13,7 @@
     "@emotion/styled": "^11.11.5",
     "@mui/material": "^5.15.15",
     "@nextui-org/react": "^2.4.6",
+    "@react-oauth/google": "^0.12.1",
     "apexcharts": "^3.48.0",
     "axios": "^1.7.2",
     "classnames": "^2.5.1",
