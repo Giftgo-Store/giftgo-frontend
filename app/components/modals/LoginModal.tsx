@@ -69,7 +69,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       toast({
         status: "error",
         //@ts-ignore
-        description: error?.response?.data.message || error?.message || "Sign in error",
+        description:error?.response?.data.message || error?.message || "Sign in error",
       });
       // console.error("Sign In Error", error.response?.data.message || error.message);
     } finally {
@@ -110,7 +110,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       toast({
         status: "error",
         //@ts-ignore
-        description: error.response?.data.message || error?.message || "Sign up error",
+        description:error.response?.data.message || error?.message || "Sign up error",
       });
       // console.error("Sign Up Error", error.response?.data || error.message);
     } finally {
@@ -142,23 +142,23 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
   };
 
   const handleSuccess = (response: any) => {
-    console.log('Login Success:', response);
+    console.log("Login Success:", response);
     // Retrieve token from the credentialResponse object
     const token = response.credential; // This is the JWT token
     Cookie.set("token", token);
-    console.log('Token:', token);
+    console.log("Token:", token);
 
-          closeModal();
+    closeModal();
 
     // You can now send this token to your backend for verification or store it for further use
   };
 
   const handleFailure = () => {
-    console.log('Login Failed');
+    console.log("Login Failed");
     toast({
       status: "error",
       //@ts-ignore
-      description:"Sign up error",
+      description: "Sign up error",
     });
   };
 
@@ -323,8 +323,8 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                   // onError={() => {
                   //   console.log("Login Failed");
                   // }}
-                          onSuccess={handleSuccess}
-        onError={handleFailure}
+                  onSuccess={handleSuccess}
+                  onError={handleFailure}
                 />
               </GoogleOAuthProvider>
             </div>
@@ -480,7 +480,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
               <div className="bg-[#E4E7E9] h-[2px] w-[45%]"></div>
             </div>
             <div className="text-center px-6 py-4">
-              <button
+              {/* <button
                 className="w-full bg-white border-[1px] border-[#E4E7E9] text-[#191C1F] py-2 rounded-[2px] h-[44px] mb-2 relative"
                 onClick={(e) => handleGoogle(e)}
               >
@@ -502,7 +502,20 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                   className="absolute left-5"
                 />
                 Sign up with Apple
-              </button>
+              </button> */}
+
+              <GoogleOAuthProvider clientId={clientId}>
+                <GoogleLogin
+                  // onSuccess={(credentialResponse) => {
+                  //   console.log(credentialResponse);
+                  // }}
+                  // onError={() => {
+                  //   console.log("Login Failed");
+                  // }}
+                  onSuccess={handleSuccess}
+                  onError={handleFailure}
+                />
+              </GoogleOAuthProvider>
             </div>
           </>
         )}
