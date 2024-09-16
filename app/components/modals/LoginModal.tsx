@@ -69,7 +69,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       toast({
         status: "error",
         //@ts-ignore
-        description:error?.response?.data.message || error?.message || "Sign in error",
+        description: error?.response?.data.message || error?.message || "Sign in error",
       });
       // console.error("Sign In Error", error.response?.data.message || error.message);
     } finally {
@@ -110,29 +110,6 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       toast({
         status: "error",
         //@ts-ignore
-        description:error.response?.data.message || error?.message || "Sign up error",
-      });
-      // console.error("Sign Up Error", error.response?.data || error.message);
-    } finally {
-      setIsSigningUp(false);
-    }
-  };
-
-  const handleGoogle = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await axios.get(`${BASE_URL}/api/v1/google/callback`);
-      // Handle successful response, e.g., show success message, redirect, etc.
-      toast({
-        status: "success",
-        description: response.data.message || "Success",
-      });
-      Cookie.set("token", response.data.data.accessToken.token);
-      closeModal();
-    } catch (error) {
-      toast({
-        status: "error",
-        //@ts-ignore
         description: error.response?.data.message || error?.message || "Sign up error",
       });
       // console.error("Sign Up Error", error.response?.data || error.message);
@@ -141,13 +118,101 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
     }
   };
 
-  const handleSuccess = (response: any) => {
+  // const handleGoogle = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   try {
+  //     const response = await axios.get(`${BASE_URL}/api/v1/google/callback`);
+  //     // Handle successful response, e.g., show success message, redirect, etc.
+  //     toast({
+  //       status: "success",
+  //       description: response.data.message || "Success",
+  //     });
+  //     Cookie.set("token", response.data.data.accessToken.token);
+  //     closeModal();
+  //   } catch (error) {
+  //     toast({
+  //       status: "error",
+  //       //@ts-ignore
+  //       description: error.response?.data.message || error?.message || "Sign up error",
+  //     });
+  //     // console.error("Sign Up Error", error.response?.data || error.message);
+  //   } finally {
+  //     setIsSigningUp(false);
+  //   }
+  // };
+
+  const handleGoogle = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`${BASE_URL}/api/v1/google/callback`, {
+        method: "GET",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      // Handle successful response
+      toast({
+        status: "success",
+        description: data.message || "Success",
+      });
+
+      Cookie.set("token", data.data.accessToken.token);
+      closeModal();
+    } catch (error: any) {
+      toast({
+        status: "error",
+        description: error?.message || "Sign up error",
+      });
+    } finally {
+      setIsSigningUp(false);
+    }
+  };
+
+  const handleSuccess = async (response: any) => {
     console.log("Login Success:", response);
     // Retrieve token from the credentialResponse object
     const token = response.credential; // This is the JWT token
     Cookie.set("token", token);
     console.log("Token:", token);
+    try {
+      const response = await fetch(`${BASE_URL}/api/v1/google/callback`, {
+        method: "POST", // Use POST since you are sending data
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }), // Send the token in the request body
+      });
 
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      console.log(data)
+
+      // Handle successful response from the backend
+      toast({
+        status: "success",
+        description: data.message || "Success",
+      });
+
+      // Store the access token or other data as needed
+      Cookie.set("token", data.data.accessToken.token);
+    } catch (error: any) {
+      // Handle error if the request fails
+      toast({
+        status: "error",
+        description: error?.message || "Sign up error",
+      });
+    } finally {
+      // Set the signing-up state to false after the request
+      setIsSigningUp(false);
+    }
     closeModal();
 
     // You can now send this token to your backend for verification or store it for further use
@@ -163,7 +228,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
   };
 
   const clientId =
-    "48399581233-6hk493r4h01ijuhkf6kn7tqhhn5i7mmt.apps.googleusercontent.com";
+    "787438596934-440o4qkmhn6o09170ou6dlms89g1j8tj.apps.googleusercontent.com";
 
   return (
     <div
@@ -480,8 +545,9 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
               <div className="bg-[#E4E7E9] h-[2px] w-[45%]"></div>
             </div>
             <div className="text-center px-6 py-4">
-              <button
-                onClick={(e) => handleGoogle(e)}
+              <Link
+                href={`${BASE_URL}/api/v1/google/callback`}
+                // onClick={(e) => handleGoogle(e)}
                 // id="signInButton"
                 className="w-full bg-white border-[1px] border-[#E4E7E9] text-[#191C1F] py-2 rounded-[2px] h-[44px] mb-2 relative"
               >
@@ -492,8 +558,8 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                   height={20}
                   className="absolute left-5"
                 />
-                Login with Google
-              </button>
+                Loginn with Google
+              </Link>
               {/* <button className="w-full bg-white border-[1px] border-[#E4E7E9] text-[#191C1F] py-2 rounded-[2px] h-[44px] relative">
                 <Image
                   src="/apple.png"
