@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Public_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers/providers";
 import AppWrapper from "./components/wrappers/AppWrapper";
@@ -7,7 +7,7 @@ import { RefetchProvider } from "./context/refetchContext";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
-const inter = Inter({ subsets: ["latin"] });
+const publicSans = Public_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Giftgo",
@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} absolute h-screen w-full`}
+        className={`${publicSans.className} absolute h-screen w-full`}
         suppressHydrationWarning
       >
         <RefetchProvider>
