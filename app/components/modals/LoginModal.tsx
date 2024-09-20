@@ -118,59 +118,59 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
     }
   };
 
-  // const handleGoogle = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   try {
-  //     const response = await axios.get(`${BASE_URL}/api/v1/google/callback`);
-  //     // Handle successful response, e.g., show success message, redirect, etc.
-  //     toast({
-  //       status: "success",
-  //       description: response.data.message || "Success",
-  //     });
-  //     Cookie.set("token", response.data.data.accessToken.token);
-  //     closeModal();
-  //   } catch (error) {
-  //     toast({
-  //       status: "error",
-  //       //@ts-ignore
-  //       description: error.response?.data.message || error?.message || "Sign up error",
-  //     });
-  //     // console.error("Sign Up Error", error.response?.data || error.message);
-  //   } finally {
-  //     setIsSigningUp(false);
-  //   }
-  // };
-
   const handleGoogle = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${BASE_URL}/api/v1/google/callback`, {
-        method: "GET",
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-
-      // Handle successful response
+      const response = await axios.get(`${BASE_URL}/api/v1/google`);
+      // Handle successful response, e.g., show success message, redirect, etc.
       toast({
         status: "success",
-        description: data.message || "Success",
+        description: response.data.message || "Success",
       });
-
-      Cookie.set("token", data.data.accessToken.token);
+      Cookie.set("token", response.data.data.accessToken.token);
       closeModal();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         status: "error",
-        description: error?.message || "Sign up error",
+        //@ts-ignore
+        description: error.response?.data.message || error?.message || "Sign up error",
       });
+      // console.error("Sign Up Error", error.response?.data || error.message);
     } finally {
       setIsSigningUp(false);
     }
   };
+
+  // const handleGoogle = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   try {
+  //     const response = await fetch(`${BASE_URL}/api/v1/google/callback`, {
+  //       method: "GET",
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error(`Error: ${response.statusText}`);
+  //     }
+
+  //     const data = await response.json();
+
+  //     // Handle successful response
+  //     toast({
+  //       status: "success",
+  //       description: data.message || "Success",
+  //     });
+
+  //     Cookie.set("token", data.data.accessToken.token);
+  //     closeModal();
+  //   } catch (error: any) {
+  //     toast({
+  //       status: "error",
+  //       description: error?.message || "Sign up error",
+  //     });
+  //   } finally {
+  //     setIsSigningUp(false);
+  //   }
+  // };
 
   const handleSuccess = async (response: any) => {
     console.log("Login Success:", response);
@@ -227,8 +227,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
     });
   };
 
-  const clientId =
-    "787438596934-440o4qkmhn6o09170ou6dlms89g1j8tj.apps.googleusercontent.com";
+  const clientId = "787438596934-440o4qkmhn6o09170ou6dlms89g1j8tj.apps.googleusercontent.com";
 
   return (
     <div
