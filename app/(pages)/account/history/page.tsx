@@ -49,7 +49,6 @@ const History = () => {
           "an error occurred ",
       });
     } finally {
-      // Any cleanup or final actions
     }
     setShowDetails(false);
   };
@@ -95,7 +94,6 @@ const History = () => {
           "an error occurred ",
       });
     } finally {
-      // Any cleanup or final actions
     }
   };
 
@@ -114,7 +112,6 @@ const History = () => {
       } catch (error) {
         console.log(error);
       } finally {
-        // Any cleanup or final actions
       }
     };
     fetchUser();
@@ -131,12 +128,10 @@ const History = () => {
             },
           }
         );
-        // Handle successful response, e.g., save token, redirect, etc.
         setOrder(response.data.data);
       } catch (error) {
         console.log(error);
       } finally {
-        // Any cleanup or final actions
       }
     };
     fetchOrder();
@@ -344,42 +339,6 @@ const History = () => {
                         />
                       </div>
                     </div>
-                    {/* 
-                    <div className="flex justify-center items-center px-10 py-6">
-                      <div className="flex items-center gap-2">
-                        <div className="flex justify-between items-center gap-2">
-                          <Image
-                            src="/arrow1.png"
-                            alt=""
-                            width={40}
-                            height={40}
-                            className="lg:mr-[12px]"
-                          />
-                          <div className="w-[40px] text-white text-[14px] leading-[20px] h-[40px] bg-primary rounded-full border-[#E4E7E9] border-[1px] flex justify-center text-center items-center">
-                            01
-                          </div>
-                          <div className="w-[40px] text-[#191C1F] text-[14px] leading-[20px] h-[40px] bg-white rounded-full border-[#E4E7E9] border-[1px] flex justify-center text-center items-center">
-                            02
-                          </div>
-                          <div className="w-[40px] text-[#191C1F] text-[14px] leading-[20px] h-[40px] bg-white rounded-full border-[#E4E7E9] border-[1px] flex justify-center text-center items-center">
-                            03
-                          </div>
-                          <div className="w-[40px] text-[#191C1F] text-[14px] leading-[20px] h-[40px] bg-white rounded-full border-[#E4E7E9] border-[1px] flex justify-center text-center items-center">
-                            04
-                          </div>
-                          <div className="w-[40px] text-[#191C1F] text-[14px] leading-[20px] h-[40px] bg-white rounded-full border-[#E4E7E9] border-[1px] flex justify-center text-center items-center">
-                            05
-                          </div>
-                          <Image
-                            src="/arrow2.png"
-                            alt=""
-                            width={40}
-                            height={40}
-                            className="lg:ml-[12px]"
-                          />
-                        </div>
-                      </div>
-                    </div> */}
                   </div>
                 </div>
               </div>

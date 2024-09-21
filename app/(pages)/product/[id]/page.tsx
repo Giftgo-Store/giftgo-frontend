@@ -81,7 +81,6 @@ const Page = () => {
   const [product, setProduct] = useState<any>([]);
   const [relatedProduct, setRelatedProduct] = useState<any>([]);
   const location = Cookies.get("location");
-  console.log(params);
   const token = Cookies.get("token");
 
     const handleBack = () => {
@@ -101,7 +100,6 @@ const Page = () => {
         console.error(
           //@ts-ignore
           "Error fetching resource"
-          // error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
@@ -135,7 +133,6 @@ const Page = () => {
         console.error(
           //@ts-ignore
           "Error fetching resource"
-          // error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
@@ -145,12 +142,10 @@ const Page = () => {
     fetchData();
   }, [location, params]);
 
-  console.log(relatedProduct);
 
   const handleAddToCart = async () => {
     const token = Cookies.get("token");
     if (!token) {
-      console.log("No token");
       openModal();
       setShowLogin(true);
       return;
@@ -199,7 +194,6 @@ const Page = () => {
     }
   };
 
-  console.log(product && product.reviews);
 
   const calculateAverageRating = (reviews: Review[]): number => {
     if (!reviews || reviews.length === 0) return 0; // Correct check for empty array
@@ -211,7 +205,6 @@ const Page = () => {
   };
 
   const averageRating = calculateAverageRating(product && product.reviews);
-  console.log(`Average Rating: ${averageRating}`);
 
   return (
     <div className="">
@@ -239,8 +232,6 @@ const Page = () => {
         <div className="w-full lg:w-[50%] flex-col justify-start items-start lg:px-[24px] gap-2 h-full overflow-x-hidden">
           {loadingImages ? (
             <Skeleton
-              // width="100%"
-              // height="315px"
               className="w-full lg:w-[80%] h-[315px] object-cover rounded-[8px]"
             />
           ) : (
@@ -250,7 +241,6 @@ const Page = () => {
               width={174}
               height={148}
               className="w-full lg:w-[80%] h-[315px] object-cover rounded-[8px] transition-transform duration-300 ease-in-out transform hover:scale-95"
-              // onClick={() => openLightbox(0)}
             />
           )}
           <div className="flex gap-2 w-[80%] justify-between mt-2 items-center relative overflow-x-hidden z-40">
@@ -455,7 +445,7 @@ const Page = () => {
                   const month: string = String(date.getMonth() + 1).padStart(
                     2,
                     "0"
-                  ); // getMonth() is zero-based
+                  );
                   const year: number = date.getFullYear();
 
                   const formattedDate: string = `${day}-${month}-${year}`;
@@ -476,9 +466,6 @@ const Page = () => {
                           />
                         ))}
                       </div>
-                      {/* <h2 className="font-[400] text-[#191C1F] text-[16px]">
-                        I like the product
-                      </h2> */}
                       <p className="text-[#475156] text-[14px]">
                         {review.comment}
                       </p>
@@ -520,9 +507,6 @@ const Page = () => {
                           />
                         ))}
                       </div>
-                      {/* <h2 className="font-[400] text-[#191C1F] text-[16px]">
-                        I like the product
-                      </h2> */}
                       <p className="text-[#475156] text-[14px]">
                         {review.comment}
                       </p>
@@ -544,7 +528,7 @@ const Page = () => {
                   const month: string = String(date.getMonth() + 1).padStart(
                     2,
                     "0"
-                  ); // getMonth() is zero-based
+                  );
                   const year: number = date.getFullYear();
 
                   const formattedDate: string = `${day}-${month}-${year}`;
@@ -565,9 +549,7 @@ const Page = () => {
                           />
                         ))}
                       </div>
-                      {/* <h2 className="font-[400] text-[#191C1F] text-[16px]">
-                        I like the product
-                      </h2> */}
+                     
                       <p className="text-[#475156] text-[14px]">
                         {review.comment}
                       </p>
@@ -588,7 +570,7 @@ const Page = () => {
                   const month: string = String(date.getMonth() + 1).padStart(
                     2,
                     "0"
-                  ); // getMonth() is zero-based
+                  );
                   const year: number = date.getFullYear();
 
                   const formattedDate: string = `${day}-${month}-${year}`;
@@ -609,9 +591,6 @@ const Page = () => {
                           />
                         ))}
                       </div>
-                      {/* <h2 className="font-[400] text-[#191C1F] text-[16px]">
-                        I like the product
-                      </h2> */}
                       <p className="text-[#475156] text-[14px]">
                         {review.comment}
                       </p>
@@ -653,14 +632,6 @@ const Page = () => {
             </Link>
           </div>
           <div className="flex justify-center items-center flex-wrap gap-6">
-            {/* <Card />
-            <Card express={true} />
-            <Card />
-            <Card />
-            <Card express={true} />
-            <Card />
-            <Card express={true} />
-            <Card /> */}
             {relatedProduct && relatedProduct ? (
               relatedProduct.map((product: any, i: any) => {
                 return <Card key={i} lists={product} />;

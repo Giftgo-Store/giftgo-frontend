@@ -55,7 +55,6 @@ const Page = () => {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
         });
-        // Handle successful response, e.g., save token, redirect, etc.
         setCartItems(response.data.data);
       } catch (error: any) {
         if (error?.response?.status === 401) {
@@ -66,7 +65,6 @@ const Page = () => {
         console.error(
           //@ts-ignore
           "Error fetching resource"
-          // error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
@@ -83,13 +81,11 @@ const Page = () => {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
         });
-        // Handle successful response, e.g., save token, redirect, etc.
         setUser(response.data.data);
       } catch (error) {
         console.error(
           //@ts-ignore
           "Error fetching resource"
-          // error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
@@ -140,7 +136,6 @@ const Page = () => {
             },
           }
         );
-        // Handle successful response, e.g., save token, redirect, etc.
         setCouponInfo(response.data);
         if (response.data.isActive === "true") {
           setCouponValid(true);
@@ -159,7 +154,6 @@ const Page = () => {
         console.error(
           //@ts-ignore
           "Error fetching resource"
-          // error?.response?.data || error?.message
         );
         toast({
           status: "error",
@@ -174,10 +168,6 @@ const Page = () => {
     }
   }, [coupon]);
 
-  console.log(couponInfo);
-
-  console.log(user && user.address && user.address.address);
-
   useEffect(() => {
     const fetchCountries = async () => {
       try {
@@ -189,13 +179,11 @@ const Page = () => {
             },
           }
         );
-        // Handle successful response, e.g., save token, redirect, etc.
         setCountries(response.data.data);
       } catch (error) {
         console.error(
           //@ts-ignore
           "Error fetching resource"
-          // error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
@@ -218,13 +206,11 @@ const Page = () => {
             },
           }
         );
-        // Handle successful response, e.g., save token, redirect, etc.
         setCountCity(response.data.data);
       } catch (error) {
         console.error(
           //@ts-ignore
           "Error fetching resource"
-          // error?.response?.data || error?.message
         );
       } finally {
         // Any cleanup or final actions
@@ -276,7 +262,6 @@ const Page = () => {
         description: response.data.message || "Success",
       });
       router.push("/confirmation");
-      // Handle successful response, e.g., save token, redirect, etc.
       try {
         const response = await axios.delete(`${BASE_URL}/api/v1/cart`, {
           headers: {
@@ -287,7 +272,7 @@ const Page = () => {
         toast({
           status: "success",
           description: response.data.message || "Success",
-        }); // Handle successful response, e.g., save token, redirect, etc.
+        }); 
       } catch (error) {
         toast({
           status: "error",
@@ -323,16 +308,13 @@ const Page = () => {
     (item: any) => item.product && item.product.isCouponActive === "true"
   );
 
-  console.log(couponProducts);
 
   const totalDiscount = couponProducts.reduce((acc: number, item: any) => {
     const price = Number(item.product?.salePrice) || 0; // Ensure price is a valid number
     const discountPercentage = couponInfo?.discountPercentage || 0; // Default to 0 if undefined
-    console.log(discountPercentage, price);
     return acc + (item.quantity * price * discountPercentage) / 100;
   }, 0);
 
-  console.log(totalDiscount);
 
   function formatNumberWithCommas(amount: number): string {
     return new Intl.NumberFormat("en-US").format(amount);
@@ -369,7 +351,6 @@ const Page = () => {
     e.preventDefault();
     const token = Cookies.get("token");
     if (!token) {
-      console.log("No token");
       openModal();
       setShowLogin(true);
       return;
@@ -814,7 +795,6 @@ const Page = () => {
 
           <div className="flex justify-center items-center my-6">
             <button
-              // onClick={handlePlaceOrder}
               onClick={(e) => validateForm(e)}
               className="flex justify-center items-center gap-2 text-white px-8 py-4 bg-primary hover:bg-[#05031A]  rounded-[3px] font-[700] disabled:bg-primary/50 disabled:cursor-not-allowed"
               disabled={!isFormValid}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import classNames from "classnames";
 import { FaArrowRight } from "react-icons/fa6";
 import Image from "next/image";
@@ -58,7 +58,6 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
         `${BASE_URL}/api/v1/auth/log-in`,
         signInData
       );
-      // Handle successful response, e.g., save token, redirect, etc.
       toast({
         status: "success",
         description: response.data.message || "Success",
@@ -71,7 +70,6 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
         //@ts-ignore
         description: error?.response?.data.message || error?.message || "Sign in error",
       });
-      // console.error("Sign In Error", error.response?.data.message || error.message);
     } finally {
       setIsSigningIn(false);
     }
@@ -99,7 +97,6 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
         `${BASE_URL}/api/v1/auth/sign-up`,
         signUpData
       );
-      // Handle successful response, e.g., show success message, redirect, etc.
       toast({
         status: "success",
         description: response.data.message || "Success",
@@ -112,7 +109,6 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
         //@ts-ignore
         description: error.response?.data.message || error?.message || "Sign up error",
       });
-      // console.error("Sign Up Error", error.response?.data || error.message);
     } finally {
       setIsSigningUp(false);
     }
@@ -121,8 +117,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
   const handleGoogle = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.get(`${BASE_URL}/api/v1/google`);
-      // Handle successful response, e.g., show success message, redirect, etc.
+      const response = await axios.get(`${BASE_URL}/api/v1/google/callback`);
       toast({
         status: "success",
         description: response.data.message || "Success",
@@ -135,52 +130,19 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
         //@ts-ignore
         description: error.response?.data.message || error?.message || "Sign up error",
       });
-      // console.error("Sign Up Error", error.response?.data || error.message);
     } finally {
       setIsSigningUp(false);
     }
   };
 
-  // const handleGoogle = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   try {
-  //     const response = await fetch(`${BASE_URL}/api/v1/google/callback`, {
-  //       method: "GET",
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error(`Error: ${response.statusText}`);
-  //     }
-
-  //     const data = await response.json();
-
-  //     // Handle successful response
-  //     toast({
-  //       status: "success",
-  //       description: data.message || "Success",
-  //     });
-
-  //     Cookie.set("token", data.data.accessToken.token);
-  //     closeModal();
-  //   } catch (error: any) {
-  //     toast({
-  //       status: "error",
-  //       description: error?.message || "Sign up error",
-  //     });
-  //   } finally {
-  //     setIsSigningUp(false);
-  //   }
-  // };
 
   const handleSuccess = async (response: any) => {
-    console.log("Login Success:", response);
     // Retrieve token from the credentialResponse object
     const token = response.credential; // This is the JWT token
     Cookie.set("token", token);
-    console.log("Token:", token);
     try {
       const response = await fetch(`${BASE_URL}/api/v1/google/callback`, {
-        method: "POST", // Use POST since you are sending data
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -192,9 +154,6 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       }
 
       const data = await response.json();
-
-      console.log(data)
-
       // Handle successful response from the backend
       toast({
         status: "success",
@@ -219,7 +178,6 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
   };
 
   const handleFailure = () => {
-    console.log("Login Failed");
     toast({
       status: "error",
       //@ts-ignore
@@ -349,7 +307,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                 )}
               </button>
             </form>
-            <div className="flex justify-between px-6 items-center">
+            {/* <div className="flex justify-between px-6 items-center">
               <div className="bg-[#E4E7E9] h-[2px] w-[45%]"></div>
               <button className="text-sm text-[#77878F]">or</button>
               <div className="bg-[#E4E7E9] h-[2px] w-[45%]"></div>
@@ -357,7 +315,6 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
             <div className="text-center px-6 py-4">
               <button
                 onClick={(e) => handleGoogle(e)}
-                // id="signInButton"
                 className="w-full bg-white border-[1px] border-[#E4E7E9] text-[#191C1F] py-2 rounded-[2px] h-[44px] mb-2 relative"
               >
                 <Image
@@ -369,29 +326,14 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                 />
                 Login with Google
               </button>
-              {/* <button className="w-full bg-white border-[1px] border-[#E4E7E9] text-[#191C1F] py-2 rounded-[2px] h-[44px] relative">
-                <Image
-                  src="/apple.png"
-                  alt=""
-                  width={20}
-                  height={20}
-                  className="absolute left-5"
-                />
-                Login with Apple
-              </button> */}
+             
               <GoogleOAuthProvider clientId={clientId}>
                 <GoogleLogin
-                  // onSuccess={(credentialResponse) => {
-                  //   console.log(credentialResponse);
-                  // }}
-                  // onError={() => {
-                  //   console.log("Login Failed");
-                  // }}
                   onSuccess={handleSuccess}
                   onError={handleFailure}
                 />
               </GoogleOAuthProvider>
-            </div>
+            </div> */}
           </>
         )}
 
@@ -538,16 +480,14 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                 )}
               </button>
             </form>
-            <div className="flex justify-between px-6 items-center">
+            {/* <div className="flex justify-between px-6 items-center">
               <div className="bg-[#E4E7E9] h-[2px] w-[45%]"></div>
               <button className="text-sm text-[#77878F]">or</button>
               <div className="bg-[#E4E7E9] h-[2px] w-[45%]"></div>
             </div>
             <div className="text-center px-6 py-4">
-              <Link
-                href={`${BASE_URL}/api/v1/google/callback`}
-                // onClick={(e) => handleGoogle(e)}
-                // id="signInButton"
+              <div
+                onClick={(e) => handleGoogle(e)}
                 className="w-full bg-white border-[1px] border-[#E4E7E9] text-[#191C1F] py-2 rounded-[2px] h-[44px] mb-2 relative"
               >
                 <Image
@@ -557,31 +497,15 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                   height={20}
                   className="absolute left-5"
                 />
-                Loginn with Google
-              </Link>
-              {/* <button className="w-full bg-white border-[1px] border-[#E4E7E9] text-[#191C1F] py-2 rounded-[2px] h-[44px] relative">
-                <Image
-                  src="/apple.png"
-                  alt=""
-                  width={20}
-                  height={20}
-                  className="absolute left-5"
-                />
-                Login with Apple
-              </button> */}
+                Login with Google
+              </div>
               <GoogleOAuthProvider clientId={clientId}>
                 <GoogleLogin
-                  // onSuccess={(credentialResponse) => {
-                  //   console.log(credentialResponse);
-                  // }}
-                  // onError={() => {
-                  //   console.log("Login Failed");
-                  // }}
                   onSuccess={handleSuccess}
                   onError={handleFailure}
                 />
               </GoogleOAuthProvider>
-            </div>
+            </div> */}
           </>
         )}
       </div>

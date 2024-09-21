@@ -5,7 +5,7 @@ import Image from "next/image";
 import Cookies from "js-cookie";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAppToast } from "@/app/providers/useAppToast";
 import Link from "next/link";
 
@@ -15,6 +15,7 @@ const Order = () => {
   const [single, setSingle] = useState<any>([]);
   const [id, setId] = useState<any>("");
   const [loading, setLoading] = useState(false);
+
   const handleFetchOrder = async (e: any) => {
     e.preventDefault();
     if (!id) {
@@ -107,7 +108,6 @@ const Order = () => {
     setShowDetails(!showDetails);
   };
 
-  console.log(single);
 
   return (
     <>
@@ -302,135 +302,7 @@ const Order = () => {
                 </span>
               </p>
             </div>
-
-            {/* <div className="flex px-[90px] justify-between w-full items-center gap-[26px] pb-[22px]">
-              <p className="text-[15px] text-[#787C82] leading-[19px]">
-                From :{" "}
-                <span className="text-black font-[500]"> {location}</span>
-              </p>{" "}
-              <p className="text-[15px] text-[#787C82] leading-[19px]">
-                To :{" "}
-                <span className="text-black font-[500]">
-                  {" "}
-                  {single &&
-                    single.customerAddress &&
-                    single.customerAddress.address}
-                </span>
-              </p>
-            </div> */}
-
-            {/* <div className="px-[90px]">
-              <p className="text-[15px] text-[#787C82] leading-[19px]">
-                Delivery progress -{" "}
-                {single.status === "pending"
-                  ? 5
-                  : single.status === "processing"
-                  ? 30
-                  : single.status === "shipped"
-                  ? 70
-                  : single.status === "delivered" ||
-                    single.status === "picked" ||
-                    single.status === "confirmed"
-                  ? 100
-                  : 0}
-                %
-              </p>
-              <div className="flex justify-between w-full items-center pt-[10px]">
-                <div className="w-[80%]">
-                  <div className="w-full bg-[#D9D9D9] rounded-full h-3">
-                    <div
-                      className="bg-[#FF7A00] h-3 rounded-full"
-                      style={{ width: `${progress}%` }}
-                    ></div>
-                  </div>
-                </div>
-                <div className="w-[20%]">
-                  <p className="text-right w-full text-[14px] font-[600] text-[#FF7A00]">
-                    Details
-                  </p>
-                </div>
-              </div>
-            </div> */}
           </div>
-          {/* <div className="flex justify-between items-start mt-4">
-            <div className="flex flex-col items-start">
-              <div className="flex justify-start items-center gap-[40px] pb-[56px] relative">
-                <div
-                  className={`w-[1px] h-[80px] top-8 left-3 absolute ${
-                    single.status !== "delivered"
-                      ? "bg-[#FF7A00]"
-                      : single.status === "processing"
-                      ? "bg-[#FF7A00]"
-                      : "bg-[#B6B9C1]"
-                  } `}
-                ></div>
-                <div
-                  className={`w-[25px] h-[25px] rounded-full ${
-                    single.status !== "delivered"
-                      ? "bg-[#FF7A00]"
-                      : "bg-[#B6B9C1]"
-                  }`}
-                ></div>
-                <div>
-                  <p className="text-[16px] font-[600] leading-[24px]">
-                    Courier service picks up package{" "}
-                  </p>
-                  <p className="text-[14px] text-[#8B909A] font-[500] leading-[20px]">
-                    2nd April 2024
-                  </p>
-                </div>
-              </div>
-              <div className="flex justify-start items-center gap-[40px] pb-[56px] relative">
-                <div
-                  className={`w-[1px] h-[80px] top-8 left-3 absolute ${
-                    single.status !== "delivered"
-                      ? "bg-[#FF7A00]"
-                      : "bg-[#B6B9C1]"
-                  }`}
-                ></div>
-                <div
-                  className={`w-[25px] h-[25px] rounded-full ${
-                    single.status !== "delivered"
-                      ? "bg-[#FF7A00]"
-                      : "bg-[#B6B9C1]"
-                  }`}
-                ></div>
-                <div>
-                  <p className="text-[16px] font-[600] leading-[24px]">
-                    Package sorted and loaded
-                  </p>
-                  <p className="text-[14px] text-[#8B909A] font-[500] leading-[20px]">
-                    5th April 2024
-                  </p>
-                </div>
-              </div>
-              <div className="flex justify-start items-center gap-[40px] pb-[56px]">
-                <div
-                  className={`w-[25px] h-[25px] rounded-full ${
-                    single.status === "delivered"
-                      ? "bg-[#FF7A00]"
-                      : "bg-[#B6B9C1]"
-                  }`}
-                ></div>
-                <div>
-                  <p className="text-[16px] font-[600] leading-[24px]">
-                    Package delivered{" "}
-                  </p>
-                  <p className="text-[14px] text-[#8B909A] font-[500] leading-[20px]">
-                    15th April 2024{" "}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div>
-              <p className="text-[20px] font-[600] leading-[24px] text-[#A0A1A4]">
-                Status :{" "}
-                <span className="text-primary">
-                  {single.status === "completed" ? "Arrived" : "In Transit"}
-                </span>
-              </p>
-            </div>
-          </div> */}
         </>
       )}
     </>

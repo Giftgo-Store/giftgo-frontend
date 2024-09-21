@@ -51,20 +51,16 @@ const Page = () => {
           Authorization: `Bearer ${Cookies.get("token")}`,
         },
       });
-      console.log(response.data.data);
       toast({
         status: "success",
         description: response.data.message || "Success",
       });
-      // Handle successful response, e.g., save token, redirect, etc.
       try {
         const response = await axios.get(`${BASE_URL}/api/v1/cart`, {
           headers: {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
         });
-        console.log(response.data.data);
-        // Handle successful response, e.g., save token, redirect, etc.
         setCartItems(response.data.data);
         toast({
           status: "success",
@@ -80,8 +76,10 @@ const Page = () => {
       } finally {
         // Any cleanup or final actions
       }
-      alert("Item deleted from cart");
-      console.log("Successful", response.data.data);
+       toast({
+         status: "success",
+         description: "Item deleted from cart",
+       });
     } catch (error) {
       toast({
         status: "error",
