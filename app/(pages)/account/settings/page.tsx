@@ -38,8 +38,6 @@ const Settings = () => {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
         });
-        console.log(response.data.data);
-        // Handle successful response, e.g., save token, redirect, etc.
         setUser(response.data.data);
       } catch (error) {
         console.log(error);
@@ -61,7 +59,6 @@ const Settings = () => {
             },
           }
         );
-        // Handle successful response, e.g., save token, redirect, etc.
         setCountries(response.data.data);
       } catch (error) {
         console.error(
@@ -89,7 +86,6 @@ const Settings = () => {
             },
           }
         );
-        // Handle successful response, e.g., save token, redirect, etc.
         setCountCity(response.data.data);
       } catch (error) {
         console.error(
@@ -113,9 +109,6 @@ const Settings = () => {
       setEmail(user.email);
       setPhone(user.phone);
       setAddress(user.address.address);
-      // setCountry(user.address.country);
-      // setCity(user.address.city);
-      // setRegion(user.address.state);
       setZipCode(user.address.postal_code);
     }
   }, [user]);
@@ -137,8 +130,6 @@ const Settings = () => {
           },
         }
       );
-      console.log(response.data);
-      // Handle successful response, e.g., save token, redirect, etc.
       toast({
         status: "success",
         description: response.data.message || "Success",
@@ -177,8 +168,6 @@ const Settings = () => {
           },
         }
       );
-      console.log(response.data);
-      // Handle successful response, e.g., save token, redirect, etc.
       toast({
         status: "success",
         description: response.data.message || "Success",
@@ -233,8 +222,6 @@ const Settings = () => {
           },
         }
       );
-      console.log(response.data);
-      // Handle successful response, e.g., save token, redirect, etc.
       toast({
         status: "success",
         description: response.data.message || "Success",

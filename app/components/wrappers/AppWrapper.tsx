@@ -14,7 +14,6 @@ const AppWrapper = ({
   children: React.ReactNode;
 }>) => {
   const pathname = usePathname();
-  // const path = pathname.includes
   return (
     <div className="relative" suppressHydrationWarning>
       {!pathname?.includes("admin") && (

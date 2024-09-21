@@ -21,7 +21,6 @@ const Page = () => {
     router.back();
   };
 
-  console.log(params);
   const [category, setCategory] = useState([]);
 
   const location = Cookies.get("location");
@@ -34,13 +33,6 @@ const Page = () => {
           );
           setCategory(response.data.data);
         } catch (error) {
-          //@ts-ignore
-          // toast({
-          //   status: "error",
-          //   description:
-          //     //@ts-expect-error
-          //     error?.response?.data || error?.message || "an error occurred ",
-          // });
         } finally {
           // Any cleanup or final actions
         }
@@ -105,14 +97,6 @@ const Page = () => {
             ) : (
               <p className="text-center font-medium">No product available</p>
             )}
-            {/* <Card />
-            <Card express={true} />
-            <Card />
-            <Card />
-            <Card express={true} />
-            <Card />
-            <Card express={true} />
-            <Card /> */}
           </div>
         </div>
 

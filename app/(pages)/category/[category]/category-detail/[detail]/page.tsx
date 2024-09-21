@@ -21,7 +21,6 @@ const Page = () => {
     router.back();
   };
 
-  console.log(params);
   const location = Cookies.get("location");
 
   useEffect(() => {
@@ -52,12 +51,6 @@ const Page = () => {
     fetchData();
   }, [location]);
 
-  
-  const cat: any = []
-  // category &&
-  // category.filter((cat: any) => cat._id === (params && params.detail));
-  console.log(cat)
-  console.log(category)
 
   return (
     <>
@@ -110,14 +103,6 @@ const Page = () => {
             ) : (
               <>No product available</>
             )}
-            {/* <Card />
-            <Card express={true} />
-            <Card />
-            <Card />
-            <Card express={true} />
-            <Card />
-            <Card express={true} />
-            <Card /> */}
           </div>
         </div>
 

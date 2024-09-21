@@ -34,7 +34,6 @@ const CheckoutModal: React.FC<ModalProps> = ({
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
         });
-        // Handle successful response, e.g., save token, redirect, etc.
         setCartItems(response.data.data);
       } catch (error) {
         console.error(
@@ -56,16 +55,12 @@ const CheckoutModal: React.FC<ModalProps> = ({
           Authorization: `Bearer ${Cookies.get("token")}`,
         },
       });
-      console.log(response.data.data);
-      // Handle successful response, e.g., save token, redirect, etc.
       try {
         const response = await axios.get(`${BASE_URL}/api/v1/cart`, {
           headers: {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
         });
-        console.log(response.data.data);
-        // Handle successful response, e.g., save token, redirect, etc.
         setCartItems(response.data.data);
         toast({
           status: "success",
@@ -84,7 +79,6 @@ const CheckoutModal: React.FC<ModalProps> = ({
       }
       triggerRefetch();
       alert("Item deleted from cart");
-      console.log("Successful", response.data.data);
     } catch (error) {
       toast({
         status: "error",

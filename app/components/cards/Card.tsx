@@ -57,7 +57,6 @@ const Card = ({ lists }: CardProps) => {
 
   const closeModal = () => setShowModal(false);
 
-  console.log(lists);
 
   const calculateAverageRating = (reviews: Review[]): number => {
     if (!reviews || reviews.length === 0) return 0;
@@ -69,7 +68,6 @@ const Card = ({ lists }: CardProps) => {
   };
 
   const averageRating = calculateAverageRating(lists?.reviews || []);
-  console.log(`Average Rating: ${averageRating}`);
 
     const query = new URLSearchParams({
       quantity: '1',
@@ -110,7 +108,7 @@ const Card = ({ lists }: CardProps) => {
                 <div
                   className="w-[48px] h-[48px] rounded-full bg-primary flex justify-center items-center"
                   onClick={(e) => {
-                    e.stopPropagation(); // Prevents card navigation when clicking this icon
+                    e.stopPropagation();
                     router.push(`/product/${lists?._id}`);
                   }}
                 >
@@ -154,11 +152,9 @@ const Card = ({ lists }: CardProps) => {
           </p>
           <button
             onClick={(e) => {
-              e.stopPropagation(); // Prevents card navigation when clicking this icon
+              e.stopPropagation();
               router.push(`/order-now/${lists && lists._id}?${query}`);
             }}
-            // onClick={(e) => e.stopPropagation()} // Prevents card click event
-            // href={`/order-now/${lists && lists._id}?${query}`}
             type="submit"
             className="w-full bg-primary relative z-[999] hover:bg-[#05031A]  text-white py-2 h-[48px] rounded-[8px] flex justify-center items-center gap-4 font-[700]"
           >

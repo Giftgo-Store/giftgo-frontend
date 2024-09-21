@@ -38,7 +38,6 @@ const ResetPassword = () => {
         `${BASE_URL}/api/v1/auth/reset-password`,
         { otp, newPassword: password, confirmPassword }
       );
-      // Handle successful response, e.g., save token, redirect, etc.
       toast({
         status: "success",
         description: response.data.message || "Success",
@@ -49,7 +48,6 @@ const ResetPassword = () => {
         status: "error",
         description: "Invalid token. Please request for another token",
       });
-      // console.error("Sign In Error", error.response?.data || error.message);
     } finally {
       setIsSending(false);
     }

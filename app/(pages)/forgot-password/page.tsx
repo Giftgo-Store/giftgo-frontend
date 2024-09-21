@@ -27,7 +27,6 @@ const ForgotPassword = () => {
         `${BASE_URL}/api/v1/auth/forgot-password`,
         { email }
       );
-      // Handle successful response, e.g., save token, redirect, etc.
       toast({
         status: "success",
         description: response.data.message || "Success",
@@ -38,7 +37,6 @@ const ForgotPassword = () => {
         status: "error",
         description: error.response.data.message,
       });
-      // console.error("Sign In Error", error.response?.data.message);
     } finally {
       setIsSending(false);
     }

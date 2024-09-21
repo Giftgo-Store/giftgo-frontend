@@ -31,7 +31,6 @@ import "swiper/css/autoplay";
 const page = () => {
   const toast = useAppToast();
   const params = useParams();
-  console.log(params?.category);
   const [category, setCategory] = useState([]);
   const [product, setProduct] = useState<any>([]);
   const [revPerPage, setRevPerPage] = useState(1);
@@ -42,7 +41,6 @@ const page = () => {
         setRevPerPage(1);
       }
     };
-    console.log(revPerPage, window.innerWidth);
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -55,7 +53,6 @@ const page = () => {
         setRevPerPage(4);
       }
     };
-    console.log(revPerPage, window.innerWidth);
 
     window.addEventListener("resize", handleResize);
 
@@ -71,22 +68,11 @@ const page = () => {
       try {
         const response = await axios.get(
           `${BASE_URL}/api/v1/products/location/${location}`,
-          // {
-          //   headers: {
-          //     Authorization: `Bearer ${Cookies.get("token")}`,
-          //   },
-          // }
         );
         setProduct(response.data.data.products[0]);
         // Handle successful response, e.g., save token, redirect, etc.
       } catch (error) {
-        //@ts-ignore
-        // toast({
-        //   status: "error",
-        //   description:
-        //     //@ts-expect-error
-        //     error?.response?.data || error?.message || "an error occurred ",
-        // });
+       
       } finally {
         // Any cleanup or final actions
       }
@@ -102,15 +88,7 @@ const page = () => {
           `${BASE_URL}/api/v1/products/locate/${location} `
         );
         setCategory(response.data.data);
-        // Handle successful response, e.g., save token, redirect, etc.
       } catch (error) {
-        //@ts-ignore
-        // toast({
-        //   status: "error",
-        //   description:
-        //     //@ts-expect-error
-        //     error?.response?.data || error?.message || "an error occurred ",
-        // });
       } finally {
         // Any cleanup or final actions
       }
@@ -119,35 +97,10 @@ const page = () => {
     fetchData();
   }, [params?.category]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `${BASE_URL}/api/v1/products/location/${location}`
-  //       );
-  //       console.log(response.data.data.data);
-  //       setCategory(response.data.data);
-  //       // Handle successful response, e.g., save token, redirect, etc.
-  //     } catch (error) {
-  //       //@ts-ignore
-  //       // toast({
-  //       //   status: "error",
-  //       //   description:
-  //       //     //@ts-expect-error
-  //       //     error?.response?.data || error?.message || "an error occurred ",
-  //       // });
-  //     } finally {
-  //       // Any cleanup or final actions
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [params && params.category]);
   const cat = category && category.map((cat:any) => cat.products)
 
   const allItems = cat && cat.flatMap((innerArray) => innerArray);
 
-  console.log(allItems)
 
   return (
     <>
@@ -208,7 +161,6 @@ const page = () => {
               >
                 {category &&
                   category.map((cat: any, i: any) => {
-                    console.log(cat);
                     return (
                       <SwiperSlide
                         key={i}

@@ -6,7 +6,6 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import BASE_URL from "@/app/config/baseurl";
 import axios from "axios";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
 const Page = () => {
@@ -15,7 +14,6 @@ const Page = () => {
   const router = useRouter();
 
   const searchParams = useSearchParams();
-  console.log(searchParams?.get("filter"));
   useEffect(() => {
     const fetchCartItems = async () => {
       if (searchParams?.get("product") !== null) {
@@ -26,8 +24,6 @@ const Page = () => {
               query: searchParams?.get("product"),
             }
           );
-          console.log(response.data.data.length);
-          // Handle successful response, e.g., save token, redirect, etc.
           if (response.data.data.length > 0) {
             setResult(response.data.data);
             setShowResult(true);
@@ -37,12 +33,10 @@ const Page = () => {
             return;
           }
 
-          console.log("Successful", response.data.data);
         } catch (error) {
           console.error(
             //@ts-ignore
             "Error fetching resource"
-            // error?.response?.data || error?.message
           );
         } finally {
           // Any cleanup or final actions
@@ -54,8 +48,6 @@ const Page = () => {
               "filter"
             )}`
           );
-          console.log(response.data.data.products);
-          // Handle successful response, e.g., save token, redirect, etc.
           if (response.data.data.products.length > 0) {
             setResult(response.data.data.products);
             setShowResult(true);
@@ -68,7 +60,6 @@ const Page = () => {
           console.error(
             //@ts-ignore
             "Error fetching resource"
-            // error?.response?.data || error?.message
           );
         } finally {
           // Any cleanup or final actions
@@ -133,14 +124,6 @@ const Page = () => {
               </div>
             </div>
             <div className="flex justify-center items-center flex-wrap gap-6">
-              {/* <Card />
-              <Card express={true} />
-              <Card />
-              <Card />
-              <Card express={true} />
-              <Card />
-              <Card express={true} />
-              <Card /> */}
               {result.length > 0 ? (
                 result.map((product: any, i: any) => {
                   return <Card key={i} lists={product} />;

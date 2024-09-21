@@ -21,11 +21,9 @@ const Account = () => {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
         });
-        console.log(response.data.data);
         // Handle successful response, e.g., save token, redirect, etc.
         setUser(response.data.data);
       } catch (error: any) {
-        console.log(error.response.status)
         if(error?.response?.status === 401) {
           Cookies.remove("token");
           return;

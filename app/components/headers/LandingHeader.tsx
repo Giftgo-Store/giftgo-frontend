@@ -50,9 +50,7 @@ const LandingHeader = () => {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
         });
-        console.log(response.data.data);
         setCartItems(response.data.data);
-        console.log("Successful", response.data.data);
       } catch (error) {
         console.error(
           //@ts-ignore
@@ -69,9 +67,7 @@ const LandingHeader = () => {
     const fetchCartItems = async () => {
       try {
         const response = await axios.get(`${BASE_URL}/api/v1/category`);
-        console.log(response.data.data);
         setCategories(response.data.data);
-        console.log("Successful", response.data.data);
       } catch (error) {
         console.error(
           //@ts-ignore
@@ -89,7 +85,6 @@ const LandingHeader = () => {
       try {
         const response = await axios.get(`${BASE_URL}/api/v1/location`);
         setLocation(response.data.data);
-        console.log("Successful", response.data.data);
       } catch (error) {
         //@ts-ignore
         console.error(
@@ -370,9 +365,7 @@ const LandingHeader = () => {
             >
               <p className="text-[#808080] text-[14px]">Contact</p>
               <p className="text-[#191C1F] font-[500]">+234 91 1414 0300</p>
-            </Link>
-
-           
+            </Link>           
           </div>
         </div>
       </div>
