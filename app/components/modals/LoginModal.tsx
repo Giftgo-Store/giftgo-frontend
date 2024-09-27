@@ -68,8 +68,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       toast({
         status: "error",
         //@ts-ignore
-        description:
-          error?.response?.data.message || error?.message || "Sign in error",
+        description: error?.response?.data.message || error?.message || "Sign in error",
       });
     } finally {
       setIsSigningIn(false);
@@ -108,8 +107,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       toast({
         status: "error",
         //@ts-ignore
-        description:
-          error.response?.data.message || error?.message || "Sign up error",
+        description: error.response?.data.message || error?.message || "Sign up error",
       });
     } finally {
       setIsSigningUp(false);
@@ -130,13 +128,13 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       toast({
         status: "error",
         //@ts-ignore
-        description:
-          error.response?.data.message || error?.message || "Sign up error",
+        description: error.response?.data.message || error?.message || "Sign up error",
       });
     } finally {
       setIsSigningUp(false);
     }
   };
+
 
   const handleSuccess = async (response: any) => {
     // Retrieve token from the credentialResponse object
@@ -187,8 +185,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
     });
   };
 
-  const clientId =
-    "787438596934-440o4qkmhn6o09170ou6dlms89g1j8tj.apps.googleusercontent.com";
+  const clientId = "787438596934-440o4qkmhn6o09170ou6dlms89g1j8tj.apps.googleusercontent.com";
 
   return (
     <div
@@ -310,7 +307,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                 )}
               </button>
             </form>
-            <div className="flex justify-between px-6 items-center">
+            {/* <div className="flex justify-between px-6 items-center">
               <div className="bg-[#E4E7E9] h-[2px] w-[45%]"></div>
               <button className="text-sm text-[#77878F]">or</button>
               <div className="bg-[#E4E7E9] h-[2px] w-[45%]"></div>
@@ -329,14 +326,14 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                 />
                 Login with Google
               </button>
-
+             
               <GoogleOAuthProvider clientId={clientId}>
                 <GoogleLogin
                   onSuccess={handleSuccess}
                   onError={handleFailure}
                 />
               </GoogleOAuthProvider>
-            </div>
+            </div> */}
           </>
         )}
 
