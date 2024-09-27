@@ -232,63 +232,7 @@ export default function Dashboard() {
     },
   };
 
-  const rows = [
-    {
-      id: "#5069",
-      issued_date: "31 March 2024",
-      total: "12000",
-      action: "Active",
-    },
-    {
-      id: "#5089",
-      issued_date: "31 March 2024",
-      total: "12000",
-      action: "Active",
-    },
-    {
-      id: "#5089",
-      issued_date: "31 March 2024",
-      total: "12000",
-      action: "Active",
-    },
-    {
-      id: "#5089",
-      issued_date: "31 March 2024",
-      total: "12000",
-      action: "Active",
-    },
-    {
-      id: "#5089",
-      issued_date: "31 March 2024",
-      total: "12000",
-      action: "Active",
-    },
-    {
-      id: "#5089",
-      issued_date: "31 March 2024",
-      total: "12000",
-      action: "Active",
-    },
-  ];
-
-  const columns = [
-    {
-      key: "id",
-      label: "ID",
-    },
-    {
-      key: "issued date",
-      label: "ISSUED DATE",
-    },
-    {
-      key: "total",
-      label: "TOTAL",
-    },
-    {
-      key: "action",
-      label: "ACTION",
-    },
-  ];
+  
 
   const bestSellingcolumns = [
     {
@@ -327,24 +271,7 @@ export default function Dashboard() {
       label: "TOTAL",
     },
   ];
-  const tableTopContent = useMemo(() => {
-    return (
-      <div className="flex justify-between py-3">
-        <div className="flex flex-col">
-          <p className="font-semibold text-lg text-[#23272E]">
-            Last Transactions
-          </p>
-        </div>
-        <Button
-          isIconOnly
-          className="bg-transparent text-[#1EB564] w-[100px]"
-          onClick={option}
-        >
-          View Details
-        </Button>
-      </div>
-    );
-  }, []);
+  
   const bestSellingTableTopContent = useMemo(() => {
     return (
       <div className="flex justify-between py-3 w-full">
