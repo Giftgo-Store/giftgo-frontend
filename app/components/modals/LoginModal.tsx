@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import classNames from "classnames";
 import { FaArrowRight } from "react-icons/fa6";
@@ -9,6 +10,8 @@ import Cookie from "js-cookie";
 import { useAppToast } from "@/app/providers/useAppToast";
 import Link from "next/link";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { Button } from "@nextui-org/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 interface ModalProps {
   showModal: boolean;
@@ -30,6 +33,10 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
 
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
+
+  //get the token
+  const session: any = useSession();
+  const token = session?.data?.token;
 
   const handlePassword = () => {
     setShowPassword(!showPassword);
@@ -68,7 +75,8 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       toast({
         status: "error",
         //@ts-ignore
-        description: error?.response?.data.message || error?.message || "Sign in error",
+        description:
+          error?.response?.data.message || error?.message || "Sign in error",
       });
     } finally {
       setIsSigningIn(false);
@@ -107,7 +115,8 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       toast({
         status: "error",
         //@ts-ignore
-        description: error.response?.data.message || error?.message || "Sign up error",
+        description:
+          error.response?.data.message || error?.message || "Sign up error",
       });
     } finally {
       setIsSigningUp(false);
@@ -128,13 +137,13 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       toast({
         status: "error",
         //@ts-ignore
-        description: error.response?.data.message || error?.message || "Sign up error",
+        description:
+          error.response?.data.message || error?.message || "Sign up error",
       });
     } finally {
       setIsSigningUp(false);
     }
   };
-
 
   const handleSuccess = async (response: any) => {
     // Retrieve token from the credentialResponse object
@@ -185,7 +194,8 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
     });
   };
 
-  const clientId = "787438596934-440o4qkmhn6o09170ou6dlms89g1j8tj.apps.googleusercontent.com";
+  const clientId =
+    "787438596934-440o4qkmhn6o09170ou6dlms89g1j8tj.apps.googleusercontent.com";
 
   return (
     <div
@@ -307,6 +317,49 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                 )}
               </button>
             </form>
+            <div className="w-full flex justify-center items-center">
+              <Button
+                fullWidth
+                className="bg-white max-w-[200px] shadow-md  mx-auto h-[45px] rounded-sm "
+                onClick={() => {
+                  signIn("google", {
+                    redirect: true,
+                    callbackUrl: "/",
+                  });
+                }}
+                startContent={
+                  <Image
+                    src="/Google.png"
+                    alt=""
+                    width={20}
+                    height={20}
+                    className=""
+                  />
+                }
+              >
+                Sign up with Google
+              </Button>
+            </div>
+
+            {/* logout button */}
+            {/* <Button
+              fullWidth
+              className="bg-white max-w-[200px] shadow-md  mx-auto h-[45px] rounded-sm "
+              onClick={() => {
+                signOut()
+              }}
+              startContent={
+                <Image
+                  src="/Google.png"
+                  alt=""
+                  width={20}
+                  height={20}
+                  className=""
+                />
+              }
+            >
+              logout
+            </Button> */}
             {/* <div className="flex justify-between px-6 items-center">
               <div className="bg-[#E4E7E9] h-[2px] w-[45%]"></div>
               <button className="text-sm text-[#77878F]">or</button>

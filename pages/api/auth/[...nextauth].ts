@@ -4,6 +4,28 @@ import Credentials from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import BASE_URL from "@/app/config/baseurl";
 
+async function loginWithGoogle(user: { name: string; email: string }) {
+  try {
+    const res = await fetch(`${BASE_URL}/api/v1/auth/sign-up-google`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: user.email,
+        name: user.name,
+      }),
+    });
+    const resData = await res.json();
+    if (res.ok) {
+      return resData.data.accessToken.token;
+    }
+    return null;
+  } catch (error) {
+    // console.log(error);
+  }
+}
+
 export const authOptions = {
   // Configure one or more authentication providers
   pages: {
@@ -11,6 +33,11 @@ export const authOptions = {
     error: "/admin/auth/login",
   },
   providers: [
+    GoogleProvider({
+      name: "google",
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
     Credentials({
       name: "credentials",
       credentials: {},
@@ -51,9 +78,13 @@ export const authOptions = {
   ],
   callbacks: {
     // If there is a token, the user is authenticated
-    async jwt({ token, user }: any) {
+    async jwt({ token, user, account }: any) {
       if (user) {
         token.accessToken = user;
+      }
+      if (account && account.provider === "google") {
+        const userToken = await loginWithGoogle(user);
+        token.accessToken = userToken;
       }
       return token;
     },
@@ -70,6 +101,5 @@ export const authOptions = {
 
   secret: process.env.NEXTAUTH_SECRET,
 };
-
 
 export default NextAuth(authOptions);
