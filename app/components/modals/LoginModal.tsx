@@ -329,15 +329,15 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                 }}
                 startContent={
                   <Image
-                    src="/Google.png"
+                    src="/googleIcon.png"
                     alt=""
-                    width={20}
-                    height={20}
-                    className=""
+                    width={1000}
+                    height={1000}
+                    className="w-[20px] h-[20px]"
                   />
                 }
               >
-                Sign up with Google
+                Sign in with Google
               </Button>
             </div>
 
@@ -532,6 +532,29 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                   </>
                 )}
               </button>
+              <div className="w-full flex justify-center items-center py-2">
+                <Button
+                  fullWidth
+                  className="bg-white max-w-[200px] shadow-md  mx-auto h-[45px] rounded-sm "
+                  onClick={() => {
+                    signIn("google", {
+                      redirect: true,
+                      callbackUrl: "/",
+                    });
+                  }}
+                  startContent={
+                    <Image
+                      src="/googleIcon.png"
+                      alt=""
+                      width={1000}
+                      height={1000}
+                      className="w-[20px] h-[20px]"
+                    />
+                  }
+                >
+                  Sign up with Google
+                </Button>
+              </div>
             </form>
             {/* <div className="flex justify-between px-6 items-center">
               <div className="bg-[#E4E7E9] h-[2px] w-[45%]"></div>
