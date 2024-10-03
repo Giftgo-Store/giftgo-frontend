@@ -1,6 +1,6 @@
 "use client";
 import { useSession } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import BASE_URL from "@/app/config/baseurl";
 import { useEffect, useState } from "react";
 import ReviewCard from "@/app/components/review/reviewCard";
@@ -109,7 +109,7 @@ export default function Reviews({ params }: { params: { id: string } }) {
             ],
           }}
           value={filterValue}
-          onChange={(e:any) => {
+          onChange={(e: any) => {
             setFilterValue(e.target.value);
           }}
         ></Input>
