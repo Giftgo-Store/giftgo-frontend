@@ -103,11 +103,14 @@ const Settings = () => {
     countCity && countCity.filter((count: any) => count.country === country);
 
   useEffect(() => {
-    if (user && user.address) {
+    if (user) {
       setFirstName(user && user?.name && user?.name.split(" ")[0]);
       setLastName(user && user?.name && user?.name.split(" ")[1]);
       setEmail(user.email);
       setPhone(user.phone);
+    }
+    
+    if(user && user?.address) {
       setAddress(user.address.address);
       setZipCode(user.address.postal_code);
     }
@@ -278,7 +281,7 @@ const Settings = () => {
               type="text"
               className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-full"
               value={firstName + " " + lastName}
-              onChange={(e) => setLastName(e.target.value)}
+              // onChange={(e) => setLastName(e.target.value)}
             />
           </fieldset>
           <div className="w-full flex justify-between items-center gap-4">
@@ -290,7 +293,13 @@ const Settings = () => {
                 type="email"
                 className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-full"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  if (user.provider === "google") {
+                    return;
+                  } else {
+                    setEmail(e.target.value);
+                  }
+                }}
               />
             </fieldset>
             <fieldset className="flex flex-col items-start gap-2 w-[50%]">
@@ -490,7 +499,13 @@ const Settings = () => {
                 type="email"
                 className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-full"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  if (user.provider === "google") {
+                    return;
+                  } else {
+                    setEmail(e.target.value);
+                  }
+                }}
               />
             </fieldset>
             <fieldset className="flex flex-col items-start gap-2 lg:w-[50%]">
@@ -536,115 +551,117 @@ const Settings = () => {
         </form>
       </div>
 
-      <div className="mb-[56px] border-[1px] border-[#E4E7E9] rounded-[4px]">
-        <h1 className="text-[14px] font-[500] leading-[24px] border-b-[1px] border-b-[#E4E7E9] text-[#191C1F] py-[16px] px-[24px]">
-          CHANGE PASSWORD
-        </h1>
-
-        <form action="" className="flex flex-col items-start gap-4 p-[24px]">
-          <fieldset className="flex flex-col items-start gap-2 w-full">
-            <label htmlFor="" className="text-[#191C1F] text-[14px]">
-              Current Password
-            </label>
-            <div className="relative w-full">
-              <input
-                type={showPassword ? "text" : "password"}
-                className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-full"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-              />
-              {!showPassword ? (
-                <FiEyeOff
-                  onClick={handlePassword}
-                  className="absolute right-3 top-3"
-                />
-              ) : (
-                <FiEye
-                  onClick={handlePassword}
-                  className="absolute right-3 top-3"
-                />
-              )}
-            </div>
-          </fieldset>
-          <fieldset className="flex flex-col items-start gap-2 w-full">
-            <label htmlFor="" className="text-[#191C1F] text-[14px]">
-              New Password
-            </label>
-            <div className="relative w-full">
-              <input
-                type={showPassword ? "text" : "password"}
-                className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-full"
-                placeholder="8+ characters"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
-              {!showPassword ? (
-                <FiEyeOff
-                  onClick={handlePassword}
-                  className="absolute right-3 top-3"
-                />
-              ) : (
-                <FiEye
-                  onClick={handlePassword}
-                  className="absolute right-3 top-3"
-                />
-              )}
-            </div>
-          </fieldset>
-          <fieldset className="flex flex-col items-start gap-2 w-full">
-            <label htmlFor="" className="text-[#191C1F] text-[14px]">
-              Confirm Password
-            </label>
-            <div className="relative w-full">
-              <input
-                type={showPassword ? "text" : "password"}
-                className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-full"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-              {!showPassword ? (
-                <FiEyeOff
-                  onClick={handlePassword}
-                  className="absolute right-3 top-3"
-                />
-              ) : (
-                <FiEye
-                  onClick={handlePassword}
-                  className="absolute right-3 top-3"
-                />
-              )}
-            </div>
-          </fieldset>
-          <button
-            onClick={(e) => handlePasswordChange(e)}
-            className="mt-2 flex justify-center items-center w-[204px] gap-[35px] text-white px-6 py-4 bg-primary rounded-[3px] font-[700] text-[14px]"
-          >
-            {loading3 && (
-              <svg
-                className="animate-spin h-5 w-5 mr-3 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v8H4z"
-                ></path>
-              </svg>
-            )}
+      {user?.provider !== "google" && (
+        <div className="mb-[56px] border-[1px] border-[#E4E7E9] rounded-[4px]">
+          <h1 className="text-[14px] font-[500] leading-[24px] border-b-[1px] border-b-[#E4E7E9] text-[#191C1F] py-[16px] px-[24px]">
             CHANGE PASSWORD
-          </button>
-        </form>
-      </div>
+          </h1>
+
+          <form action="" className="flex flex-col items-start gap-4 p-[24px]">
+            <fieldset className="flex flex-col items-start gap-2 w-full">
+              <label htmlFor="" className="text-[#191C1F] text-[14px]">
+                Current Password
+              </label>
+              <div className="relative w-full">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-full"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                />
+                {!showPassword ? (
+                  <FiEyeOff
+                    onClick={handlePassword}
+                    className="absolute right-3 top-3"
+                  />
+                ) : (
+                  <FiEye
+                    onClick={handlePassword}
+                    className="absolute right-3 top-3"
+                  />
+                )}
+              </div>
+            </fieldset>
+            <fieldset className="flex flex-col items-start gap-2 w-full">
+              <label htmlFor="" className="text-[#191C1F] text-[14px]">
+                New Password
+              </label>
+              <div className="relative w-full">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-full"
+                  placeholder="8+ characters"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+                {!showPassword ? (
+                  <FiEyeOff
+                    onClick={handlePassword}
+                    className="absolute right-3 top-3"
+                  />
+                ) : (
+                  <FiEye
+                    onClick={handlePassword}
+                    className="absolute right-3 top-3"
+                  />
+                )}
+              </div>
+            </fieldset>
+            <fieldset className="flex flex-col items-start gap-2 w-full">
+              <label htmlFor="" className="text-[#191C1F] text-[14px]">
+                Confirm Password
+              </label>
+              <div className="relative w-full">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="border-[1px] border-[#E4E7E9] rounded-[2px] outline-none h-[44px] px-4 text-[14px] w-full"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+                {!showPassword ? (
+                  <FiEyeOff
+                    onClick={handlePassword}
+                    className="absolute right-3 top-3"
+                  />
+                ) : (
+                  <FiEye
+                    onClick={handlePassword}
+                    className="absolute right-3 top-3"
+                  />
+                )}
+              </div>
+            </fieldset>
+            <button
+              onClick={(e) => handlePasswordChange(e)}
+              className="mt-2 flex justify-center items-center w-[204px] gap-[35px] text-white px-6 py-4 bg-primary rounded-[3px] font-[700] text-[14px]"
+            >
+              {loading3 && (
+                <svg
+                  className="animate-spin h-5 w-5 mr-3 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  ></path>
+                </svg>
+              )}
+              CHANGE PASSWORD
+            </button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };
