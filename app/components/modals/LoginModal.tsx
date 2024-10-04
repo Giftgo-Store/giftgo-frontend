@@ -38,9 +38,9 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
   const session: any = useSession();
   const token = session?.data?.token;
 
-  console.log(token);
-
-  Cookie.set("token", session?.data?.token);
+  if (token !== undefined) {
+    Cookie.set("token", session?.data?.token);
+  }
 
   const handlePassword = () => {
     setShowPassword(!showPassword);
