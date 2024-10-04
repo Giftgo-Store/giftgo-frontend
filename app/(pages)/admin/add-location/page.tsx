@@ -100,6 +100,7 @@ export default function AddLocation() {
       // console.log(error);
     }
   };
+
   const addLocation = async () => {
     const data = new FormData();
     data.append("image", selectedImage as unknown as Blob);
@@ -331,8 +332,6 @@ export default function AddLocation() {
                             success: "location deleted",
                             error: "An error occured , please try again",
                           });
-                        } else {
-                          toast.error("Image is required");
                         }
                       }}
                     >
