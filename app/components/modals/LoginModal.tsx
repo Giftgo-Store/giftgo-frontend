@@ -38,6 +38,10 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
   const session: any = useSession();
   const token = session?.data?.token;
 
+  if (token !== undefined) {
+    Cookie.set("token", session?.data?.token);
+  }
+
   const handlePassword = () => {
     setShowPassword(!showPassword);
   };
@@ -75,8 +79,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       toast({
         status: "error",
         //@ts-ignore
-        description:
-          error?.response?.data.message || error?.message || "Sign in error",
+        description: error?.response?.data.message || error?.message || "Sign in error",
       });
     } finally {
       setIsSigningIn(false);
@@ -115,8 +118,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       toast({
         status: "error",
         //@ts-ignore
-        description:
-          error.response?.data.message || error?.message || "Sign up error",
+        description: error.response?.data.message || error?.message || "Sign up error",
       });
     } finally {
       setIsSigningUp(false);
@@ -137,8 +139,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
       toast({
         status: "error",
         //@ts-ignore
-        description:
-          error.response?.data.message || error?.message || "Sign up error",
+        description: error.response?.data.message || error?.message || "Sign up error",
       });
     } finally {
       setIsSigningUp(false);
