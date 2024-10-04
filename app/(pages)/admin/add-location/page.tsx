@@ -326,13 +326,11 @@ export default function AddLocation() {
                       isIconOnly
                       className="bg-transparent z-50"
                       onClick={() => {
-                        if (selectedImage) {
-                          toast.promise(deleteLocation(location._id), {
-                            pending: "deleting location",
-                            success: "location deleted",
-                            error: "An error occured , please try again",
-                          });
-                        }
+                        toast.promise(deleteLocation(location._id), {
+                          pending: "deleting location",
+                          success: "location deleted",
+                          error: "An error occured , please try again",
+                        });
                       }}
                     >
                       <HiOutlineTrash size={20} />
