@@ -329,13 +329,14 @@ export default function AddProducts() {
 
       if (res.ok) {
         resetForm();
+        toast.success("Product information added");
       } else {
-        toast.error("An error occured, please try again");
+        toast.error(productData.message);
       }
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      toast.error("An error occured, please try again");
+      toast.error("An error has occured ,please try again");
     }
   };
 
@@ -366,7 +367,9 @@ export default function AddProducts() {
       if (res.ok) {
         resetForm();
         setLoading(false);
+        toast.success("Product information edited");
       }
+
       console.log(productData);
     } catch (error) {
       setLoading(false);
@@ -374,33 +377,6 @@ export default function AddProducts() {
     }
   };
 
-  // const loginAdmin = async () => {
-  //   const data = {
-  //     email: "giftgo@gmail.com",
-  //     password: "etrtrfhn",
-  //   };
-  //   try {
-  //     const res = await fetch(
-  //       "https://giftgo.onrender.com/api/v1/auth/sign-in",
-  //       {
-  //         headers: {
-  //           Accept: "application/json",
-  //           "Content-Type": `application/json`,
-  //         },
-  //         method: "POST",
-  //         body: JSON.stringify(data),
-  //       }
-  //     );
-  //     const resData = await res.json();
-  //     // setItems(productData)
-  //     console.log(resData);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-  // useEffect(() => {
-  //   loginAdmin()
-  // },[])
   const getAllCategory = async () => {
     try {
       const res = await fetch(`${API}/category/all-categories`, {
@@ -437,7 +413,7 @@ export default function AddProducts() {
       getAllLocations();
     }
   }, [token]);
-  
+
   const fetchProduct = async (id: string) => {
     try {
       const res = await fetch(`${API}/products/${id}`, {
@@ -560,13 +536,13 @@ export default function AddProducts() {
           if (edit) {
             toast.promise(editProducts(), {
               pending: "Editing product information ",
-              success: "Product information edited",
+
               error: "An error occured , please try again",
             });
           } else {
             toast.promise(addProducts(), {
               pending: "Adding product information ",
-              success: "Product information added",
+
               error: "An error occured , please try again",
             });
           }
