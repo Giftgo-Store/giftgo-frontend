@@ -107,7 +107,6 @@ export default function AddProducts() {
     JPY: "",
     NGN: "",
   });
-  const countries = ["USA", "NIGERIA", "TOKYO", "GERMANY"];
   const searchParams = useSearchParams();
   const edit = searchParams?.get("edit");
 
@@ -328,7 +327,7 @@ export default function AddProducts() {
 
       const productData = await res.json();
 
-      if (productData.statusCode === 201) {
+      if (res.ok) {
         resetForm();
       } else {
         toast.error("An error occured, please try again");

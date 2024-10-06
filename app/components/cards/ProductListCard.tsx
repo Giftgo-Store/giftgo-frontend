@@ -7,6 +7,7 @@ import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
+  Spacer,
 } from "@nextui-org/react";
 import { MouseEventHandler } from "react";
 import { HiDotsVertical } from "react-icons/hi";
@@ -42,15 +43,17 @@ export default function ProductListCard({
   return (
     <div className="bg-white p-4 sm:max-w-[360px] w-full flex flex-col gap-4 rounded-lg">
       <div className="flex gap-2 w-full h-max">
-        <Image
-          removeWrapper
-          src={avatar}
-          alt="Preview"
-          className="object-cover w-[90px] h-[80px] rounded-lg"
-          width={100}
-          height={100}
-        />
-        <div className="flex justify-between w-full items-start ">
+        <div className="max-w-[90px] w-full h-[80px]">
+          <Image
+            removeWrapper
+            src={avatar}
+            alt="Preview"
+            className="object-cover w-[90px] h-[80px] rounded-lg"
+            width={100}
+            height={100}
+          />
+        </div>
+        <div className="flex justify-between items-start w-full ">
           <div className="flex flex-col justify-between h-full">
             <div className="flex flex-col gap-1">
               <p className="font-semibold text-[15px] leading-[17.63px] max-w-[150px] w-full whitespace-wrap whitespace-pre-wrap text-ellipsis overflow-hidden line-clamp-2">
@@ -116,6 +119,7 @@ export default function ProductListCard({
           </div>
         </div>
       </div>
+      <Spacer y={2}></Spacer>
       <div>
         <p className="font-semibold text-base">Summary</p>
         <p className="text-[#8B909A] text-sm max-h-[60px] whitespace-wrap whitespace-pre-wrap text-ellipsis overflow-hidden line-clamp-2">

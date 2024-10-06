@@ -84,8 +84,10 @@ export default function Coupons() {
       setCouponPercentage("");
       setCouponValue("");
       setCreateNewCoupon(false);
-      setCoupons([]);
-      setCoupons((prevCoupons: any) => [...prevCoupons, resData]);
+      if (resData) {
+        setCoupons([]);
+        setCoupons((prevCoupons: any) => [...prevCoupons, resData]);
+      }
       onClose();
     } catch (error) {
       // console.log(error);
@@ -217,7 +219,6 @@ export default function Coupons() {
                       src={"/warning.png"}
                       alt="icon"
                       width={100}
-                      height={100}
                       className="w-[50px] h-[50px] mx-auto"
                     />
                   </div>
@@ -255,6 +256,10 @@ export default function Coupons() {
                       onChange={(e) => {
                         setCouponValue(e.target.value);
                       }}
+                      isInvalid={couponValue.length > 10}
+                      errorMessage={
+                        "COUPON CODE MUST BE EQUAL TO OR LESS THAN 10 CHARACTERS"
+                      }
                     ></Input>
                     <Input
                       isRequired
@@ -310,11 +315,17 @@ export default function Coupons() {
                     if (!createNewCoupon) {
                       setCreateNewCoupon(true);
                     } else {
-                      toast.promise(addCoupon(), {
-                        pending: "Creating coupon ",
-                        success: "Coupon created",
-                        error: "An error occured , please try again",
-                      });
+                      if (couponValue.length <= 10) {
+                        toast.promise(addCoupon(), {
+                          pending: "Creating coupon ",
+                          success: "Coupon created",
+                          error: "An error occured , please try again",
+                        });
+                      } else {
+                        toast.error(
+                          "coupon code must be less than 10 characters"
+                        );
+                      }
                     }
                   }}
                   className="text-white bg-[#1EB564] w-[200px]"

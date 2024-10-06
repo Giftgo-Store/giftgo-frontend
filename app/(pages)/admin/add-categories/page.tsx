@@ -25,10 +25,13 @@ import { redirect, useRouter, useSearchParams } from "next/navigation";
 import BASE_URL from "@/app/config/baseurl";
 import { toast } from "react-toastify";
 import { HiOutlineTrash } from "react-icons/hi";
+import { FiEdit } from "react-icons/fi";
+import { json } from "stream/consumers";
 interface Category {
   _id: string;
   name: string;
   image: string;
+  locations: string[];
 }
 interface location {
   _id: string;
@@ -44,9 +47,11 @@ export default function AddCategories() {
   const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<any>([]);
   const [locations, setLocations] = useState([]);
+  const [locationsToEdit, setLocationsToEdit] = useState<any>([]);
+  const [edit, setEdit] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [categoryIdToEdit, setCategoryIdToEdit] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
-
   //secure page
   const sesssion = useSession({
     required: true,
@@ -57,7 +62,7 @@ export default function AddCategories() {
   const session: any = useSession();
   const token = session?.data?.token;
   const API = BASE_URL + "/api/v1";
-
+  console.log(selectedLocation);
   const selectedValue = useMemo(
     () => Array.from(selectedKeys).join(", "),
     [selectedKeys]
@@ -127,6 +132,7 @@ export default function AddCategories() {
       toast.error("An error has occured, please try again");
     }
   };
+
   const deleteCategory = async (_id: string) => {
     try {
       const res = await fetch(`${API}/category/${_id}`, {
@@ -144,6 +150,35 @@ export default function AddCategories() {
       // console.log(error);
     }
   };
+
+  const EditCategory = async (_id: string) => {
+    const data = new FormData();
+    data.append("image", selectedImage as unknown as Blob);
+    data.append("name", categoryName);
+    data.append("locations", JSON.stringify(selectedLocation));
+    try {
+      const res = await fetch(`${API}/category/update-category/${_id}`, {
+        headers: {
+          AUTHORIZATION: "Bearer " + token,
+        },
+        method: "POST",
+        body: data,
+      });
+      if (res.ok) {
+        getAllCategory();
+        toast.success("category successfully edited");
+        setSelectedImage("");
+        setImagePreview("");
+        setSelectedLocation([]);
+        setCategoryName("");
+        setEdit(false);
+        onClose();
+      }
+    } catch (error) {
+      // console.log(error);
+    }
+  };
+
   const getAllLocations = async () => {
     setLoading(true);
 
@@ -173,6 +208,11 @@ export default function AddCategories() {
   const filteredCategories = allCategories?.filter((category) =>
     category.name.toLowerCase().includes(filterValue.toLowerCase())
   );
+
+  //set values for location
+  function handleSelectionChange(selectedlocations?: string[]) {
+    setSelectedLocation(selectedlocations);
+  }
 
   return (
     <div>
@@ -218,6 +258,9 @@ export default function AddCategories() {
             onClose();
             setSelectedImage("");
             setImagePreview("");
+            setSelectedLocation([]);
+            setCategoryName("");
+            setEdit(false);
           }}
           placement="center"
         >
@@ -257,7 +300,7 @@ export default function AddCategories() {
                       aria-label="Select locations"
                       color="success"
                       value={selectedLocation}
-                      onValueChange={setSelectedLocation}
+                      onValueChange={handleSelectionChange}
                     >
                       {locations.map((location: location) => (
                         <Checkbox value={location.location} key={location._id}>
@@ -266,6 +309,7 @@ export default function AddCategories() {
                       ))}
                     </CheckboxGroup>
                   </div>
+
                   <p className="text-lg py-2">Upload a picture</p>
                   {selectedImage ? (
                     <Image
@@ -319,17 +363,39 @@ export default function AddCategories() {
                       </div>
                     </div>
                   )}
+                  {edit && (
+                    <Button
+                      className="max-w-[200px] w-full mx-auto relative text-white"
+                      color="success"
+                    >
+                      <input
+                        type="file"
+                        name="file input"
+                        className="opacity-0 absolute w-full cursor-pointer"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                      ></input>
+                      Change Image
+                    </Button>
+                  )}
                 </ModalBody>
                 <ModalFooter className="flex justify-center">
                   <Button
                     className="bg-[#1EB564] text-white text-sm w-[150px]"
                     onClick={() => {
-                      toast.promise(addCategory(), {
-                        pending: "Adding category information ",
-                      });
+                      if (edit) {
+                        toast.promise(EditCategory(categoryIdToEdit), {
+                          pending: "Editing category information ",
+                          error: "An error has occured, please try again",
+                        });
+                      } else {
+                        toast.promise(addCategory(), {
+                          pending: "Adding category information ",
+                        });
+                      }
                     }}
                   >
-                    CONFIRM
+                    {edit ? "Edit" : "CONFIRM"}
                   </Button>
                   <Button
                     className="bg-transparent text-[#8B909A] text-sm w-[150px] border-1"
@@ -372,19 +438,48 @@ export default function AddCategories() {
                     />
                   }
                   endContent={
-                    <Button
-                      isIconOnly
-                      className="bg-transparent z-50"
-                      onClick={() => {
-                        toast.promise(deleteCategory(category._id), {
-                          pending: "deleting category",
-                          success: "category deleted",
-                          error: "An error occured , please try again",
-                        });
-                      }}
-                    >
-                      <HiOutlineTrash size={20} />
-                    </Button>
+                    <div>
+                      <Button
+                        isIconOnly
+                        className="bg-transparent z-50"
+                        onClick={() => {
+                          onOpen();
+                          setEdit(true);
+                          setCategoryName(category.name);
+                          setSelectedImage(category.image);
+                          setImagePreview(category.image);
+                          setCategoryIdToEdit(category._id)
+                          if (category.locations) {
+                            // Set selectedLocation to the IDs from the category being edited
+                            const selectedLocationIds = category.locations; // Assuming `category.locations` contains an array of location IDs
+
+                            // convert those selected IDs to location names for the checkboxes
+                            const locationNamesToEdit = locations
+                              .filter((location: location) =>
+                                selectedLocationIds.includes(location._id)
+                              ) // Match IDs
+                              .map((location: location) => location.location); // Get names
+
+                            setSelectedLocation(locationNamesToEdit); // Set the names for display
+                          }
+                        }}
+                      >
+                        <FiEdit size={20} />
+                      </Button>
+                      <Button
+                        isIconOnly
+                        className="bg-transparent z-50"
+                        onClick={() => {
+                          toast.promise(deleteCategory(category._id), {
+                            pending: "deleting category",
+                            success: "category deleted",
+                            error: "An error occured , please try again",
+                          });
+                        }}
+                      >
+                        <HiOutlineTrash size={20} />
+                      </Button>
+                    </div>
                   }
                   key={category._id}
                 >
