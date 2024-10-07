@@ -680,7 +680,6 @@ export default function AddProducts() {
           <div className="flex flex-col gap-3">
             <p>Brand Name</p>
             <Input
-              isRequired
               placeholder="Type brand name here"
               size="md"
               radius="sm"
@@ -707,7 +706,6 @@ export default function AddProducts() {
               <div className="flex w-full flex-col gap-3">
                 <p>SKU</p>
                 <Input
-                  isRequired
                   placeholder="fox-3983"
                   size="md"
                   radius="sm"

@@ -47,7 +47,7 @@ export default function AddCategories() {
   const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<any>([]);
   const [locations, setLocations] = useState([]);
-  const [locationsToEdit, setLocationsToEdit] = useState<any>([]);
+  const [imageToEdit, setImageToEdit] = useState<any>();
   const [edit, setEdit] = useState(false);
   const [loading, setLoading] = useState(true);
   const [categoryIdToEdit, setCategoryIdToEdit] = useState("");
@@ -59,10 +59,11 @@ export default function AddCategories() {
       redirect("/admin/auth/login");
     },
   });
+  //get session and api url
   const session: any = useSession();
   const token = session?.data?.token;
   const API = BASE_URL + "/api/v1";
-  console.log(selectedLocation);
+
   const selectedValue = useMemo(
     () => Array.from(selectedKeys).join(", "),
     [selectedKeys]
@@ -153,7 +154,10 @@ export default function AddCategories() {
 
   const EditCategory = async (_id: string) => {
     const data = new FormData();
-    data.append("image", selectedImage as unknown as Blob);
+    data.append(
+      "image",
+      selectedImage ? (selectedImage as unknown as Blob) : ""
+    );
     data.append("name", categoryName);
     data.append("locations", JSON.stringify(selectedLocation));
     try {
@@ -173,6 +177,7 @@ export default function AddCategories() {
         setSelectedLocation([]);
         setCategoryName("");
         setEdit(false);
+        setImageToEdit("");
         onClose();
       } else {
         toast.error(resData.message);
@@ -264,6 +269,7 @@ export default function AddCategories() {
             setSelectedLocation([]);
             setCategoryName("");
             setEdit(false);
+            setImageToEdit("");
           }}
           placement="center"
         >
@@ -314,7 +320,7 @@ export default function AddCategories() {
                   </div>
 
                   <p className="text-lg py-2">Upload a picture</p>
-                  {selectedImage ? (
+                  {imagePreview ? (
                     <Image
                       src={imagePreview}
                       alt="Preview"
@@ -366,6 +372,7 @@ export default function AddCategories() {
                       </div>
                     </div>
                   )}
+
                   {edit && (
                     <Button
                       className="max-w-[200px] w-full mx-auto relative text-white"
@@ -449,7 +456,7 @@ export default function AddCategories() {
                           onOpen();
                           setEdit(true);
                           setCategoryName(category.name);
-                          setSelectedImage(category.image);
+                          setImageToEdit(category.image);
                           setImagePreview(category.image);
                           setCategoryIdToEdit(category._id);
                           if (category.locations) {
@@ -486,7 +493,7 @@ export default function AddCategories() {
                   }
                   key={category._id}
                 >
-                 <p className="max-w-[180px] truncate">{category.name}</p> 
+                  <p className="max-w-[180px] truncate">{category.name}</p>
                 </ListboxItem>
               ))}
           </Listbox>
