@@ -161,9 +161,10 @@ export default function AddCategories() {
         headers: {
           AUTHORIZATION: "Bearer " + token,
         },
-        method: "POST",
+        method: "PUT",
         body: data,
       });
+      const resData = await res.json();
       if (res.ok) {
         getAllCategory();
         toast.success("category successfully edited");
@@ -173,6 +174,8 @@ export default function AddCategories() {
         setCategoryName("");
         setEdit(false);
         onClose();
+      } else {
+        toast.error(resData.message);
       }
     } catch (error) {
       // console.log(error);
@@ -448,7 +451,7 @@ export default function AddCategories() {
                           setCategoryName(category.name);
                           setSelectedImage(category.image);
                           setImagePreview(category.image);
-                          setCategoryIdToEdit(category._id)
+                          setCategoryIdToEdit(category._id);
                           if (category.locations) {
                             // Set selectedLocation to the IDs from the category being edited
                             const selectedLocationIds = category.locations; // Assuming `category.locations` contains an array of location IDs
