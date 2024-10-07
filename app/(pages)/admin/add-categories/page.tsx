@@ -486,7 +486,7 @@ export default function AddCategories() {
                   }
                   key={category._id}
                 >
-                  {category.name}
+                 <p className="max-w-[180px] truncate">{category.name}</p> 
                 </ListboxItem>
               ))}
           </Listbox>
