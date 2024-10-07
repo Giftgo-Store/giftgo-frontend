@@ -142,7 +142,7 @@ export function Header() {
             />
           </div>
         </NavbarContent>
-        <NavbarMenu className="flex flex-col gap-3 text-xl text-black">
+        <NavbarMenu className="flex flex-col gap-3 text-xl text-black z-[100] absolute">
           <NavbarItem>
             <p className="px-3 py-1 opacity-60">MAIN MENU</p>
           </NavbarItem>
