@@ -271,7 +271,7 @@ export function Header() {
             }   transition-[width] transform ease-in-out  duration-300`}
             key="product-list"
             as={Link}
-            href="/admin/<FiBox size={34} />product-list"
+            href="/admin/product-list"
           >
             <FiBox size={34} />
             <p
