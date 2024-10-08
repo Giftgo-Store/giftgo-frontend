@@ -70,7 +70,7 @@ export function Header() {
 
   //check if email is valid
   const validateEmail = (value: string) =>
-    value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
+    value?.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
 
   const isInvalid = useMemo(() => {
     if (email === "") return false;
@@ -106,8 +106,8 @@ export function Header() {
     }
   }
 
+  //get admin account details
   const getAdminDetails = async () => {
-   
     try {
       const res = await fetch(`${API}/admin/profile`, {
         headers: {
@@ -116,10 +116,17 @@ export function Header() {
       });
       const resData = await res.json();
       setAdminDetails(resData.data);
+      if (res.ok) {
+        setName(resData.data.name);
+        setEmail(resData.data.email);
+        setPhoneNumber(resData.data.phone);
+      }
     } catch (error) {
       toast.error("An error occured , please try again");
     }
   };
+
+  //reset form
   const resetForm = () => {
     setName("");
     setPassword("");
@@ -146,6 +153,7 @@ export function Header() {
       const res = await fetch(`${API}/auth/create/admin`, {
         headers: {
           AUTHORIZATION: "Bearer " + token,
+          "Content-Type": "application/json",
         },
         method: "POST",
         body: JSON.stringify(data),
@@ -153,8 +161,7 @@ export function Header() {
       const resData = await res.json();
 
       if (res.ok) {
-        setAdminDetails(resData.data);
-        toast.success("Admin details successfully edited");
+        toast.success("Admin details successfully created");
         resetForm();
         setLoading(false);
       } else {
@@ -180,6 +187,7 @@ export function Header() {
       const res = await fetch(`${API}/admin/update-profile`, {
         headers: {
           AUTHORIZATION: "Bearer " + token,
+          "Content-Type": "application/json",
         },
         method: "PUT",
         body: JSON.stringify(data),
@@ -212,6 +220,7 @@ export function Header() {
       const res = await fetch(`${API}/admin/change-password`, {
         headers: {
           AUTHORIZATION: "Bearer " + token,
+          "Content-Type": "application/json",
         },
         method: "PUT",
         body: JSON.stringify(data),
@@ -221,9 +230,9 @@ export function Header() {
         toast.success("password changed successfully ");
         resetForm();
         setLoading(false);
-        setName(resData.name)
-        setEmail(resData.email)
-        setPhoneNumber(resData.phone)
+        setName(resData.name);
+        setEmail(resData.email);
+        setPhoneNumber(resData.phone);
       } else {
         toast.error(resData.message);
         setLoading(false);
@@ -235,14 +244,15 @@ export function Header() {
   };
 
   useEffect(() => {
-    getAdminDetails();
-  }, []);
+    if (token) {
+      getAdminDetails();
+    }
+  }, [token]);
 
   //memoizeadmin details
   const memoizedAdminDetails = useMemo(() => {
     return adminDetails;
-  }, [adminDetails]);
-  console.log(memoizedAdminDetails);
+  }, [adminDetails, token]);
 
   return (
     <div>
@@ -486,6 +496,7 @@ export function Header() {
         placement="center"
         onClose={() => {
           setSelected("Create admin");
+          resetForm();
         }}
       >
         <ModalContent>
@@ -552,10 +563,8 @@ export function Header() {
                               setConfirmPassword(e.target.value);
                             }}
                             errorMessage={
-                              confirmPassword.length > 1 &&
-                              confirmPassword.length < 8
-                                ? " password nedds to be ad least 8 characters long"
-                                : ""
+                              confirmPassword !== newPassword &&
+                              "passwords needs to match"
                             }
                           />
                         </div>
@@ -646,7 +655,7 @@ export function Header() {
                                 }}
                                 errorMessage={
                                   password.length > 1 && password.length < 8
-                                    ? " password nedds to be ad least 8 characters long"
+                                    ? " password needs to be at least 8 characters long"
                                     : ""
                                 }
                               />
@@ -663,9 +672,8 @@ export function Header() {
                                   setConfirmPassword(e.target.value);
                                 }}
                                 errorMessage={
-                                  password.length > 1 && password.length < 8
-                                    ? " password nedds to be ad least 8 characters long"
-                                    : ""
+                                  confirmPassword !== password &&
+                                  "passwords needs to match"
                                 }
                               />
                             </div>
@@ -736,14 +744,15 @@ export function Header() {
                             />
                             <Input
                               isRequired
-                              label="Password"
-                              placeholder="Enter your password"
-                              type="password"
-                              value={password}
+                              label="Phone number"
+                              placeholder="Enter your phone number"
+                              type="text"
+                              value={phoneNumber}
                               onChange={(e) => {
-                                setPassword(e.target.value);
+                                setPhoneNumber(e.target.value);
                               }}
                             />
+
                             <p className="text-center text-small">
                               Want to create an admin account?{" "}
                               <Link
