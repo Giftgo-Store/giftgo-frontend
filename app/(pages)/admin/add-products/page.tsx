@@ -98,6 +98,7 @@ export default function AddProducts() {
   const [loading, setLoading] = useState(false);
   const [categoryloading, setCategoryLoading] = useState(true);
   const [isCouponActive, setIsCouponActive] = useState(false);
+  const [imagesToRemove, setImagesToRemove] = useState<string[]>([]);
   const [form, setForm] = useState<Form>({
     USD: "",
     GBP: "",
@@ -267,13 +268,16 @@ export default function AddProducts() {
         key={index}
         name={imageNames[index]}
         avatar={imagePreview}
-        removeCard={() => removeImage(index)}
-        isEditable={edit ? true : false}
+        removeCard={() => {
+          removeImage(index);
+          setImagesToRemove((prev) => [...prev, imagePreview]);
+        }}
       />
     ));
   }, [imagePreviews, imageNames]);
 
   const resetForm = () => {
+    setLoading(false);
     setProductName("");
     setProductCategory("");
     setProductDescription("");
@@ -341,26 +345,31 @@ export default function AddProducts() {
   };
 
   const editProducts = async () => {
-    const payload = {
-      sku,
-      productName,
-      description: productDescription,
-      brandName,
-      salePrice: form.NGN,
-      expressShipping: expressShipping ? "true" : "false",
-      stockQuantity: String(stockQuantity),
-      regularPrice: String(regularPrice),
-    };
+    const formdata = new FormData();
+    selectedImages.forEach((image) => {
+      formdata.append("images", image);
+    });
+    imagesToRemove.forEach((image) => {
+      formdata.append("imagesToRemove", image);
+    });
+    formdata.append("sku", sku);
+    formdata.append("productName", productName);
+    formdata.append("description", productDescription);
+    formdata.append("regularPrice", regularPrice);
+    formdata.append("brandName", brandName);
+    formdata.append("salePrice", form.NGN);
+    formdata.append("stockQuantity", stockQuantity);
+    formdata.append("expressShipping", expressShipping.toString());
+    formdata.append("isCouponActive", isCouponActive.toString());
 
     setLoading(true);
     try {
       const res = await fetch(`${API}/products/${edit}`, {
         headers: {
-          "Content-Type": "application/json",
           AUTHORIZATION: "Bearer " + token,
         },
         method: "PUT",
-        body: JSON.stringify(payload),
+        body: formdata,
       });
 
       const productData = await res.json();
@@ -369,6 +378,7 @@ export default function AddProducts() {
         setLoading(false);
         toast.success("Product information edited");
       }
+      setLoading(false);
 
       console.log(productData);
     } catch (error) {
@@ -641,7 +651,6 @@ export default function AddProducts() {
                 }}
                 isSelected={isCouponActive}
                 onValueChange={setIsCouponActive}
-                isDisabled={edit ? true : false}
               ></Switch>
             </div>
             <p className="text-[#8B909A]">
@@ -752,38 +761,6 @@ export default function AddProducts() {
                   }}
                 ></Input>
               </div>
-              {/* <div className="flex w-full flex-col gap-3">
-                <p>Location</p>
-                <Select
-                  isRequired
-                  size="md"
-                  radius="sm"
-                  className="w-full bg-white shadow-none border-1 rounded-lg"
-                  placeholder="Select location"
-                  variant="flat"
-                  aria-label="filter select"
-                  classNames={{
-                    trigger: [
-                      "bg-white",
-                      "data-focus-[within=true]:bg-white",
-                      "data-[hover=true]:bg-white",
-                      "group-data-[focus=true]:bg-white",
-                    ],
-                  }}
-                  onChange={(e) => {
-                    setLocation(e.target.value);
-                  }}
-                  selectedKeys={[location]}
-                  isDisabled={edit ? true : false}
-                >
-                  {allLocations &&
-                    allLocations.map((country: location) => (
-                      <SelectItem key={country.location.toUpperCase()}>
-                        {country.location}
-                      </SelectItem>
-                    ))}
-                </Select>
-              </div> */}
             </div>
             <div className="flex md:flex-row flex-col w-full justify-between gap-2">
               <div className="flex w-full flex-col gap-3">
@@ -875,46 +852,45 @@ export default function AddProducts() {
             )}
           </div>
           <Spacer y={12}></Spacer>
-          {!edit && (
-            <div className="w-full relative p-5 bordered-input">
-              <input
-                type="file"
-                name="file input drag"
-                multiple
-                className="opacity-0 absolute w-full h-full"
-                accept="image/*"
-                onChange={handleImageChange}
-              ></input>
-              <label
-                className="cursor-pointer flex justify-center items-center flex-col"
-                htmlFor="file input drag"
-              >
-                <SlPicture size={48} color="#1EB564" />
-                <div className="w-full h-full">
-                  <div className="flex justify-center gap-1">
-                    <p>Drop your Images here or </p>
-                    <p>
-                      <input
-                        type="file"
-                        name="file input"
-                        className="opacity-0 z-50 absolute w-[50px]"
-                        multiple
-                        accept="image/*"
-                        onChange={handleImageChange}
-                      ></input>
-                      <label
-                        className="cursor-pointer text-[#1EB564]"
-                        htmlFor="file input"
-                      >
-                        Browse
-                      </label>
-                    </p>
-                  </div>
-                  <p className="text-center">Jpeg,png,jpj are allowed</p>
+          <div className="w-full relative p-5 bordered-input">
+            <input
+              type="file"
+              name="file input drag"
+              multiple
+              className="opacity-0 absolute w-full h-full"
+              accept="image/*"
+              onChange={handleImageChange}
+            ></input>
+            <label
+              className="cursor-pointer flex justify-center items-center flex-col"
+              htmlFor="file input drag"
+            >
+              <SlPicture size={48} color="#1EB564" />
+              <div className="w-full h-full">
+                <div className="flex justify-center gap-1">
+                  <p>Drop your Images here or </p>
+                  <p>
+                    <input
+                      type="file"
+                      name="file input"
+                      className="opacity-0 z-50 absolute w-[50px]"
+                      multiple
+                      accept="image/*"
+                      onChange={handleImageChange}
+                    ></input>
+                    <label
+                      className="cursor-pointer text-[#1EB564]"
+                      htmlFor="file input"
+                    >
+                      Browse
+                    </label>
+                  </p>
                 </div>
-              </label>
-            </div>
-          )}
+                <p className="text-center">Jpeg,png,jpj are allowed</p>
+              </div>
+            </label>
+          </div>
+
           <Spacer y={12}></Spacer>
           <div className=" flex flex-col gap-3 h-fit">{ImageUploadCards}</div>
           <Spacer y={12}></Spacer>
