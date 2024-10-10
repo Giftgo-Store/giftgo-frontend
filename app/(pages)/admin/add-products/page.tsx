@@ -749,6 +749,7 @@ export default function AddProducts() {
                   size="md"
                   radius="sm"
                   aria-label="product name"
+                  type="number"
                   className=" rounded-lg w-full border-1"
                   classNames={{
                     label: "text-base",
@@ -772,10 +773,11 @@ export default function AddProducts() {
                 <p>Regular Price</p>
                 <Input
                   isRequired
-                  placeholder="Type name here"
+                  placeholder="Type regular price here"
                   size="md"
                   radius="sm"
                   aria-label="₦1000"
+                  type="number"
                   className=" rounded-lg w-full border-1"
                   classNames={{
                     label: "text-base",
@@ -800,6 +802,7 @@ export default function AddProducts() {
                     isRequired={flag.currency === "NGN"}
                     key={flag.currency}
                     placeholder={flag.placeholder}
+                    type="number"
                     startContent={
                       <div className="flex gap-1">
                         <Image
