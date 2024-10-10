@@ -346,9 +346,11 @@ export default function AddProducts() {
 
   const editProducts = async () => {
     const formdata = new FormData();
-    selectedImages.forEach((image) => {
-      formdata.append("images", image);
-    });
+    if (selectedImages.length > 0) {
+      selectedImages.forEach((image) => {
+        formdata.append("images[]", image);
+      });
+    }
     imagesToRemove.forEach((image) => {
       formdata.append("imagesToRemove", image);
     });
