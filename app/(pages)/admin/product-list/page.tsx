@@ -149,7 +149,7 @@ export default function ProductList() {
         });
         await data.json();
 
-        const updatedItems = [...Items];
+        const updatedItems = [...paginatedItems];
         updatedItems.splice(index, 1);
         setItems(updatedItems);
       } catch (error) {
