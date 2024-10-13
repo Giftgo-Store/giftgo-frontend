@@ -1011,4 +1011,4 @@ export default function Dashboard() {
     </div>
   );
 }
-Dashboard.requireAuth = true;
+Dashboard.auth = true;
