@@ -272,7 +272,8 @@ const Page = () => {
           //@ts-expect-error
           error?.response?.data || error?.message || "an error occurred ",
       });
-      alert("error");
+      // alert("error");
+      console.log(error)
     } finally {
       // Any cleanup or final actions
     }

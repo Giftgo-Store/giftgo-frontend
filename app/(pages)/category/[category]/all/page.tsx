@@ -89,7 +89,7 @@ const Page = () => {
               </select>
             </div>
           </div>
-          <div className="flex justify-center items-center flex-wrap gap-6">
+          <div className="flex justify-center items-center flex-wrap gap-2 gap-y-4 lg:gap-6">
             {allItems ? (
               allItems.map((product: any, i: any) => {
                 return <Card key={i} lists={product} />;

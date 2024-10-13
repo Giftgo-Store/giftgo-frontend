@@ -81,11 +81,11 @@ const Card = ({ lists }: CardProps) => {
         images={lists?.images}
       />
       <div
-        className="w-[290px] flex flex-col gap-[16px] border-[#E4E7E9] border-[1px] rounded-[8px] p-[8px] drop-shadow-sm hover:shadow-2xl shadow-white/12 cursor-pointer relative"
+        className="w-[45%] lg:w-[290px] flex flex-col gap-[16px] border-[#E4E7E9] border-[1px] rounded-[2px] lg:rounded-[8px] p-[8px] drop-shadow-sm hover:shadow-2xl shadow-white/12 cursor-pointer relative"
         onClick={() => router.push(`/product/${lists?._id}`)}
       >
         {lists && lists?.expressShipping === "true" && (
-          <div className="bg-primary rounded-br-[8px] rounded-tl-[8px] absolute top-0 left-0 py-[7px] px-[10px] flex justify-center items-center gap-1 text-white z-50">
+          <div className="bg-primary rounded-br-[2px] lg:rounded-br-[8px] rounded-tl-[2px] lg:rounded-tl-[8px] absolute top-0 left-0 py-[4px] lg:py-[7px] px-[6px] lg:px-[10px] flex justify-center items-center lg:gap-1 text-white z-50">
             <LiaFighterJetSolid />
             <p className="text-[11px]">Express shipping</p>
           </div>
@@ -100,7 +100,7 @@ const Card = ({ lists }: CardProps) => {
             alt=""
             width={276}
             height={256}
-            className="relative z-0 object-cover h-[300px] w-[276px]"
+            className="relative z-0 object-cover lg:h-[300px] lg:w-[276px] bg-red-400"
           />
           {isHovered && (
             <div className="w-full h-full bg-cardBg z-40 absolute top-0 flex justify-center items-center">
@@ -125,10 +125,10 @@ const Card = ({ lists }: CardProps) => {
           )}
         </div>
         <div className="flex flex-col items-start">
-          <p className="text-[14px] font-[500] text-[#475156] pb-1">
+          <p className="text-[14px] leading-1 font-[500] text-[#475156] lg:pb-1">
             {lists?.productName}
           </p>
-          <p className="text-[13px] font-[500] text-[#838f95] pb-1">
+          <p className="hidden lg:block text-[13px] font-[500] text-[#838f95] lg:pb-1">
             {lists?.description.slice(0, 30) + "..."}
           </p>
 
@@ -147,7 +147,7 @@ const Card = ({ lists }: CardProps) => {
               ({lists?.reviews?.length})
             </p>
           </div>
-          <p className="text-[[#05031A]] text-[16px] font-[600] py-2">
+          <p className="text-[[#05031A]] text-[16px] font-[600] py-1 lg:py-2">
             ₦ {formatNumberWithCommas(lists?.salePrice)}
           </p>
           <button
@@ -156,7 +156,7 @@ const Card = ({ lists }: CardProps) => {
               router.push(`/order-now/${lists && lists._id}?${query}`);
             }}
             type="submit"
-            className="w-full bg-primary relative z-[999] hover:bg-[#05031A]  text-white py-2 h-[48px] rounded-[8px] flex justify-center items-center gap-4 font-[700]"
+            className="w-full bg-primary relative z-[999] hover:bg-[#05031A]  text-white py-2 lg:h-[48px] h-[35px] rounded-[8px] flex justify-center items-center gap-4 font-[700]"
           >
             Buy Now
           </button>
