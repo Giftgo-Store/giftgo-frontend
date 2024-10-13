@@ -334,4 +334,4 @@ export default function ProductList() {
     </div>
   );
 }
-ProductList.requireAuth = true;
+ProductList.auth = true;

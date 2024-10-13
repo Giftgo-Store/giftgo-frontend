@@ -509,4 +509,4 @@ export default function AddCategories() {
     </div>
   );
 }
-AddCategories.requireAuth = true;
+AddCategories.auth = true;

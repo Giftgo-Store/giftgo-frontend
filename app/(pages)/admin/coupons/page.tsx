@@ -341,4 +341,4 @@ export default function Coupons() {
     </>
   );
 }
-Coupons.requireAuth = true;
+Coupons.auth = true;

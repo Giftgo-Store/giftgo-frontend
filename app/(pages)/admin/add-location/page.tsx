@@ -354,4 +354,4 @@ export default function AddLocation() {
     </div>
   );
 }
-AddLocation.requireAuth = true;
+AddLocation.auth = true;

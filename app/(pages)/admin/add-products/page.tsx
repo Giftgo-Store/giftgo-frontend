@@ -934,4 +934,4 @@ export default function AddProducts() {
     </div>
   );
 }
-AddProducts.requireAuth = true;
+AddProducts.auth = true;

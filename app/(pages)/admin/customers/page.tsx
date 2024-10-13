@@ -371,4 +371,4 @@ export default function Customers() {
     </div>
   );
 }
-Customers.requireAuth = true;
+Customers.auth = true;

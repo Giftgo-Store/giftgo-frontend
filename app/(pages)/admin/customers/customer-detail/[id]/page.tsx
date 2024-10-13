@@ -1020,4 +1020,4 @@ export default function CustomerDetails({
     </div>
   );
 }
-CustomerDetails.requireAuth = true;
+CustomerDetails.auth = true;

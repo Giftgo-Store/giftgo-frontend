@@ -148,4 +148,4 @@ export default function Reviews({ params }: { params: { id: string } }) {
     </div>
   );
 }
-Reviews.requireAuth = true;
+Reviews.auth = true;
