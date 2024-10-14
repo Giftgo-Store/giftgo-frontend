@@ -103,8 +103,8 @@ const page = () => {
 
 
   return (
-    <>
-      <div className="py-[20px] px-[4%] lg:px-[8%] bg-secondary mb-[56px]">
+    <div className="bg-[#F5F5F5]">
+      <div className="py-[20px] px-[4%] lg:px-[8%] bg-[#FFFCF5] lg:bg-secondary mb-[56px]">
         <h2 className="font-[600] leading-[32px] text-[28px] text-[#191C1F]">
           {location} Store
         </h2>
@@ -120,7 +120,7 @@ const page = () => {
 
         <div className="mt-[24px] w-full flex justify-between items-center relative overflow-x-hidden gap-4">
           <div>
-            <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center cursor-pointer custom-nextt z-40">
+            <div className="h-3 lg:h-12 w-3 lg:w-12 rounded-full bg-primary hidden lg:flex justify-center items-center cursor-pointer custom-nextt z-40">
               <FaArrowLeft className="h-6 w-6 text-white" />
             </div>
           </div>
@@ -129,7 +129,7 @@ const page = () => {
             {category && category.length > 0 ? (
               <Swiper
                 modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
-                spaceBetween={20}
+                // spaceBetween={10}
                 autoplay={{
                   delay: 5000,
                   disableOnInteraction: false,
@@ -139,13 +139,20 @@ const page = () => {
                   nextEl: ".custom-prevv",
                 }}
                 breakpoints={{
+                  0: {
+                    slidesPerView:
+                      category.length === 1 ? 1 : category.length === 2 ? 2 : 2,
+                    spaceBetween: 16,
+                  },
                   640: {
                     slidesPerView:
                       category.length === 1 ? 1 : category.length === 2 ? 2 : 2,
+                    spaceBetween: 16,
                   },
                   768: {
                     slidesPerView:
                       category.length === 1 ? 1 : category.length === 2 ? 2 : 2,
+                    spaceBetween: 20,
                   },
                   1024: {
                     slidesPerView:
@@ -166,7 +173,7 @@ const page = () => {
                         key={i}
                         className="flex justify-center items-center"
                       >
-                        <div className=" flex justify-center items-center">
+                        <div className="flex justify-center items-center">
                           <Category
                             key={i}
                             catId={cat}
@@ -182,7 +189,7 @@ const page = () => {
             )}
           </div>
           <div>
-            <div className="h-12 w-12 rounded-full bg-primary flex justify-center items-center cursor-pointer custom-prevv z-40">
+            <div className="h-3 w-3 lg:h-12 lg:w-12 rounded-full bg-primary hidden lg:flex justify-center items-center cursor-pointer custom-prevv z-40">
               <FaArrowRight className="h-6 w-6 text-white" />
             </div>
           </div>
@@ -203,9 +210,9 @@ const page = () => {
               <FaArrowRight />
             </Link>
           </div>
-          <div className="flex justify-center items-center flex-wrap gap-6">
+          <div className="flex justify-center items-center flex-wrap gap-2 gap-y-4 lg:gap-6">
             {allItems ? (
-              allItems.slice(0,12).map((product: any, i: any) => {
+              allItems.slice(0, 12).map((product: any, i: any) => {
                 return <Card key={i} lists={product} />;
               })
             ) : (
@@ -305,7 +312,7 @@ const page = () => {
               <FaArrowRight />
             </Link>
           </div>
-          <div className="flex justify-center items-center flex-wrap gap-6">
+          <div className="flex justify-center items-center flex-wrap gap-2 gap-y-4 lg:gap-6">
             {allItems ? (
               allItems.map((product: any, i: any) => {
                 return (
@@ -331,7 +338,7 @@ const page = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
