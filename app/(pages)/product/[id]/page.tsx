@@ -418,7 +418,7 @@ const Page = () => {
               <h2 className="text-[#191C1F] font-[500]">
                 Shipping Information
               </h2>
-              {product.expressShipping === "true" && (
+              {product?.expressShipping === "true" && (
                 <div className="bg-primary rounded-br-[8px] mt-2 lg:mt-5 rounded-tl-[8px] py-[5px] px-[12px] flex justify-center items-center gap-1 text-white w-[fit-content]">
                   <LiaFighterJetSolid />
                   <p className="text-[11px]">Express shipping</p>
@@ -436,8 +436,8 @@ const Page = () => {
           <div>
             <div className="flex justify-between flex-wrap items-start mt-[24px] gap-[8px]">
               {product &&
-                product.reviews &&
-                product.reviews.slice(0, 6).map((review: any, i: any) => {
+                product?.reviews &&
+                product?.reviews.slice(0, 6).map((review: any, i: any) => {
                   const dateString = review.createdAt;
                   const date: Date = new Date(dateString);
 
@@ -477,8 +477,8 @@ const Page = () => {
                 })}
               {showMore &&
                 product &&
-                product.reviews &&
-                product.reviews.slice(6, 7).map((review: any, i: any) => {
+                product?.reviews &&
+                product?.reviews.slice(6, 7).map((review: any, i: any) => {
                   const dateString = review.createdAt;
                   const date: Date = new Date(dateString);
 
@@ -519,8 +519,8 @@ const Page = () => {
 
               {showMore &&
                 product &&
-                product.reviews &&
-                product.reviews.slice(7, 8).map((review: any, i: any) => {
+                product?.reviews &&
+                product?.reviews.slice(7, 8).map((review: any, i: any) => {
                   const dateString = review.createdAt;
                   const date: Date = new Date(dateString);
 
@@ -561,8 +561,8 @@ const Page = () => {
                 })}
               {showMore &&
                 product &&
-                product.reviews &&
-                product.reviews.slice(8, 9).map((review: any, i: any) => {
+                product?.reviews &&
+                product?.reviews.slice(8, 9).map((review: any, i: any) => {
                   const dateString = review.createdAt;
                   const date: Date = new Date(dateString);
 
