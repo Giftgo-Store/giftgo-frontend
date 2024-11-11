@@ -190,7 +190,7 @@ const Card = ({ lists }: CardProps) => {
         </div>
         <div className="flex flex-col items-start">
           <p className="text-[14px] leading-1 font-[500] text-[#475156] lg:pb-1">
-            {lists?.productName}
+            {lists?.productName.slice(0, 20) + '...'}
           </p>
           <p className="hidden lg:block text-[13px] font-[500] text-[#838f95] lg:pb-1">
             {lists?.description.slice(0, 30) + "..."}
@@ -215,21 +215,23 @@ const Card = ({ lists }: CardProps) => {
             ₦ {formatNumberWithCommas(lists?.salePrice)}
           </p>
           <div className="flex justify-between items-center gap-2 w-full">
-            <Image
-              src="/Buy 2.svg"
-              alt=""
-              width={22}
-              height={22}
-              className=""
-              onClick={(e) => handleAddToCart(e, lists)}
-            />
+            <div className="w-[35%] flex justify-center items-center border-black border-[1px] py-2 lg:h-[48px] h-[35px] rounded-[8px]">
+              <Image
+                src="/Buy 2.svg"
+                alt=""
+                width={22}
+                height={22}
+                className=""
+                onClick={(e) => handleAddToCart(e, lists)}
+              />
+            </div>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 router.push(`/order-now/${lists && lists.productId}?${query}`);
               }}
               type="submit"
-              className="w-full bg-primary relative z-[999] hover:bg-[#05031A]  text-white py-2 lg:h-[48px] h-[35px] rounded-[8px] flex justify-center items-center gap-4 font-[700]"
+              className="w-[65%] bg-primary relative z-[999] hover:bg-[#05031A]  text-white py-2 lg:h-[48px] h-[35px] rounded-[8px] flex justify-center items-center gap-4 font-[700]"
             >
               Buy Now
             </button>

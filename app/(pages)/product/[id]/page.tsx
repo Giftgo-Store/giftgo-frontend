@@ -394,10 +394,10 @@ const Page = () => {
             <div className="text-[14px] text-[#191C1F] whitespace-nowrap">
               <h2 className="text-[#191C1F] font-[500]">Feature</h2>
               <div className="flex flex-col items-start gap-3 mt-2 lg:mt-4">
-                <div className="flex justify-start items-center gap-1">
+                {/* <div className="flex justify-start items-center gap-1">
                   <PiMedalLight className="text-[#FA8232] h-6 w-6" />
                   <p>Free 1 Year Warranty</p>
-                </div>
+                </div> */}
                 <div className="flex justify-start items-center gap-1 whitespace-nowrap">
                   <LiaShippingFastSolid className="text-[#FA8232] h-6 w-6" />
                   <p>Free Shipping and Fast Delivery</p>
@@ -414,7 +414,7 @@ const Page = () => {
             </div>
             <div className="bg-[#E4E7E9] h-[180px] w-[1px] hidden lg:block"></div>
 
-            <div className="text-[14px] text-[#191C1F] whitespace-nowrap">
+            {/* <div className="text-[14px] text-[#191C1F] whitespace-nowrap">
               <h2 className="text-[#191C1F] font-[500]">
                 Shipping Information
               </h2>
@@ -428,7 +428,7 @@ const Page = () => {
                 <span className="font-[500]">Courier : </span> 2-4 days free
                 shipping
               </p>
-            </div>
+            </div> */}
           </div>
         )}
 

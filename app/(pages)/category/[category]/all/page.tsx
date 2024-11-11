@@ -22,28 +22,75 @@ const Page = () => {
   };
 
   const [category, setCategory] = useState([]);
+  const [sort, setSort] = useState("none");
+  const [allItems, setAllItems] = useState<any>([]);
+  const [originalItems, setOriginalItems] = useState<any>([]); // To store the original data
 
   const location = Cookies.get("location");
 
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const response = await axios.get(
-            `${BASE_URL}/api/v1/products/locate/${location} `
-          );
-          setCategory(response.data.data);
-        } catch (error) {
-        } finally {
-          // Any cleanup or final actions
-        }
-      };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/api/v1/products/locate/${location}`
+        );
+        setCategory(response.data.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-      fetchData();
-    }, [params?.category]);
+    fetchData();
+  }, [params?.category, location]); // Added location as a dependency in case it changes
 
-      const cat = category && category.map((cat: any) => cat.products);
+  useEffect(() => {
+    // Assuming 'category' is your fetched data
+    if (category?.length) {
+      const flatItems = category.flatMap((cat: any) => cat.products || []);
+      setAllItems(flatItems);
+      setOriginalItems(flatItems); // Save the original items
+    }
+  }, [category]);
 
-      const allItems = cat && cat.flatMap((innerArray) => innerArray);
+  // Flatten the nested products structure whenever 'category' changes
+  useEffect(() => {
+    if (category?.length) {
+      const flatItems = category.flatMap((cat: any) => cat.products || []);
+      setAllItems(flatItems);
+    }
+  }, [category]);
+
+  // Sorting logic whenever 'sort' or 'allItems' changes
+  useEffect(() => {
+    if (!allItems?.length) return;
+
+    let sortedProducts = [...allItems]; // Create a shallow copy to avoid mutating state
+
+    if (sort === "price-low") {
+      sortedProducts.sort((a: any, b: any) => a.salePrice - b.salePrice);
+    } else if (sort === "price-high") {
+      sortedProducts.sort((a: any, b: any) => b.salePrice - a.salePrice);
+    } else if (sort === "express") {
+      sortedProducts = sortedProducts.filter(
+        (a: any) => a.expressShipping === "true"
+      );
+    } else if (sort === "none") {
+      sortedProducts = [...originalItems]; // Reset to the original items
+    } else if (sort === "alphabetic") {
+      sortedProducts.sort((a: any, b: any) => {
+        if (a.productName < b.productName) return -1;
+        if (a.productName > b.productName) return 1;
+        return 0;
+      });
+    } else if (sort === "best-selling") {
+      // Sort by the number of reviews in descending order
+      sortedProducts.sort(
+        (a: any, b: any) => b.reviews.length - a.reviews.length
+      );
+    }
+
+    setAllItems(sortedProducts); // Update state with sorted products
+  }, [sort, allItems, originalItems]);
 
   return (
     <>
@@ -81,10 +128,27 @@ const Page = () => {
               <select
                 name=""
                 id=""
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
                 className="text-[14px] text-[#475156] border-[#E4E7E9] py-3 rounded-[2px] px-4 border-[1px] outline-none"
               >
-                <option value="" className="text-[14px]">
-                  Most Popular
+                <option value="none" className="text-[14px]">
+                  All
+                </option>
+                <option value="best-selling" className="text-[14px]">
+                  Best selling{" "}
+                </option>
+                <option value="alphabetic" className="text-[14px]">
+                  Alphabetical{" "}
+                </option>
+                <option value="express" className="text-[14px]">
+                  Express Shipping{" "}
+                </option>
+                <option value="price-low" className="text-[14px]">
+                  Price High to low{" "}
+                </option>
+                <option value="price-high" className="text-[14px]">
+                  Price low to high
                 </option>
               </select>
             </div>
@@ -100,7 +164,7 @@ const Page = () => {
           </div>
         </div>
 
-        <div className="flex gap-4 justify-between items-center flex-col lg:flex-row my-[64px]">
+        {/* <div className="flex gap-4 justify-between items-center flex-col lg:flex-row my-[64px]">
           <div className="lg:w-[50%] bg-[#F2F4F5] pt-[36px] pl-[36px] flex justify-between flex-col lg:flex-row items-center lg:items-end rounded-[4px]">
             <div className="flex flex-col items-start justify-center lg:pb-[60px] lg:w-[50%]">
               <p className="bg-secondary py-2 px-3 rounded-[2px] text-[#475156] text-[14px] font-[600]">
@@ -169,7 +233,7 @@ const Page = () => {
               />
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );
